@@ -149,7 +149,7 @@ function Input_Check(element){
             .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
             .replace(/(\-{1,2})$/g, "");
         }
-
+        
         Value_Check(element.name, element.value, null)
         .then(result => {
             pnc = result;
