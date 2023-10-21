@@ -5,10 +5,16 @@ let pool = null;
 function DB_Connect(){
     pool = mysql.createPool({
         connectionLimit: 200,
+        host: 'localhost',
+        user: 'root',
+        password: 'admin7120',
+        database: 'nodejs',
+        /*
         host: 'sinervadb.cnlq6mwuy6ej.us-east-2.rds.amazonaws.com',
         user: 'sinerva',
         password: 'sinerva1234',
         database: 'sinerva',
+        */
         port: '3306',
         charset: 'UTF8MB4'
     });

@@ -85,25 +85,25 @@ app.post('/check-input', (req, res) => {
                 res.json({ result });
             });
     } else if (name === 'nick_name') {
-        console.log(value1);
+        //console.log(value1);
         normalization.Nick_Name_Check(value1)
             .then(result => {
                 res.json({ result });
             });
     } else if (name === 'phone_num') {
-        console.log(value1);
+        //console.log(value1);
         normalization.Phone_Num_Check(value1)
             .then(result => {
                 res.json({ result });
             });
     } else if (name === 'email') {
-        console.log(value1);
+        //console.log(value1);
         normalization.Email_Check(value1)
             .then(result => {
                 res.json({ result });
             });
     } else if (name === 'address') {
-        console.log(value1);
+        //console.log(value1);
         normalization.Address_Check(value1)
             .then(result => {
                 res.json({ result });

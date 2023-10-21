@@ -130,7 +130,26 @@ function Input_Check(element){
             });
         }
     }
-    else if (element.name === "phoneNum") {
+    else if (element.name === "phone_num") {
+        element.value = element.value.replace(/[^0-9]/g, '');
+        const changeLength = document.getElementById("phone_num");
+        
+        if (element.value.startsWith("02")) {
+            changeLength.maxLength = 12;
+
+            element.value = element.value
+            .replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,2})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+            .replace(/(\-{1,2})$/g, "");
+        } else {
+            changeLength.maxLength = 13;
+
+            element.value = element.value
+            .replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+            .replace(/(\-{1,2})$/g, "");
+        }
+
         Value_Check(element.name, element.value, null)
         .then(result => {
             pnc = result;
@@ -163,7 +182,7 @@ function Input_Check(element){
                 }
                 else{
                     img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "사용 불가능한 이메일입니다.";
+                    textNode.nodeValue = "사용할 수 없는 이메일입니다.";
                 }
                 MessageBox_Check();
             });
