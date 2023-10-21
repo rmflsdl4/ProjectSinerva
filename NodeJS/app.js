@@ -90,7 +90,25 @@ app.post('/check-input', (req, res) => {
             .then(result => {
                 res.json({ result });
             });
-    }
+    } else if (name === 'phone_num') {
+        console.log(value1);
+        normalization.Phone_Num_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'email') {
+        console.log(value1);
+        normalization.Email_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'address') {
+        console.log(value1);
+        normalization.Address_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } 
 });
 app.post('/sign-up', (req, res) => {
     const { id, pw, nick_name, phone_num, email, address} = req.body;

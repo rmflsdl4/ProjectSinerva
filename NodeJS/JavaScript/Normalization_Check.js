@@ -43,9 +43,27 @@ async function Nick_Name_Normalization_Check(value){
     };
     return bool;   
 }
+async function Phone_Num_Normalization_Check(value) {
+    let phone_num_normal = /^.{4,50}$/;
+
+    return phone_num_normal;
+}
+async function Email_Normalization_Check(value) {
+    let bool;
+
+    return bool;
+}
+async function Address_Normalization_Check(value) {
+    let bool;
+
+    return bool;
+}
 module.exports = {
     ID_Check: ID_Normalization_Check,
     PW_Check: PW_Normalization_Check,
     Confirm_Pw_Check: PW_Confirm_Check,
-    Nick_Name_Check: Nick_Name_Normalization_Check
+    Nick_Name_Check: Nick_Name_Normalization_Check,
+    Phone_Num_Check: Phone_Num_Normalization_Check,
+    Email_Check: Email_Normalization_Check,
+    Address_Check: Address_Normalization_Check
 };
