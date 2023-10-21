@@ -44,7 +44,7 @@ async function Nick_Name_Normalization_Check(value){
     return bool;   
 }
 async function Phone_Num_Normalization_Check(value) {
-    let phone_num_normal = /^.{4,50}$/;
+    let phone_num_normal;
 
     return phone_num_normal;
 }
