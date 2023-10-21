@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CommonUserMain</title>
+
+    <style>
+        .subMenu {
+            list-style:none;
+        }
+        .subMenu > li {
+            display: inline-block;
+        }
+        .mainTitle {
+            text-align: center;
+        }
+        .mainElement {
+            text-align: center;
+        }
+        .clickImg {
+            width: 300px; 
+            height: 300px; 
+            cursor: pointer;
+        }
+        #imageTestBtn, #recordBtn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <ul class="subMenu">
+            <li>회원정보 수정</li>
+            <li>알림</li>
+        </ul>
+    </div>
+    <hr>
+
+    <section>
+        <h1 class="mainTitle">건물 균열 검사 시스템</h1>
+
+        <div class="mainElement">
+            <label for="imageTestBtn" id="customImgBtn">
+                <img class="clickImg" src="Image/imageTest.png" alt="Choose a file"/>
+                <input id="imageTestBtn" type="button" accept="image/*" onclick="location.href='imageTest.html'" multiple/>
+            </label>
+        
+            <label for="recordBtn" id="customRecordBtn">
+                <img class="clickImg" src="Image/folder.png" alt="Choose a file"/>
+                <input id="recordBtn" type="button" accept="image/*" onclick="location.href='RecordList.html'"/>
+            </label>
+        </div>
+    </section>
+</body>
+</html>
