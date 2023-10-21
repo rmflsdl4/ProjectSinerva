@@ -1,4 +1,4 @@
-let idc, pwc, cpwc, nnc;
+let idc, pwc, cpwc, nnc, pnc, emc, adc;
 
 function Input_Check(element){
     Input_Data_Check_To_Submit();
@@ -239,6 +239,9 @@ function Input_Data_Check_To_Submit(){
 
     for(let i = 0; i < inputData.length; i++){
         if(inputData[i].value === ""){
+            if (i == 4 || i == 6) {
+                continue;
+            }
             submitButton.disabled = true;
             submitButton.style.backgroundColor = "#347236";
             return;
@@ -269,7 +272,7 @@ function Value_Check(name, value1, value2) {
 }
 
 function All_Values_Check(){
-    if(idc && pwc && cpwc && nnc && pnc && emc && adc){
+    if(idc && pwc && cpwc && nnc && emc){
         return true;
     }
     alert('입력값을 다시 확인해 주세요.');

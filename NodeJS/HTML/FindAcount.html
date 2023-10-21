@@ -8,7 +8,11 @@
     </head>
     <body id="Main_BackGround" onload="InitForm()">
         <div>
-            <form action="/sign-up" method="POST" onsubmit="return All_Values_Check()">
+            <form action="/" method="POST" onsubmit="return All_Values_Check()">
+                <div>
+                    <div class="findAc" onclick="">아이디 찾기</div>
+                    <div class="findAc" onclick="">비밀번호 찾기</div>
+                </div>
                 <div>
                     <input id="id" type="text" name="id" placeholder="아이디" maxlength="29" oninput="Input_Check(this);">
                 </div>
@@ -19,24 +23,15 @@
                     <input id="confirm_pw" type="password" name="confirm_pw" placeholder="비밀번호 확인"  maxlength="49" oninput="Input_Check(this);">
                 </div>
                 <div>
-                    <input id="nick_name" type="text" name="nick_name" placeholder="이름" maxlength="30" onkeyup="Input_Check(this);">
-                </div>
-                <div>
                     <input id="phone_num" type="text" name="phone_num" placeholder="xxx-xxxx-xxxx" maxlength="13" oninput="Input_Check(this);">
                 </div>
                 <div>
                     <input id="email" type="text" name="email" placeholder="이메일" maxlength="50" onkeyup="Input_Check(this);">
                 </div>
-                <div>
-                    <input id="address" type="text" name="address" placeholder="주소" maxlength="200" onkeyup="Input_Check(this);">
-                </div>
-                <div>
-                    <input type="radio" id="nomalUser" name="userType" value="user" onclick="Input_Check()" checked><label for="nomal">일반 사용자</label>
-                    <input type="radio" id="expertComment" name="userType" value="expert" onclick="Input_Check()"><label for="expert">안전 전문가</label>
-                </div>
                 <div id="MainMenuBox">
                     <a href="Login.html">로그인 페이지로 이동</a>
-                    <button id="sign_up" type="submit" disabled onclick="window.onbeforeunload = null;">회원가입</button>
+                    <a href="SignUp.html">회원가입 페이지로 이동</a>
+                    <button id="find" type="submit" disabled onclick="window.onbeforeunload = null;">찾기</button>
                 </div>
             </form>
         </div>

@@ -111,10 +111,10 @@ app.post('/check-input', (req, res) => {
     } 
 });
 app.post('/sign-up', (req, res) => {
-    const { id, pw, nick_name, phone_num, email, address} = req.body;
+    const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
 
     try{
-        signup.Add_User(id, pw, nick_name, phone_num, email, address);
+        signup.Add_User(id, pw, nick_name, phone_num, email, address, userType);
     
         console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} ]`);
 
