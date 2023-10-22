@@ -10,35 +10,17 @@
     <div class="wrapper">
         <header>파일 업로드</header>
         <form action="#">
-            <input type="file" class="file-input" hidden multiple>
+            <input type="file" class="fileInput" accept="image/jpeg" hidden multiple/>
             <i class="fas fa-cloud-upload-alt"></i>
             <p>브라우저 파일 업로드</p>
         </form>
-        <section class="progress-area">
-            <li class="row">
-                <i class="fas fa-file-alt"></i>
-                <div class="content">
-                    <div class="details">
-                        <span class="name">image_01.png Uploading</span>
-                        <span class="percent">50%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress"></div>
-                    </div>
-                </div>                
-            </li>
+        <section class="selectArea">
+            <li class="row" style="display: none;"></li>
         </section>
-        <section class="uploaded-area">
-            <li class="row">
-                <div class="content">
-                    <i class="fas fa-file-alt"></i>
-                    <div class="details">
-                        <span class="name">image_01.png Uploading</span>
-                        <span class="size">70 KB</span>
-                    </div>
-                </div>
-                <i class="fas fa-check"></i>
-            </li>
+        <section class="testBtnArea">
+            <div class="testBtnBox">
+                <button class="checkBtn">검사</button>
+            </div>     
         </section>
     </div>
 

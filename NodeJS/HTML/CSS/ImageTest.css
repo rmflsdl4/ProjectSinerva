@@ -11,7 +11,7 @@ body {
     min-height: 100vh;
 }
 .wrapper {
-    width: 430px;
+    width: 850px;
     padding: 30px;
     background: #fff;
     border-radius: 5px;
@@ -32,6 +32,9 @@ body {
     flex-direction: column;
     border-radius: 5px;
     border: 2px dashed #6990f2;
+}
+.wrapper form:hover {
+    background: linear-gradient(to bottom, #87CEEB, #B0E0E6);
 }
 form i {
     font-size: 50px;
@@ -57,42 +60,67 @@ section .row i{
 section .details span {
     font-size: 14px;
 }
-.progress-area .row .content {
+.selectArea {
+    max-height: 350px;
+    overflow-y: scroll;
+}
+.selectArea::-webkit-scrollbar {
+    width: 0px;
+}
+.selectArea .row .content .imgContent {
     width: 100%;
     margin-left: 15px;
 }
-.progress-area .details {
+.selectArea .details {
     display: flex;
     align-items: center;
     margin-bottom: 7px;
-    justify-content: space-between;
 }
-.progress-area .progress-bar {
-    height: 6px;
-    width: 100%;
-    background: #fff;
-    margin-bottom: 4px;
-    border-radius: 30px;
+.imgContent {
+    display: inline-block;
 }
-.progress-bar .progress {
-    height: 100%;
-    width: 0%;
-    background: #6990f2;
-    border-radius: inherit;
+.imgContent img {
+    width: 50px; 
+    height: 50px;
 }
-.uploaded-area {
-    max-height: 230px;
-    overflow-y: scroll;
+
+/* 삭제 버튼 스타일 */
+.removeBtn {
+    background-color: #FF3333;
+    color: white;
+    font-size: 14px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
 }
-.uploaded-area::-webkit-scrollbar {
-    width: 0px;
+
+/* 삭제 버튼 호버(마우스 오버) 스타일 */
+.removeBtn:hover {
+    background-color: #FF0000;
 }
-.uploaded-area .row .content {
-    display: flex;
-    align-items: center;
+
+
+/* 검사 버튼 스타일 */
+.checkBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 26px;
+    padding: 20px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
-.uploaded-area .row .details {
-    display: flex;
-    margin-left: 15px;
-    flex-direction: column;
+
+/* 버튼 호버(마우스 오버) 스타일 */
+.checkBtn:hover {
+    background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
+}
+
+.testBtnArea {
+    margin-top: 30px;
+}
+
+.testBtnBox {
+    text-align: center;
 }
