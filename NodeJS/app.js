@@ -152,7 +152,12 @@ app.post('/login', (req, res) => {
                 res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else{
-                res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+                if (waitOk === 0) {
+                    res.send("<script>alert('승인 대기중입니다.'); location.href='Login.html';</script>");
+                }
+                else {
+                    res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+                }
             }
         })
 })
