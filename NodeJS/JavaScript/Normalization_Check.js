@@ -50,7 +50,7 @@ async function Phone_Num_Normalization_Check(value) {
         const query = 'SELECT COUNT(*) AS count FROM user WHERE phone_num = ?';
         
         const result = await database.Query(query, value);
-        
+
         if (result instanceof Error) {
             return;
         }
@@ -67,10 +67,22 @@ async function Phone_Num_Normalization_Check(value) {
             }
         }
     }
+    else {
+        if (value.startsWith("02")) {
+            if (value.length == 12) {
+                return bool;
+            }
+        }
+        else {
+            if (value.length == 13) {
+                return bool;
+            }
+        }
+    }
     
 }
 async function Email_Normalization_Check(value) {
-    let email_normal = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    let email_normal = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}\.[a-zA-Z]{2,3}$/i;
     let bool;
     
     if(email_normal.test(value)){

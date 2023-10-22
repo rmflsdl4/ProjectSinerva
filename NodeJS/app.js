@@ -116,7 +116,7 @@ app.post('/sign-up', (req, res) => {
     try{
         signup.Add_User(id, pw, nick_name, phone_num, email, address, userType);
     
-        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} ]`);
+        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} / userType - ${userType} ]`);
 
         res.send("<script>alert('회원가입이 완료되었습니다.'); location.href='Login.html';</script>");
     }
@@ -142,7 +142,8 @@ app.post('/login', (req, res) => {
         .then((arr) => {
             const state = arr[0];
             const user_type = arr[1];
-            if(state === 1){
+            const waitOk = arr[2];
+            if(state === 1 && waitOk === 1){
                 req.session.session_id = id;
                 req.session.user_type = user_type;
                 console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);

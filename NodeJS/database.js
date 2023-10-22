@@ -7,7 +7,7 @@ function DB_Connect(){
         connectionLimit: 200,
         host: 'localhost',
         user: 'root',
-        password: 'admin7120',
+        password: 'root',
         database: 'nodejs',
         /*
         host: 'sinervadb.cnlq6mwuy6ej.us-east-2.rds.amazonaws.com',

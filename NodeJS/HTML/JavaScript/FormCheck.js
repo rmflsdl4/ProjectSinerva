@@ -212,6 +212,19 @@ function Input_Check(element){
             });
         }
     }
+    /*
+    else if (element.name === "userType") {
+        if (element.value === "expert") {
+            img.src = "Image/check.png";
+            textNode.nodeValue = "안전 전문가는 승인을 받아야 로그인할 수 있습니다.";
+            MessageBox_Check();
+            return;
+        }
+        else {
+
+        }
+    }
+    */
 
     if(pw.value !== confirm_pw.value && pw.value !== null && confirm_pw.value !== null){
         cpwc = false;
@@ -239,7 +252,7 @@ function Input_Data_Check_To_Submit(){
 
     for(let i = 0; i < inputData.length; i++){
         if(inputData[i].value === ""){
-            if (i == 4 || i == 6) {
+            if (i == 4 || i == 5 || i == 6) {
                 continue;
             }
             submitButton.disabled = true;
@@ -272,7 +285,7 @@ function Value_Check(name, value1, value2) {
 }
 
 function All_Values_Check(){
-    if(idc && pwc && cpwc && nnc && emc){
+    if(idc && pwc && cpwc && nnc){
         return true;
     }
     alert('입력값을 다시 확인해 주세요.');

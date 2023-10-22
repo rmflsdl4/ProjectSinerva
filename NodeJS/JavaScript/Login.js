@@ -11,18 +11,26 @@ async function _Login(id, pw){
     if (result instanceof Error) {
         return;
     }
-    const user_type = await User_Type_Check(id);
-    const arr = [user_id, user_type];
-    console.log(arr);
-    return arr;
+    const type = await User_Type_Check(id);
+
+    if (type.userType  === "expert") {
+        const arr = [user_id, type.userType, type.waitOk];
+        console.log(arr);
+        return arr;
+    }
+    else {
+        const arr = [user_id, type.userType, type.waitOk];
+        console.log(arr);
+        return arr;
+    }
 }
 async function User_Type_Check(user_id){
-    const query = `SELECT user_type FROM user WHERE id = ?`;
+    const query = `SELECT userType, waitOk FROM user WHERE id = ?`;
     try{
 
         const result = await database.Query(query, user_id);
-
-        return result[0].user_type;
+        
+        return result[0];
     }
     catch(error){
         console.log(error);

@@ -9,17 +9,18 @@
     <body id="Main_BackGround" onload="InitForm()">
         <div>
             <form action="/sign-up" method="POST" onsubmit="return All_Values_Check()">
+                <span>* 는 필수 입력사항 입니다.</span>
                 <div>
-                    <input id="id" type="text" name="id" placeholder="아이디" maxlength="29" oninput="Input_Check(this);">
+                    <input id="id" type="text" name="id" placeholder="아이디*" maxlength="29" oninput="Input_Check(this);">
                 </div>
                 <div>
-                    <input id="pw" type="password" name="pw" placeholder="비밀번호" maxlength="49" oninput="Input_Check(this);">
+                    <input id="pw" type="password" name="pw" placeholder="비밀번호*" maxlength="49" oninput="Input_Check(this);">
                 </div>
                 <div>
-                    <input id="confirm_pw" type="password" name="confirm_pw" placeholder="비밀번호 확인"  maxlength="49" oninput="Input_Check(this);">
+                    <input id="confirm_pw" type="password" name="confirm_pw" placeholder="비밀번호 확인*"  maxlength="49" oninput="Input_Check(this);">
                 </div>
                 <div>
-                    <input id="nick_name" type="text" name="nick_name" placeholder="이름" maxlength="30" onkeyup="Input_Check(this);">
+                    <input id="nick_name" type="text" name="nick_name" placeholder="이름*" maxlength="30" onkeyup="Input_Check(this);">
                 </div>
                 <div>
                     <input id="phone_num" type="text" name="phone_num" placeholder="xxx-xxxx-xxxx" maxlength="13" oninput="Input_Check(this);">
@@ -31,8 +32,8 @@
                     <input id="address" type="text" name="address" placeholder="주소" maxlength="200" onkeyup="Input_Check(this);">
                 </div>
                 <div>
-                    <input type="radio" id="nomalUser" name="userType" value="user" onclick="Input_Check()" checked><label for="nomal">일반 사용자</label>
-                    <input type="radio" id="expertComment" name="userType" value="expert" onclick="Input_Check()"><label for="expert">안전 전문가</label>
+                    <input type="radio" id="nomalUser" name="userType" value="user" onclick="Input_Check(this)" checked><label for="nomal">일반 사용자</label>
+                    <input type="radio" id="expertComment" name="userType" value="expert" onclick="Input_Check(this)"><label for="expert">안전 전문가</label>
                 </div>
                 <div id="MainMenuBox">
                     <a href="Login.html">로그인 페이지로 이동</a>
