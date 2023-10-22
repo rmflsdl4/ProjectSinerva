@@ -212,19 +212,10 @@ function Input_Check(element){
             });
         }
     }
-    /*
-    else if (element.name === "userType") {
-        if (element.value === "expert") {
-            img.src = "Image/check.png";
-            textNode.nodeValue = "안전 전문가는 승인을 받아야 로그인할 수 있습니다.";
-            MessageBox_Check();
-            return;
-        }
-        else {
-
-        }
+    else if (element.value === "expert") {
+        alert("안전 전문가는 승인을 받아야 로그인할 수 있습니다.");
+        return;
     }
-    */
 
     if(pw.value !== confirm_pw.value && pw.value !== null && confirm_pw.value !== null){
         cpwc = false;
@@ -291,4 +282,3 @@ function All_Values_Check(){
     alert('입력값을 다시 확인해 주세요.');
     return false;
 }
-  
