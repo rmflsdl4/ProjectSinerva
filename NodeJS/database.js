@@ -5,11 +5,11 @@ let pool = null;
 function DB_Connect(){
     pool = mysql.createPool({
         connectionLimit: 200,
-        host: 'svc.sel4.cloudtype.app',
+        host: 'localhost',
         user: 'root',
-        password: 'tkfkdgo3@',
-        database: 'flier',
-        port: '32388',
+        password: 'root',
+        database: 'sinerva',
+        port: '3306',
         charset: 'UTF8MB4'
     });
     console.log('데이터베이스 pool 생성');
