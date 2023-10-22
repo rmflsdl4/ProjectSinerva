@@ -1,7 +1,7 @@
 var currPageNum;
-let posts; 
-let prePage;
-let nextPage;
+var posts; 
+var prePage;
+var nextPage;
 var pageCount;
 var pageNum;
 
@@ -12,54 +12,64 @@ function InitPage(){
     prePage = document.getElementById("prePage");
     nextPage = document.getElementById("nextPage");
     pageNum = document.getElementById("pageNum");
-    pageCount = Math.round(posts.length / 5);
-
-    prePage.style.display = "none";
+    pageCount = Math.ceil(posts.length / 5);
+    console.log(pageCount);
     PageLoad();
+    
+    prePage.style.visibility = "hidden";
 }
 function SetPost(){
+    var posts = document.getElementsByClassName("commentRequest");
     for(let i = 0; i < posts.length; i++){
         posts[i].style.display = "none";
     }
 }
 function PageLoad(){
     SetPost();
+
     var startPageNum;
+
     if(currPageNum == 1){
         startPageNum = 0;
     }
     else{
-        startPageNum = (currPageNum - 1) * 5;
+        startPageNum = (currPageNum - 1) * 5 ;
     }
     for(let i = startPageNum; i < currPageNum * 5; i++){
+        if(i >= posts.length){
+            break;
+        }
         posts[i].style.display = "";
     }
 }
 function SetPreNum(){
-    if(currPageNum > 1){
-        currPageNum -= 1;
-        PageLoad();
-        SetCurrentPageText();
-        
-        prePage.style.display = "block";
+    currPageNum -= 1;
+    PageLoad();
+    SetCurrentPageText(currPageNum);
+
+    if(currPageNum === 1){
+        prePage.style.visibility = "hidden";
+        nextPage.style.visibility = "visible";
     }
     else{
-        prePage.style.display = "none";
-        nextPage.style.display = "block";
+        prePage.style.visibility = "visible";
+        nextPage.style.visibility = "visible";
     }
 }
 function SetNextNum(){
-    if(pageCount > currPageNum){
-        currPageNum += 1;
-        PageLoad();
-        SetCurrentPageText();
-        nextPage.style.display = "block";
+    currPageNum += 1;
+    console.log(currPageNum >= pageCount);
+    PageLoad();
+    SetCurrentPageText(currPageNum);
+    if(pageCount <= currPageNum){
+        nextPage.style.visibility = "hidden";
+        prePage.style.visibility = "visible";
     }
-    else{
-        prePage.style.display = "block";
-        nextPage.style.display = "none";
+    else {
+        prePage.style.visibility = "visible";
+        nextPage.style.visibility = "visible";
     }
 }
-function SetCurrentPageText(){
-    pageNum.textContent = currPageNum;
+function SetCurrentPageText(currentPageNum){
+    pageNum.textContent = currentPageNum;
 }
