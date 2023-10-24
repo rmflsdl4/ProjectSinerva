@@ -1,11 +1,11 @@
 // 사용 모듈 로드
 const express = require('express');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+//const session = require('express-session');
+//const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
-const posts = require('./JavaScript/Post.js');
+//const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
 
 // 데이터베이스 연결
@@ -13,28 +13,28 @@ database.Connect();
 // 모듈에서 사용할 로직들
 const app = express();
 var fs = require('fs');
-const sessionStore = new MySQLStore({
-    host: 'svc.sel4.cloudtype.app',
-    user: 'root',
-    password: 'tkfkdgo3@',
-    database: 'flier',
-    port: '32388',
-    charset: 'UTF8MB4',
-    expiration: 24 * 60 * 60 * 1000
-});
+// const sessionStore = new MySQLStore({
+//     host: 'svc.sel4.cloudtype.app',
+//     user: 'root',
+//     password: 'tkfkdgo3@',
+//     database: 'flier',
+//     port: '32388',
+//     charset: 'UTF8MB4',
+//     expiration: 24 * 60 * 60 * 1000
+// });
 
 app.use(express.static('HTML'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
-    },
-    store: sessionStore,
-}));
+// app.use(session({
+//     secret: 'secret-key',
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//         maxAge: 24 * 60 * 60 * 1000,
+//     },
+//     store: sessionStore,
+// }));
 
 // 서버 구동
 app.listen(3000, function(){
