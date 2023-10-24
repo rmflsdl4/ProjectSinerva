@@ -82,7 +82,7 @@ async function Phone_Num_Normalization_Check(value) {
     
 }
 async function Email_Normalization_Check(value) {
-    let email_normal = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}\.[a-zA-Z]{2,3}$/i;
+    let email_normal = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){3,}\.[a-zA-Z]{2,3}$/i;
     let bool;
     
     if(email_normal.test(value)){
