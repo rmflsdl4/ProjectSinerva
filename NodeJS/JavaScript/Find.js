@@ -1,22 +1,36 @@
 const database = require('../database.js');
 
-async function Find(id, pw, phone_num, email){
+async function FindId(nick_name, userType, phone_num, email){
     
-    const query = 'SELECT COUNT(*) as count FROM user WHERE id = ? OR pw = ? OR phone_num = ? OR email = ?';
-    const values = [id, pw, phone_num, email];
+    const query = 'SELECT id, nick_name FROM user WHERE nick_name = ? AND userType = ? AND phone_num = ? OR email = ?';
+    const values = [nick_name, userType, phone_num, email];
 
     const result = await database.Query(query, values);
-    const user_id = result[0].count;
+    const user = [result[0].id, result[0].nick_name];
 
     if (result instanceof Error) {
         return;
     }
-    const user_type = await User_Type_Check(id);
-    const arr = [user_id, user_type];
-    console.log(arr);
-    return arr;
+    console.log(user);
+    return user;
+}
+
+async function FindPw(id, userType, phone_num, email){
+    
+    const query = 'SELECT pw, nick_name FROM user WHERE id = ? AND userType = ? AND phone_num = ? OR email = ?';
+    const values = [id, userType, phone_num, email];
+
+    const result = await database.Query(query, values);
+    const user = [result[0].pw, result[0].nick_name];
+
+    if (result instanceof Error) {
+        return;
+    }
+    console.log(user);
+    return user;
 }
 
 module.exports = {
-    Find: Find
+    FindId: FindId,
+    FindPw: FindPw
 };

@@ -5,6 +5,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
+const findAccount = require('./JavaScript/Find.js');
 const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
 
@@ -64,12 +65,12 @@ app.get('/', function(req, res){
         }
     });
 });
-// 회원가입 입력값 검사
+// 회원가입 입력값 검사 및 계정 찾기 입력값 검사
 app.post('/check-input', (req, res) => {
     const { name, value1, value2 } = req.body;
     
     // 분기별로 처리 로직 수행
-    if (name === 'id') {
+    if (name === 'id') {                //회원가입 분기
         normalization.ID_Check(value1)
             .then(result => {
                 res.json({ result });
@@ -108,8 +109,33 @@ app.post('/check-input', (req, res) => {
             .then(result => {
                 res.json({ result });
             });
-    } 
+    } else if (name === 'findId') {         //계정 찾기 분기
+        //console.log(value1);
+        normalization.FindId_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findNickName') {
+        //console.log(value1);
+        normalization.FindNickName_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findPhone_num') {
+        //console.log(value1);
+        normalization.FindPhone_num_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findEmail') {
+        //console.log(value1);
+        normalization.FindEmail_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    }
 });
+//회원가입
 app.post('/sign-up', (req, res) => {
     const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
 
@@ -125,6 +151,7 @@ app.post('/sign-up', (req, res) => {
         res.status(500).send("<script>alert('회원가입에 실패하였습니다.'); location.href='SignUp.html';</script>");
     }
 });
+//로그인
 app.post('/login', (req, res) => {
     const now = new Date();
     const year = now.getFullYear();
@@ -161,6 +188,41 @@ app.post('/login', (req, res) => {
             }
         })
 })
+//계정찾기
+app.post('/findAccount', (req,res) => {
+    const { id, nick_name, userType, phone_num, email } = req.body;
+
+    findAccount.FindId( nick_name, userType, phone_num, email )
+        .then((arr) => {
+            const userId = arr[0];
+            const userNickName = arr[1];
+
+            if(userId !== null){
+                console.log(`ID: ${userId}`);
+                console.log(`Nick_Name: ${userNickName}`);
+                res.send("<script>alert(userNickName + '님의 계정을 찾았습니다.\n' 'ID:' + userId + '입니다.'); location.href='FindAccount.html';</script>");
+            }
+            else{
+                res.send("<script>alert('계정을 찾을 수 없습니다.'); location.href='FindAccount.html';</script>");
+            }
+        })
+
+    findAccount.FindPw( id, userType, phone_num, email )
+        .then((arr) => {
+            const userPw = arr[0];
+            const userNickName = arr[1];
+
+            if(userId !== null){
+                console.log(`PW: ${userPw}`);
+                console.log(`Nick_Name: ${userNickName}`);
+                res.send("<script>alert(userNickName + '님의 계정을 찾았습니다.\n' 'PW:' + userPw + '입니다.'); location.href='FindAccount.html';</script>");
+            }
+            else{
+                res.send("<script>alert('계정을 찾을 수 없습니다.'); location.href='FindAccount.html';</script>");
+            }
+        })
+})
+
 app.post('/posts-import', async (req, res) => {
     const data = await posts.Get_List();
     
