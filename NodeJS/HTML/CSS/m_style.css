@@ -1,3 +1,5 @@
+
+
 /* ALL */
 html, body{
     margin: 0;
@@ -25,9 +27,11 @@ a:hover{
     position: relative;
     overflow: hidden;
     text-align: center;
-    margin-bottom: 100px;
+    margin-bottom: 20px;
 }
-  
+#Logo:hover::before {
+    width: 100%;
+}
 #Logo::before {
     content: "";
     position: absolute;
@@ -50,16 +54,14 @@ a:hover{
 	color: #C0C0C0;
 }
   
-#Logo:hover::before {
-    width: 100%;
-}
+
 /* Main.html */
 #Main_BackGround{
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#id, #pw, #confirm_pw, #nick_name, #phone_num, #email, #address{
+#id, #pw,#confirm_pw, #nick_name{
     width: 500px;
     height: 70px;
     border: 2px solid gray;
