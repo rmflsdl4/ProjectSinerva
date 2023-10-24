@@ -1,6 +1,7 @@
 @import url("./font.css"); /* 글꼴 */
 @import url("./Expert.css"); /* 안전 전문가 */
 
+/* Main */
 html, body{
     margin: 0;
     padding: 0;
@@ -42,4 +43,57 @@ a:hover{
     height: 3px;
     background-color: #333;
     transition: width 0.3s ease;
+}
+#Main_BackGround{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#MainMenuBox{
+    font-size: 17px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+/* Login */
+#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address{
+    width: 500px;
+    height: 70px;
+    border: 2px solid gray;
+    border-radius: 5px;
+    font-size: 20px;
+    padding: 30px;
+    outline: none;
+}
+#login{
+    font-size: 17px;
+    width: 100px;
+    height: 30px;
+    background-color: #347236;
+    border: none;
+    color: white;
+    margin-left: auto;
+}
+
+/* SignUp */
+#sign_up{
+    font-size: 18px;
+    width: 100px;
+    height: 30px;
+    background-color: #347236;
+    border: none;
+    color: white;
+    margin-left: auto;
+}
+.MessageBox{
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.MessageBox > Img{
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
 }
