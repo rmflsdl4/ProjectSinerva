@@ -86,6 +86,9 @@ a:hover{
     color: white;
     margin-left: auto;
 }
+.findAc {
+    display: inline-block;
+}
 .MessageBox{
     display: flex;
     align-items: center;

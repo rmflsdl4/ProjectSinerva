@@ -101,17 +101,15 @@ async function FindNickName_Check(value) {
     return bool;  
 }
 async function FindPhone_num_Check(value) {
-    let bool;
-
     if (value) {
         if (value.startsWith("02")) {
             if (value.length == 12) {
-                return bool = 0;
+                return true;
             }
         }
         else {
             if (value.length == 13) {
-                return bool = 0;
+                return true;
             }
         }
     }

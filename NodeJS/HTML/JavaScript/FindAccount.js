@@ -103,6 +103,7 @@ function Input_Check(element){
         Value_Check(element.name, element.value, null)
         .then(result => {
             pnc = result;
+            console.log(result);
             if(result){
                 img.src = "Image/check.png";
                 textNode.nodeValue = "";
@@ -230,6 +231,7 @@ function ShowAccountInfo() {
 function Find_Select(type) {
     var idButton = document.querySelector(".findAc:nth-child(1)");
     var psButton = document.querySelector(".findAc:nth-child(2)");
+    var messageBox = document.querySelectorAll('.MessageBox');
 
     if (type === 'id') {
         document.getElementById('id').style.display = 'none';
@@ -249,9 +251,16 @@ function Find_Select(type) {
     }
 
     if (type === 'id' || type === 'ps') {
+        messageBox.forEach(function(messageBox) {
+            messageBox.remove();
+        });
         document.getElementById('id').value = '';
         document.getElementById('nick_name').value = '';
         document.getElementById('phone_num').value = '';
         document.getElementById('email').value = '';
+        document.getElementById('id').style.marginBottom = '10px';
+        document.getElementById('nick_name').style.marginBottom = '10px';
+        document.getElementById('phone_num').style.marginBottom = '10px';
+        document.getElementById('email').style.marginBottom = '10px';
     }
 }
