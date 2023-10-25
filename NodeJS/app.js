@@ -9,8 +9,10 @@ const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
 var bodyParser = require('body-parser');
 const predictionDB = require('./JavaScript/PredictionDB');
+const multer = require('multer');
+const path = require('path');
 
- 
+
 // 데이터베이스 연결
 database.Connect();
 // 모듈에서 사용할 로직들
@@ -50,7 +52,7 @@ app.listen(3000, function(){
 // 서버 오류 처리
 process.on('uncaughtException', (err) => {
     console.error('오류가 발생했습니다:', err);
-  
+
     database.Close();
     
     process.exit(1); // 0이 아닌 값은 비정상적인 종료를 나타냄
@@ -308,8 +310,38 @@ app.post('/login-user', async (req, res) => {
     res.send({ session_id });
 });
 //이미지 검사 요청
-app.post('/checkImg', async (req, res) => {
-    const { checkImgTest } = req.body;
-    predictionDB.InsertImage(checkImgTest);
-    res.send();
+// app.post('/checkImg', async (req, res) => {
+//     const { checkImgTest } = req.body;
+//     predictionDB.InsertImage(checkImgTest);
+//     res.send();
+// });
+// 이미지 파일 폴더에 저장
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'upload/')
+    }, 
+    filename: (req, file, cb) => {
+        console.log(file)
+        cb(null, file.originalname.split('.', 1) + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({storage: storage});
+
+app.post('/checkImg', upload.array('images'), (req, res) => {
+    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
+    req.files.forEach((file) => {
+        console.log('업로드한 파일 이름:', file.originalname);
+        console.log('서버에 저장된 파일 이름:', file.filename);
+        const query = 'INSERT INTO testImg(fileName, userId) VALUES (?, \'test\')';
+        let image = '/image/' + file.filename;
+        const values = [image];
+
+        database.Query(query, values);
+    });
+    Connection.query(sql, values,
+        (err, rows, fields) => {
+            res.send(rows);
+        }
+    );
 });

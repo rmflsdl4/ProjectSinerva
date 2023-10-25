@@ -9,7 +9,7 @@ function DB_Connect(){
         host: 'localhost',
         user: 'root',
         password: 'admin',
-        database: 'testDB',
+        database: 'sinervaDB',
         port: '3306',
         charset: 'UTF8MB4'
     });
