@@ -5,12 +5,12 @@
         <script src="JavaScript/FindAccount.js"></script>
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body id="Main_BackGround" onload="InitForm()">
+    <body id="Main_BackGround" onload="InitForm(); Find_Select('id');">
         <div>
-            <form action="/findAccount" method="POST" onsubmit="return All_Values_Check()">
+            <form action="/findAccount" method="POST" onsubmit="return All_Values_Check() && ShowAccountInfo();">
                 <div>
-                    <div class="findAc" onclick="Find_Select()">아이디 찾기</div>
-                    <div class="findAc" onclick="Find_Select()">비밀번호 찾기</div>
+                    <div class="findAc" onclick="Find_Select('id')">아이디 찾기</div>
+                    <div class="findAc" onclick="Find_Select('ps')">비밀번호 찾기</div>
                 </div>
                 <span>* 는 필수 입력사항 입니다.</span>
                 <div>

@@ -190,37 +190,46 @@ app.post('/login', (req, res) => {
 })
 //계정찾기
 app.post('/findAccount', (req,res) => {
-    const { id, nick_name, userType, phone_num, email } = req.body;
+    const { findId, findNickName, userType, findPhone_num, findEmail } = req.body;
 
-    findAccount.FindId( nick_name, userType, phone_num, email )
+    if (findNickName) {
+        findAccount.FindId( findNickName, userType, findPhone_num, findEmail )
         .then((arr) => {
             const userId = arr[0];
             const userNickName = arr[1];
 
-            if(userId !== null){
+            if(userId !== null && userNickName !== null){
                 console.log(`ID: ${userId}`);
                 console.log(`Nick_Name: ${userNickName}`);
-                res.send("<script>alert(userNickName + '님의 계정을 찾았습니다.\n' 'ID:' + userId + '입니다.'); location.href='FindAccount.html';</script>");
+                const message = `${userNickName}님의 계정을 찾았습니다.
+ID: ${userId}입니다.`;
+                res.json({ message });
             }
             else{
-                res.send("<script>alert('계정을 찾을 수 없습니다.'); location.href='FindAccount.html';</script>");
+                const message = `계정을 찾을 수 없습니다.`;
+                res.json({ message });
             }
         })
-
-    findAccount.FindPw( id, userType, phone_num, email )
+    }
+    else if (findId) {
+        findAccount.FindPw( findId, userType, findPhone_num, findEmail )
         .then((arr) => {
             const userPw = arr[0];
             const userNickName = arr[1];
 
-            if(userId !== null){
+            if(userPw !== null && userNickName !== null){
                 console.log(`PW: ${userPw}`);
                 console.log(`Nick_Name: ${userNickName}`);
-                res.send("<script>alert(userNickName + '님의 계정을 찾았습니다.\n' 'PW:' + userPw + '입니다.'); location.href='FindAccount.html';</script>");
+                const message = `${userNickName}님의 계정을 찾았습니다.
+PW: ${userPw}입니다.`;
+                res.json({ message });
             }
             else{
-                res.send("<script>alert('계정을 찾을 수 없습니다.'); location.href='FindAccount.html';</script>");
+                const message = `계정을 찾을 수 없습니다.`;
+                res.json({ message });
             }
         })
+    }
 })
 
 app.post('/posts-import', async (req, res) => {
