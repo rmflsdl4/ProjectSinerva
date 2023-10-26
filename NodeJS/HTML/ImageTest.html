@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RecordList</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="CSS/ImageTest.css"/>
+</head>
+<body>
+    <div class="wrapper">
+        <header>파일 업로드</header>
+        <form action="#">
+            <input type="file" class="fileInput" accept="image/jpeg" name="imges" hidden multiple/>
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>브라우저 파일 업로드</p>
+        </form>
+        <section class="selectArea">
+            <li class="row" style="display: none;"></li>
+        </section>
+        <section class="testBtnArea">
+            <div class="testBtnBox">
+                <button class="checkBtn">검사</button>
+            </div>     
+        </section>
+    </div>
+
+    <script src="JavaScript/ImageTest.js"></script>
+</body>
+</html>

@@ -1,41 +1,45 @@
 // 사용 모듈 로드
 const express = require('express');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+//const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
-const posts = require('./JavaScript/Post.js');
+//const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
+//유저 기능
+var bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
 
 // 데이터베이스 연결
 database.Connect();
 // 모듈에서 사용할 로직들
 const app = express();
 var fs = require('fs');
-const sessionStore = new MySQLStore({
-    host: 'svc.sel4.cloudtype.app',
-    user: 'root',
-    password: 'tkfkdgo3@',
-    database: 'flier',
-    port: '32388',
-    charset: 'UTF8MB4',
-    expiration: 24 * 60 * 60 * 1000
-});
+// const sessionStore = new MySQLStore({
+//     host: 'svc.sel4.cloudtype.app',
+//     user: 'root',
+//     password: 'tkfkdgo3@',
+//     database: 'flier',
+//     port: '32388',
+//     charset: 'UTF8MB4',
+//     expiration: 24 * 60 * 60 * 1000
+// });
 
 app.use(express.static('HTML'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({
-    secret: 'secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
-    },
-    store: sessionStore,
-}));
+// app.use(session({
+//     secret: 'secret-key',
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//         maxAge: 24 * 60 * 60 * 1000,
+//     },
+//     store: sessionStore,
+// }));
 
 // 서버 구동
 app.listen(3000, function(){
@@ -396,3 +400,33 @@ app.post('/login-user', async (req, res) => {
 	
     res.send({ session_id });
 })
+// 이미지 파일 폴더에 저장
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'upload/')
+    }, 
+    filename: (req, file, cb) => {
+        console.log(file)
+        cb(null, file.originalname.split('.', 1) + path.extname(file.originalname))
+    }
+});
+
+const upload = multer({storage: storage});
+
+app.post('/checkImg', upload.array('images'), (req, res) => {
+    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
+    req.files.forEach((file) => {
+        console.log('업로드한 파일 이름:', file.originalname);
+        console.log('서버에 저장된 파일 이름:', file.filename);
+        const query = 'INSERT INTO testImg(fileName, userId) VALUES (?, \'test\')';
+        let image = '/image/' + file.filename;
+        const values = [image];
+
+        database.Query(query, values);
+    });
+    Connection.query(sql, values,
+        (err, rows, fields) => {
+            res.send(rows);
+        }
+    );
+});
