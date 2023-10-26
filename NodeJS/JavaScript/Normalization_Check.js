@@ -67,18 +67,6 @@ async function Phone_Num_Normalization_Check(value) {
             }
         }
     }
-    else {
-        if (value.startsWith("02")) {
-            if (value.length == 12) {
-                return bool;
-            }
-        }
-        else {
-            if (value.length == 13) {
-                return bool;
-            }
-        }
-    }
     
 }
 async function Email_Normalization_Check(value) {
@@ -100,6 +88,40 @@ async function Email_Normalization_Check(value) {
 async function Address_Normalization_Check(value) {
     return value;
 }
+async function FindId_Check(value) {
+    let id_normal = /^[A-Za-z]{1}[A-Za-z0-9_-]{3,29}$/;
+    let bool = await id_normal.test(value);
+
+    return bool;
+}
+async function FindNickName_Check(value) {
+    let nick_name_normal = /^[A-Za-z0-9ㄱ-ㅎ가-힣]{1,19}$/;
+    let bool = await nick_name_normal.test(value);
+
+    return bool;  
+}
+async function FindPhone_num_Check(value) {
+    if (value) {
+        if (value.startsWith("02")) {
+            if (value.length == 12) {
+                return true;
+            }
+        }
+        else {
+            if (value.length == 13) {
+                return true;
+            }
+        }
+    }
+}
+async function FindEmail_Check(value) {
+    let email_normal = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){4,}@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z]){3,}\.[a-zA-Z]{2,3}$/i;
+    let bool = await email_normal.test(value);
+
+    return bool;
+}
+
+
 module.exports = {
     ID_Check: ID_Normalization_Check,
     PW_Check: PW_Normalization_Check,
@@ -107,5 +129,9 @@ module.exports = {
     Nick_Name_Check: Nick_Name_Normalization_Check,
     Phone_Num_Check: Phone_Num_Normalization_Check,
     Email_Check: Email_Normalization_Check,
-    Address_Check: Address_Normalization_Check
+    Address_Check: Address_Normalization_Check,
+    FindId_Check: FindId_Check,
+    FindNickName_Check: FindNickName_Check,
+    FindPhone_num_Check: FindPhone_num_Check,
+    FindEmail_Check: FindEmail_Check
 };
