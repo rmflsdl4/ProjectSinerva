@@ -76,8 +76,8 @@ a:hover{
     margin-left: auto;
 }
 
-/* SignUp */
-#sign_up{
+/* SignUp & FindAccount*/
+#sign_up, #find{
     font-size: 18px;
     width: 100px;
     height: 30px;
@@ -85,6 +85,9 @@ a:hover{
     border: none;
     color: white;
     margin-left: auto;
+}
+.findAc {
+    display: inline-block;
 }
 .MessageBox{
     display: flex;
