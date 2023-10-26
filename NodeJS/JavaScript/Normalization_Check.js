@@ -58,12 +58,12 @@ async function Phone_Num_Normalization_Check(value) {
 
         if (value.startsWith("02")) {
             if (value.length == 12) {
-                return bool;
+                return true;
             }
         }
         else {
             if (value.length == 13) {
-                return bool;
+                return true;
             }
         }
     }
