@@ -7,6 +7,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
+const tfjs = require('./JavaScript/tfjsNode.js');
 
 // 데이터베이스 연결
 database.Connect();
@@ -300,4 +301,9 @@ app.post('/login-user', async (req, res) => {
     const session_id = req.session.session_id;
 	
     res.send({ session_id });
+})
+
+app.post('/tensorflow', async (req, res) => {
+	tfjs.LoadModel();
+    res.send();
 })
