@@ -304,6 +304,9 @@ app.post('/login-user', async (req, res) => {
 })
 
 app.post('/tensorflow', async (req, res) => {
-	tfjs.LoadModel();
+    tfjs.Predict('n00001.jpg');
+    tfjs.Predict('n00002.jpg');
+    tfjs.Predict('w00001.jpg');
+    tfjs.Predict('w00002.jpg');
     res.send();
 })
