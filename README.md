@@ -1,3 +1,8 @@
+# Port
+
+
+
+
 # Sinerva AWS Ubuntu
 >public IPv4 : 18.188.244.46  
 >public IPv4 DNS : ec2-18-188-244-46.us-east-2.compute.amazonaws.com
