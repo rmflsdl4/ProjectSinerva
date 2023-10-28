@@ -12,4 +12,4 @@ NodeJS : 18.18.2
 NPM :   
 NVM :  
   
-[PPK Download](https://github.com/rmflsdl4/ProjectSinerva/blob/main/Sinerva.ppk)
+[PPK Download](https://github.com/rmflsdl4/ProjectSinerva/raw/main/Sinerva.ppk)
