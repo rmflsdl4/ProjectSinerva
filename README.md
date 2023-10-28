@@ -13,4 +13,4 @@ NPM :
 NVM :  
   
 # PPK Download
-[PPK Download](https://github.com/rmflsdl4/ProjectSinerva/blob/main/Sinerva.ppk)
+[PPK Download](Sinerva.ppk)
