@@ -1,7 +1,9 @@
 const tf = require('@tensorflow/tfjs-node');
+const modelPath = 'tfjs_model(final)/model.json';
+
 async function LoadModel() {
     try {
-        const model = await tf.loadLayersModel('file://Sinerva/ProjectSinerva/NodeJS/tfjs_model(final)/model.json');
+        const model = await tf.loadLayersModel(`file://${modelPath}`);
 
         console.log(model);
         return model;
