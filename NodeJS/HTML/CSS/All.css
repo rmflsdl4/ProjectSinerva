@@ -1,5 +1,6 @@
 @import url("./font.css"); /* 글꼴 */
 @import url("./Expert.css"); /* 안전 전문가 */
+@import url("./Admin.css"); /* 관리자 */
 
 /* Main */
 html, body{

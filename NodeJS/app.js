@@ -12,6 +12,8 @@ const database = require('./database.js');
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+//관리자 기능
+const AdminSys = require('./JavaScript/AdminSys.js');
 
 // 데이터베이스 연결
 database.Connect();
@@ -172,17 +174,20 @@ app.post('/login', (req, res) => {
     login.Login(id, pw)
         .then((arr) => {
             const state = arr[0];
-            const user_type = arr[1];
+            const userType = arr[1];
             const waitOk = arr[2];
-            if(state === 1 && user_type === user && waitOk === 1){
-                req.session.session_id = id;
-                req.session.user_type = user_type;
-                console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
-                console.log(`세션에 ID 저장: ${req.session.session_id}`);
-                console.log(`유저 타입: ${user_type}`);
+            if(state === 1 && userType === 'user'){
+                console.log(`유저 타입: ${userType}`);
                 res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
             }
-            else if (state === 1 && user_type === expert && waitOk === 0)
+            else if (state === 1 && userType === 'expert' && waitOk === 1) {
+                console.log(`유저 타입: ${userType}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Expert.html';</script>");
+            }
+            else if (state === 1 && userType === 'admin') {
+                console.log(`유저 타입: ${userType}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Admin.html';</script>");
+            }
             else{
                 if (waitOk === 0) {
                     res.send("<script>alert('승인 대기중입니다.'); location.href='Login.html';</script>");
@@ -326,7 +331,7 @@ app.post('/selected-posts-delete', async (req, res) => {
 })
 //모든 유저 가져옴
 app.post('/users-import', async (req, res) => {
-	const data = await posts.get_users();
+	const data = await AdminSys.get_users();
 	
     res.send(data);
 })
