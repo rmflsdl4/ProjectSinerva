@@ -174,14 +174,15 @@ app.post('/login', (req, res) => {
             const state = arr[0];
             const user_type = arr[1];
             const waitOk = arr[2];
-            if(state === 1 && waitOk === 1){
+            if(state === 1 && user_type === user && waitOk === 1){
                 req.session.session_id = id;
                 req.session.user_type = user_type;
                 console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
                 console.log(`세션에 ID 저장: ${req.session.session_id}`);
                 console.log(`유저 타입: ${user_type}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
             }
+            else if (state === 1 && user_type === expert && waitOk === 0)
             else{
                 if (waitOk === 0) {
                     res.send("<script>alert('승인 대기중입니다.'); location.href='Login.html';</script>");
