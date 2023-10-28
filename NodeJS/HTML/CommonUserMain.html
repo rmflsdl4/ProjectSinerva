@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>CommonUserMain</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    
 
     <style>
         body {
@@ -69,7 +71,7 @@
             transform: scale(1.05);
         }
 
-        #imageTestBtn, #recordBtn {
+        #fileInput, #recordBtn {
             display: none;
         }
     </style>
@@ -82,20 +84,24 @@
         </ul>
     </div>
 
-    <section>
+    <section class="wrapper">
         <h1 class="mainTitle">건물 균열 검사 시스템</h1>
 
         <div class="mainElement">
-            <label for="imageTestBtn" id="customImgBtn">
-                <img class="clickImg" src="Image/imageTest.png" alt="Choose a file"/>
-                <input id="imageTestBtn" type="button" accept="image/*" onclick="location.href='imageTest.html'" multiple/>
-            </label>
-        
+            <form action="#">
+                <label for="fileInput" id="customImgBtn">
+                    <img class="clickImg" src="Image/imageTest.png" alt="Choose a file"/>
+                    <input id="fileInput" type="file" name="images" accept="image/jpeg" multiple/>
+                </label>
+            </form>
+            
             <label for="recordBtn" id="customRecordBtn">
                 <img class="clickImg" src="Image/folder.png" alt="Choose a file"/>
                 <input id="recordBtn" type="button" accept="image/*" onclick="location.href='RecordList.html'"/>
             </label>
         </div>
     </section>
+
+    <script src="JavaScript/ImageTest.js"></script>
 </body>
 </html>
