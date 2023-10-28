@@ -436,3 +436,14 @@ app.post('/checkImg', upload.array('images'), (req, res) => {
         }
     );
 });
+
+app.post('/commitExpert', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.updateWaitOk(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});

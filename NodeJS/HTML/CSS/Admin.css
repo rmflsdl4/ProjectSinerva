@@ -30,7 +30,7 @@
     box-shadow: 0px 0px 5px #444;
     border-radius: 5px;
 }
-.commitButton{
+button.add_td_Tag{
     width: 50px;
     margin: 15px 15px 0 0;
     font-size: 15px;

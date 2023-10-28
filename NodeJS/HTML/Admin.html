@@ -2,7 +2,6 @@
     <head>
         <title>관리자 페이지</title>
         <link rel="stylesheet" href="CSS/All.css">
-        <script src="JavaScript/Expert.js"></script>    <!-- 페이지기능 가져오기용 -->
         <script src="JavaScript/admin.js"></script>
     </head>
     <body onload="Board_State_Init();">
@@ -19,16 +18,16 @@
                         <th class="Board_Menu" onclick="Board_Select();">유저관리</th>
                     </tr>
                     <tr id="usersTitle">
-                        <th width="15%">번호</th>
-                        <th width="30%">아이디</th>
-                        <th width="30%">이름</th>
-                        <th width="20%">승인 상태</th>
-                        <th width="15%"></th>
+                        <th class="title" width="30%">아이디</th>
+                        <th class="title" width="30%">이름</th>
+                        <th class="title" width="20%">승인 상태</th>
+                        <th class="title" width="20%"></th>
                     </tr>
                 </table>
-                <div id="pageContainer">
-                    <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
+                <div id="noRequestsMessage">
+                    요청이 없습니다.
                 </div>
+                <div id="pageLink" colspan="10" style="text-align: center;"></div>
             </div>
         </center>
     </body>
