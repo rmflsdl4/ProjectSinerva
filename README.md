@@ -13,4 +13,4 @@
 >NVM :  
 
 # PPK
->[PPK Download](Sinerva.ppk)
+>[PPK Download](https://raw.githubusercontent.com/rmflsdl4/ProjectSinerva/main/Sinerva.ppk?token=GHSAT0AAAAAACJRCGFVUXGWSC7PK4OPS32QZJ4S5CA)
