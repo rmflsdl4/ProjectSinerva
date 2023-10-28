@@ -11,7 +11,7 @@
 
 
 ## Port
->Putty : 22
+>Putty : 22  
 >Web : 3000  
 >Database : 3306
 
