@@ -266,9 +266,8 @@ const storage = multer.diskStorage({
         const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
-        const second = date.getSeconds().toString().padStart(2, '0');
-        dataTime = `${year}${month}${day}${hour}${minute}${second}`;
-        folder = `images/${year}${month}${day}${hour}${minute}${second}/`;
+        dataTime = `${year}${month}${day}${hour}${minute}`;
+        folder = `images/${year}${month}${day}${hour}${minute}/`;
 
         // 해당 날짜 폴더가 없으면 생성
         if (!fs.existsSync(folder)) {
@@ -299,14 +298,12 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
         const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, ?)';
-        let image = '/image/' + file.filename;
+        let image = file.filename;
         const values = [image, dataTime, req.session.userId];
         database.Query(query, values);
-        console.log(folder + file.filename);
-        tf.Predict(folder + file.filename);
+        tf.Predict(folder + file.filename, file.filename);
     });
-    
-    res.send(/*검사 결과 배열 돌려주기*/);
+    res.send();
 });
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
