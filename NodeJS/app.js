@@ -11,6 +11,7 @@ const tf = require('./JavaScript/tfjsNode.js');
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+const MemoryStore = require('memorystore')(session);
 
 // 데이터베이스 연결
 database.Connect();
@@ -21,15 +22,17 @@ var fs = require('fs');
 app.use(express.static('HTML'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use(session({
-//     secret: 'secret-key',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//         maxAge: 24 * 60 * 60 * 1000,
-//     },
-//     store: sessionStore,
-// }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+    },
+    store: new MemoryStore({
+        checkPeriod: 86400000,
+    }),
+}));
 
 // 서버 구동
 app.listen(3000, function(){
@@ -162,15 +165,23 @@ app.post('/login', (req, res) => {
     login.Login(id, pw)
         .then((arr) => {
             const state = arr[0];
-            const user_type = arr[1];
+            const userType = arr[1];
             const waitOk = arr[2];
-            if(state === 1 && waitOk === 1){
-                //req.session.session_id = id;
-                req.session.user_type = user_type;
-                console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
-                //console.log(`세션에 ID 저장: ${req.session.session_id}`);
-                console.log(`유저 타입: ${user_type}`);
+            if(state === 1 && userType === 'user'){
+                req.session.userId = id;
+                console.log(`세션저장 값: ${req.session.userId}`);
+                console.log(`유저 타입: ${userType}`);
                 res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
+            }
+            else if (state === 1 && userType === 'expert' && waitOk === 1) {
+                req.session.userId = id;
+                console.log(`세션저장 값: ${req.session.userId}`);
+                console.log(`유저 타입: ${userType}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Expert.html';</script>");
+            }
+            else if (state === 1 && userType === 'admin') {
+                console.log(`유저 타입: ${userType}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Admin.html';</script>");
             }
             else{
                 if (waitOk === 0) {
@@ -287,10 +298,10 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
     req.files.forEach((file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
-        const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, \'test\')';
+        console.log(req.session.userId);
+        const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, ?)';
         let image = '/image/' + file.filename;
-        const values = [image, dataTime];
-
+        const values = [image, dataTime, req.session.userId];
         database.Query(query, values);
     });
     res.send();
