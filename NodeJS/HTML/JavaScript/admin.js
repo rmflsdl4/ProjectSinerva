@@ -82,21 +82,20 @@ async function Posts_Output(board_type){
         if (row['userType'] === 'admin') {
             continue;
         }
-        
+
+        const id = document.createElement('td');
+        id.className = 'add_td_Tag';
+        id.textContent = row['id'];
+
+        const nickName = document.createElement('td');
+        nickName.className = 'add_td_Tag';
+        nickName.textContent = row['nick_name'];
+
         if (board_type === '승인요청') {
             userTypeTh.textContent = '승인요청';
-            if (row['userType'] === 'expert') {
+            if (row['userType'] === 'expert' && row['waitOk'] === 0) {
                 const noRequestsMessage = document.getElementById('noRequestsMessage');
                 noRequestsMessage.style.display = 'none';
-
-                const id = document.createElement('td');
-                id.className = 'add_td_Tag';
-                id.textContent = row['id'];
-        
-                const nickName = document.createElement('td');
-                nickName.className = 'add_td_Tag';
-                nickName.textContent = row['nick_name'];
-
                 const waitOk = document.createElement('td');
                 waitOk.className = 'add_td_Tag';
                 waitOk.textContent = row['waitOk'];
@@ -118,15 +117,9 @@ async function Posts_Output(board_type){
             }
         } 
         else {
-            const id = document.createElement('td');
-            id.className = 'add_td_Tag';
-            id.textContent = row['id'];
-    
-            const nickName = document.createElement('td');
-            nickName.className = 'add_td_Tag';
-            nickName.textContent = row['nick_name'];
-
             userTypeTh.textContent = '유저타입';
+            const noRequestsMessage = document.getElementById('noRequestsMessage');
+            noRequestsMessage.style.display = 'none';
             const userType = document.createElement('td');
             userType.className = 'add_td_Tag';
             userType.textContent = row['userType'];
