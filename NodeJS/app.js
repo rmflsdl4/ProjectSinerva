@@ -1,14 +1,13 @@
 // 사용 모듈 로드
 const express = require('express');
 const session = require('express-session');
-//const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
-//const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
 const record = require('./JavaScript/Record.js');
+const tf = require('./JavaScript/tfjsnode.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
@@ -19,15 +18,6 @@ database.Connect();
 // 모듈에서 사용할 로직들
 const app = express();
 var fs = require('fs');
-// const sessionStore = new MySQLStore({
-//     host: 'svc.sel4.cloudtype.app',
-//     user: 'root',
-//     password: 'tkfkdgo3@',
-//     database: 'flier',
-//     port: '32388',
-//     charset: 'UTF8MB4',
-//     expiration: 24 * 60 * 60 * 1000
-// });
 
 app.use(express.static('HTML'))
 app.use(express.json());
@@ -237,164 +227,8 @@ PW: ${userPw}입니다.`;
     }
 })
 
-app.post('/posts-import', async (req, res) => {
-    const data = await posts.Get_List();
-    
 
-    res.send(data);
-})
-app.post('/view-post', async (req, res) => {
-    const { post_id } = req.body;
-    await posts.Add_View_Count(post_id);
-    const data = await posts.Get_Post(post_id);
-    const session_id = req.session.session_id;
-    res.send( { data, session_id });
-})
 
-app.post('/add-post', async (req, res) => {
-    const { formData } = req.body;
-    const { board_type, title, content, lock_state } = formData;
-    console.log(board_type, title, content, lock_state);
-    try{
-        await posts.Add_Post(board_type, title, content, req.session.session_id, lock_state);
-        res.send("<script>alert('게시글을 등록하였습니다.'); location.href='Main.html';</script>");
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('게시글 등록에 실패하였습니다.'); location.href='Main.html';</script>");
-    }
-})
-app.post('/post-lock-check', async (req, res) => {
-    const { post_id } = req.body;
-    
-    try{
-        const isLock = await posts.Lock_Check(post_id, req.session.session_id);
-        console.log(isLock);
-        res.send(isLock);
-    }
-    catch(error){
-        console.log(error);
-        res.send('false');
-    }
-})
-// 제목, 내용, 게시글 넘버 받아서 게시글 업데이트
-app.post('/update-post', async (req, res) => {
-    const { title, content, post_id } = req.body;
-
-    try{
-        await posts.Update_Post(title, content, post_id);
-        res.send("<script>alert('게시글을 수정하였습니다.'); location.href='Main.html';</script>");
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('게시글 수정에 실패하였습니다.'); location.href='Main.html';</script>");
-    }
-})
-// post_id받아서 delete_post로 넘김
-app.post('/delete-post', async (req, res) => {
-	const { post_id } = req.body;
-	console.log(post_id);
-	try {
-		await posts.delete_post(post_id);
-		res.send("<script>alert('삭제되었습니다.'); window.location.href = '/';</script>");
-	}
-	catch(error){
-        console.log(error);
-		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-    }
-})
-// 유저 타입 반환
-app.post('/get-user-type', async (req, res) => {
-    const user_type = req.session.user_type;
-    
-    res.send(user_type);
-})
-// 선택한 게시글 삭제 (관리자 전용)
-app.post('/selected-posts-delete', async (req, res) => {
-    const { posts_id } = req.body;
-
-    try{
-        if(posts_id.length > 0){
-            await posts.Posts_Delete(posts_id);
-        }
-        res.send();
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('오류 발생. 삭제 실패.'); window.location.href = 'Main.html';</script>");
-    }
-})
-//모든 유저 가져옴
-app.post('/users-import', async (req, res) => {
-	const data = await posts.get_users();
-	
-    res.send(data);
-})
-//유저삭제
-app.post('/delete-users', async (req, res) => {
-	const { id, nick_name } = req.body;
-	console.log(id, nick_name);
-	try {
-		await posts.delete_users(id, nick_name);
-		res.send("<script>alert(id + ' 가 삭제되었습니다.'); window.location.href = '/';</script>");
-	}
-	catch(error){
-        console.log(error);
-		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-    }
-})
-app.post('/select-posts', async (req, res) => {
-    const { formData } = req.body;
-    const { col, search_content, board_type } = formData;
-
-    try{
-        const data = await posts.Search(col, search_content, board_type);
-        console.log(data);
-        res.send(data);
-    }
-    catch(error){
-        console.log(error);
-    }
-
-})
-//댓글 불러오기
-app.post('/load-comment', async (req, res) => {
-	const { post_id } = await req.body;
-	const data = await posts.load_comments(post_id);
-	
-	try {
-		console.log(post_id, '댓글 불러오기');
-		res.send(data);
-	}
-	catch(error) {
-		console.log(error);
-		res.send("<script>alert('오류');</script>");
-	}
-});
-//댓글 추가
-app.post('/add-comment', async (req, res) => {
-    const { comment, post_id } = req.body;
-    try {
-        await posts.add_comment(comment, post_id, req.session.session_id);
-        res.send("<script>alert(id + '가' + post_id + '에 댓글이 추가되었습니다');</script>");
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('댓글이 추가에 실패하였습니다');</script>");
-    }
-});
-//댓글 삭제
-app.post('/delete-comment', async (req, res) => {
-	const { comment_id } = req.body;
-	try {
-		await posts.delete_comment(comment_id);
-		res.send("<script>alert('댓글 번호' + comment_id + '가 삭제되었습니다');</script>");
-	}
-	catch(error){
-        console.log(error);
-        res.send("<script>alert('댓글삭제에 실패하였습니다');</script>");
-    }
-});
 //로그인한 유저 반환
 app.post('/login-user', async (req, res) => {
     const session_id = req.session.session_id;
