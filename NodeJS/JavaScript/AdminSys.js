@@ -23,7 +23,33 @@ async function updateWaitOk(id) {
 	return;
 }
 
+async function deleteUser(id) {
+	let query = `DELETE FROM user WHERE id = ?`;
+	let value = [id];
+	
+	let result = await database.Query(query, value);
+	
+	if (result instanceof Error) {
+		console.error(result);
+	}
+	return;
+}
+
+async function unCommit(id) {
+	let query = `UPDATE user SET waitOk = 0 WHERE id = ?`;
+	let value = [id];
+	
+	let result = await database.Query(query, value);
+	
+	if (result instanceof Error) {
+		console.error(result);
+	}
+	return;
+}
+
 module.exports = {
     get_users: get_users,
-	updateWaitOk: updateWaitOk
+	updateWaitOk: updateWaitOk,
+	deleteUser: deleteUser,
+	unCommit: unCommit
 };

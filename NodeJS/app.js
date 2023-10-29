@@ -447,3 +447,25 @@ app.post('/commitExpert', async (req, res) => {
         console.log(error);
     }
 });
+
+app.post('/deleteUser', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.deleteUser(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+app.post('/unCommit', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.unCommit(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
