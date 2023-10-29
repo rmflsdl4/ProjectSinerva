@@ -14,7 +14,7 @@ fileInput.addEventListener('change', () => {
 
     console.log("SetImage 함수 실행");
             return new  Promise((resolve, reject) => {
-                fetch('/checkImg', {
+                fetch('/image-discrimination', {
                     method: 'POST',
                     headers: {
                         

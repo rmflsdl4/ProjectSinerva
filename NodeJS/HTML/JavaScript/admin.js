@@ -45,13 +45,30 @@ async function Posts_Output(board_type){
 
 	let users = await Users_Import();	//모든 유저 가져오기
     //console.log(users);
-	
+    let experts = [];
+
+    if (board_type === '승인요청') {
+        users.forEach(element => {
+            if (element['userType'] === 'expert' && element['waitOk'] === 0) {
+                experts.push(element);
+            }
+        });
+    }
+    else {
+        users.forEach(element => {
+            if (element['waitOk'] !== 0) {
+                experts.push(element);
+            }
+        });
+    }
+	console.log(experts);
+
     while (tds.length > 0) {
         tds[0].parentNode.remove(); // 부모 노드를 통해 tr 요소를 삭제합니다.
     }
     
     let pageSize = 6;	//5개씩 - 1개 해야함 admin을 제외해야 해서
-	let pageCount = Math.ceil(users.length / pageSize); // 게시물 전체 크기
+	let pageCount = Math.ceil(experts.length / pageSize); // 게시물 전체 크기
 	let nowPage = 1;	//현재 페이지
 	
 	if (window.location.search) {	
@@ -70,8 +87,8 @@ async function Posts_Output(board_type){
 	}
 
     let startIndex = (nowPage - 1) * pageSize;	//첫 페이지
-	let endIndex = Math.min(startIndex + pageSize, users.length);	//마지막 페이지
-	let nowPagePosts = users.slice(startIndex, endIndex);	//페이지에 맞는 게시물
+	let endIndex = Math.min(startIndex + pageSize, experts.length);	//마지막 페이지
+	let nowPagePosts = experts.slice(startIndex, endIndex);	//페이지에 맞는 게시물
     
     for (let idx = 0; idx < nowPagePosts.length; idx++) { // 게시물 표시
         const tr = document.createElement('tr'); // 새로운 테이블 행 생성
