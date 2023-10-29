@@ -7,13 +7,21 @@ async function LoadModel() {
     const model = await tf.loadLayersModel(`file://${modelPath}`);
     return model;
 }
+// 이미지 리사이즈 함수
+async function resizeImage(imagePath) {
+    const image = await loadImage(imagePath);
+    const canvas = createCanvas(256, 256);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, 256, 256);
+    return canvas;
+}
 // 이미지를 텐서로 변환
 async function LoadImageToTensor(imagePath) {
-    const image = await loadImage(imagePath);
-    const canvas = createCanvas(256, 256); // 256x256 크기의 캔버스 생성
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(image, 0, 0, 256, 256); // 이미지를 256x256 크기로 그림
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    // 이미지 리사이즈
+    const resizedCanvas = await resizeImage(imagePath);
+    const ctx = resizedCanvas.getContext('2d');
+    
+    const imageData = ctx.getImageData(0, 0, resizedCanvas.width, resizedCanvas.height).data;
     
     // 이미지 데이터를 4차원 배열로 변환 ([1, 256, 256, 3] 형태)
     const data = new Array(1).fill(0).map(() => {
