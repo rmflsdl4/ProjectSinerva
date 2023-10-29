@@ -4,8 +4,8 @@ const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
-//const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
+const tfjs = require('./JavaScript/tfjsNode.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
@@ -274,3 +274,9 @@ app.post('/checkImg', upload.array('images'), (req, res) => {
         }
     );
 });
+// tfjsNode.js 부분으로 넘어갈 것
+app.post('/image-discrimination', async (req, res) => {
+    
+    tfjs.Predict('test1.jpg');
+    res.send();
+})
