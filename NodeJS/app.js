@@ -6,7 +6,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const tf = require('./JavaScript/tfjsNode.js'); 오류가 발생함
+const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 //유저 기능
 var bodyParser = require('body-parser');
