@@ -82,21 +82,20 @@ async function Posts_Output(board_type){
         if (row['userType'] === 'admin') {
             continue;
         }
-        
+
+        const id = document.createElement('td');
+        id.className = 'add_td_Tag';
+        id.textContent = row['id'];
+
+        const nickName = document.createElement('td');
+        nickName.className = 'add_td_Tag';
+        nickName.textContent = row['nick_name'];
+
         if (board_type === '승인요청') {
             userTypeTh.textContent = '승인요청';
-            if (row['userType'] === 'expert') {
+            if (row['userType'] === 'expert' && row['waitOk'] === 0) {
                 const noRequestsMessage = document.getElementById('noRequestsMessage');
                 noRequestsMessage.style.display = 'none';
-
-                const id = document.createElement('td');
-                id.className = 'add_td_Tag';
-                id.textContent = row['id'];
-        
-                const nickName = document.createElement('td');
-                nickName.className = 'add_td_Tag';
-                nickName.textContent = row['nick_name'];
-
                 const waitOk = document.createElement('td');
                 waitOk.className = 'add_td_Tag';
                 waitOk.textContent = row['waitOk'];
@@ -117,23 +116,38 @@ async function Posts_Output(board_type){
                 board.appendChild(tr);
             }
         } 
-        else {
-            const id = document.createElement('td');
-            id.className = 'add_td_Tag';
-            id.textContent = row['id'];
-    
-            const nickName = document.createElement('td');
-            nickName.className = 'add_td_Tag';
-            nickName.textContent = row['nick_name'];
-
+        else if (row['waitOk'] !== 0) {
             userTypeTh.textContent = '유저타입';
+            const noRequestsMessage = document.getElementById('noRequestsMessage');
+            noRequestsMessage.style.display = 'none';
             const userType = document.createElement('td');
             userType.className = 'add_td_Tag';
             userType.textContent = row['userType'];
 
+            const deleteUserButton = document.createElement('button');
+            deleteUserButton.className = 'add_td_Tag';
+            deleteUserButton.textContent = '삭제';
+
+            deleteUserButton.addEventListener('click', () => {
+                deleteUser(row['id']);
+            });
+
             tr.appendChild(id);
             tr.appendChild(nickName);
             tr.appendChild(userType);
+            tr.appendChild(deleteUserButton);
+
+            if (row['userType'] === 'expert' && row['waitOk'] === 1) {
+                const unCommitButton = document.createElement('button');
+                unCommitButton.className = 'add_td_Tag';
+                unCommitButton.textContent = '권한수정';
+
+                unCommitButton.addEventListener('click', () => {
+                    unCommit(row['id']);
+                });
+
+                tr.appendChild(unCommitButton);
+            }
 
             board.appendChild(tr);
         }
@@ -198,6 +212,44 @@ function commitExpert(id) {
     })
     .catch(error => {
         alert('commitExpert 오류');
+        location.href = 'Admin.html';
+        console.log(error);
+    });
+}
+//삭제 버튼 누르면 실행
+function deleteUser(id) {
+    fetch('/deleteUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+    })
+    .then(res => {
+        alert(id + ' 님을 삭제 하였습니다.');
+        location.href = 'Admin.html';
+    })
+    .catch(error => {
+        alert('deleteUser 오류');
+        location.href = 'Admin.html';
+        console.log(error);
+    });
+} 
+//권한 수정 버튼을 누르면 실행
+function unCommit(id) {
+    fetch('/unCommit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+    })
+    .then(res => {
+        alert(id + ' 님의 권한을 수정했습니다.');
+        location.href = 'Admin.html';
+    })
+    .catch(error => {
+        alert('unCommit 오류');
         location.href = 'Admin.html';
         console.log(error);
     });

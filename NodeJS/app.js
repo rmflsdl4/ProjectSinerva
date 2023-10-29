@@ -6,12 +6,14 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const tf = require('./JavaScript/tfjsNode.js');
+const tf = require('./JavaScript/tfjsNode.js'); 오류가 발생함
+const MemoryStore = require('memorystore')(session);
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
-const MemoryStore = require('memorystore')(session);
+//관리자 기능
+const AdminSys = require('./JavaScript/AdminSys.js');
 
 // 데이터베이스 연결
 database.Connect();
@@ -236,16 +238,21 @@ PW: ${userPw}입니다.`;
         })
     }
 })
+//모든 유저 가져옴
+app.post('/users-import', async (req, res) => {
+	const data = await AdminSys.get_users();
+	
+    res.send(data);
+})
 
-
-
-//로그인한 유저 반환
+// //로그인한 유저 반환
 // app.post('/login-user', async (req, res) => {
 //     const session_id = req.session.session_id;
 	
 //     res.send({ session_id });
 // })
-// **이미지 파일 폴더에 저장**
+
+// 이미지 파일 폴더에 저장
 const IMAGE_NUMBER_FILE = './image_number.txt';
 let dataTime;
 
@@ -305,6 +312,7 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
     });
     res.send();
 });
+
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const id = req.body.id;
@@ -327,4 +335,37 @@ app.post("/record", async (req, res) => {
     console.log(result);
 
     res.send(result);
+});
+
+app.post('/commitExpert', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.updateWaitOk(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+app.post('/deleteUser', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.deleteUser(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+app.post('/unCommit', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.unCommit(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
 });
