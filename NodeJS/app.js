@@ -6,8 +6,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const record = require('./JavaScript/Record.js');
-const tf = require('./JavaScript/tfjsnode.js');
+const tf = require('./JavaScript/tfjsNode.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
@@ -166,12 +165,12 @@ app.post('/login', (req, res) => {
             const user_type = arr[1];
             const waitOk = arr[2];
             if(state === 1 && waitOk === 1){
-                req.session.session_id = id;
+                //req.session.session_id = id;
                 req.session.user_type = user_type;
                 console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
-                console.log(`세션에 ID 저장: ${req.session.session_id}`);
+                //console.log(`세션에 ID 저장: ${req.session.session_id}`);
                 console.log(`유저 타입: ${user_type}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
             }
             else{
                 if (waitOk === 0) {
@@ -230,11 +229,11 @@ PW: ${userPw}입니다.`;
 
 
 //로그인한 유저 반환
-app.post('/login-user', async (req, res) => {
-    const session_id = req.session.session_id;
+// app.post('/login-user', async (req, res) => {
+//     const session_id = req.session.session_id;
 	
-    res.send({ session_id });
-})
+//     res.send({ session_id });
+// })
 // **이미지 파일 폴더에 저장**
 const IMAGE_NUMBER_FILE = './image_number.txt';
 let dataTime;
@@ -283,6 +282,7 @@ const upload = multer({storage: storage});
 app.use('/image', express.static('./images/'));
 
 app.post('/image-discrimination', upload.array('images'), (req, res) => {
+    //tf.Predict(이미지 이름);
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     req.files.forEach((file) => {
         console.log('업로드한 파일 이름:', file.originalname);
