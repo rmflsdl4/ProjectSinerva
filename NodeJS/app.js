@@ -1,6 +1,6 @@
 // 사용 모듈 로드
 const express = require('express');
-//const session = require('express-session');
+const session = require('express-session');
 //const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
@@ -8,12 +8,11 @@ const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 //const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
+const record = require('./JavaScript/Record.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
-//관리자 기능
-const AdminSys = require('./JavaScript/AdminSys.js');
 
 // 데이터베이스 연결
 database.Connect();
@@ -174,19 +173,15 @@ app.post('/login', (req, res) => {
     login.Login(id, pw)
         .then((arr) => {
             const state = arr[0];
-            const userType = arr[1];
+            const user_type = arr[1];
             const waitOk = arr[2];
-            if(state === 1 && userType === 'user'){
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
-            }
-            else if (state === 1 && userType === 'expert' && waitOk === 1) {
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Expert.html';</script>");
-            }
-            else if (state === 1 && userType === 'admin') {
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Admin.html';</script>");
+            if(state === 1 && waitOk === 1){
+                req.session.session_id = id;
+                req.session.user_type = user_type;
+                console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
+                console.log(`세션에 ID 저장: ${req.session.session_id}`);
+                console.log(`유저 타입: ${user_type}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else{
                 if (waitOk === 0) {
@@ -242,96 +237,96 @@ PW: ${userPw}입니다.`;
     }
 })
 
-// app.post('/posts-import', async (req, res) => {
-//     const data = await posts.Get_List();
+app.post('/posts-import', async (req, res) => {
+    const data = await posts.Get_List();
     
 
-//     res.send(data);
-// })
-// app.post('/view-post', async (req, res) => {
-//     const { post_id } = req.body;
-//     await posts.Add_View_Count(post_id);
-//     const data = await posts.Get_Post(post_id);
-//     const session_id = req.session.session_id;
-//     res.send( { data, session_id });
-// })
+    res.send(data);
+})
+app.post('/view-post', async (req, res) => {
+    const { post_id } = req.body;
+    await posts.Add_View_Count(post_id);
+    const data = await posts.Get_Post(post_id);
+    const session_id = req.session.session_id;
+    res.send( { data, session_id });
+})
 
-// app.post('/add-post', async (req, res) => {
-//     const { formData } = req.body;
-//     const { board_type, title, content, lock_state } = formData;
-//     console.log(board_type, title, content, lock_state);
-//     try{
-//         await posts.Add_Post(board_type, title, content, req.session.session_id, lock_state);
-//         res.send("<script>alert('게시글을 등록하였습니다.'); location.href='Main.html';</script>");
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.send("<script>alert('게시글 등록에 실패하였습니다.'); location.href='Main.html';</script>");
-//     }
-// })
-// app.post('/post-lock-check', async (req, res) => {
-//     const { post_id } = req.body;
+app.post('/add-post', async (req, res) => {
+    const { formData } = req.body;
+    const { board_type, title, content, lock_state } = formData;
+    console.log(board_type, title, content, lock_state);
+    try{
+        await posts.Add_Post(board_type, title, content, req.session.session_id, lock_state);
+        res.send("<script>alert('게시글을 등록하였습니다.'); location.href='Main.html';</script>");
+    }
+    catch(error){
+        console.log(error);
+        res.send("<script>alert('게시글 등록에 실패하였습니다.'); location.href='Main.html';</script>");
+    }
+})
+app.post('/post-lock-check', async (req, res) => {
+    const { post_id } = req.body;
     
-//     try{
-//         const isLock = await posts.Lock_Check(post_id, req.session.session_id);
-//         console.log(isLock);
-//         res.send(isLock);
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.send('false');
-//     }
-// })
-// // 제목, 내용, 게시글 넘버 받아서 게시글 업데이트
-// app.post('/update-post', async (req, res) => {
-//     const { title, content, post_id } = req.body;
+    try{
+        const isLock = await posts.Lock_Check(post_id, req.session.session_id);
+        console.log(isLock);
+        res.send(isLock);
+    }
+    catch(error){
+        console.log(error);
+        res.send('false');
+    }
+})
+// 제목, 내용, 게시글 넘버 받아서 게시글 업데이트
+app.post('/update-post', async (req, res) => {
+    const { title, content, post_id } = req.body;
 
-//     try{
-//         await posts.Update_Post(title, content, post_id);
-//         res.send("<script>alert('게시글을 수정하였습니다.'); location.href='Main.html';</script>");
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.send("<script>alert('게시글 수정에 실패하였습니다.'); location.href='Main.html';</script>");
-//     }
-// })
-// // post_id받아서 delete_post로 넘김
-// app.post('/delete-post', async (req, res) => {
-// 	const { post_id } = req.body;
-// 	console.log(post_id);
-// 	try {
-// 		await posts.delete_post(post_id);
-// 		res.send("<script>alert('삭제되었습니다.'); window.location.href = '/';</script>");
-// 	}
-// 	catch(error){
-//         console.log(error);
-// 		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-//     }
-// })
-// // 유저 타입 반환
-// app.post('/get-user-type', async (req, res) => {
-//     const user_type = req.session.user_type;
+    try{
+        await posts.Update_Post(title, content, post_id);
+        res.send("<script>alert('게시글을 수정하였습니다.'); location.href='Main.html';</script>");
+    }
+    catch(error){
+        console.log(error);
+        res.send("<script>alert('게시글 수정에 실패하였습니다.'); location.href='Main.html';</script>");
+    }
+})
+// post_id받아서 delete_post로 넘김
+app.post('/delete-post', async (req, res) => {
+	const { post_id } = req.body;
+	console.log(post_id);
+	try {
+		await posts.delete_post(post_id);
+		res.send("<script>alert('삭제되었습니다.'); window.location.href = '/';</script>");
+	}
+	catch(error){
+        console.log(error);
+		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
+    }
+})
+// 유저 타입 반환
+app.post('/get-user-type', async (req, res) => {
+    const user_type = req.session.user_type;
     
-//     res.send(user_type);
-// })
-// // 선택한 게시글 삭제 (관리자 전용)
-// app.post('/selected-posts-delete', async (req, res) => {
-//     const { posts_id } = req.body;
+    res.send(user_type);
+})
+// 선택한 게시글 삭제 (관리자 전용)
+app.post('/selected-posts-delete', async (req, res) => {
+    const { posts_id } = req.body;
 
-//     try{
-//         if(posts_id.length > 0){
-//             await posts.Posts_Delete(posts_id);
-//         }
-//         res.send();
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.send("<script>alert('오류 발생. 삭제 실패.'); window.location.href = 'Main.html';</script>");
-//     }
-// })
+    try{
+        if(posts_id.length > 0){
+            await posts.Posts_Delete(posts_id);
+        }
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+        res.send("<script>alert('오류 발생. 삭제 실패.'); window.location.href = 'Main.html';</script>");
+    }
+})
 //모든 유저 가져옴
 app.post('/users-import', async (req, res) => {
-	const data = await AdminSys.get_users();
+	const data = await posts.get_users();
 	
     res.send(data);
 })
@@ -348,109 +343,144 @@ app.post('/delete-users', async (req, res) => {
 		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
     }
 })
-// app.post('/select-posts', async (req, res) => {
-//     const { formData } = req.body;
-//     const { col, search_content, board_type } = formData;
+app.post('/select-posts', async (req, res) => {
+    const { formData } = req.body;
+    const { col, search_content, board_type } = formData;
 
-//     try{
-//         const data = await posts.Search(col, search_content, board_type);
-//         console.log(data);
-//         res.send(data);
-//     }
-//     catch(error){
-//         console.log(error);
-//     }
+    try{
+        const data = await posts.Search(col, search_content, board_type);
+        console.log(data);
+        res.send(data);
+    }
+    catch(error){
+        console.log(error);
+    }
 
-// })
-// //댓글 불러오기
-// app.post('/load-comment', async (req, res) => {
-// 	const { post_id } = await req.body;
-// 	const data = await posts.load_comments(post_id);
+})
+//댓글 불러오기
+app.post('/load-comment', async (req, res) => {
+	const { post_id } = await req.body;
+	const data = await posts.load_comments(post_id);
 	
-// 	try {
-// 		console.log(post_id, '댓글 불러오기');
-// 		res.send(data);
-// 	}
-// 	catch(error) {
-// 		console.log(error);
-// 		res.send("<script>alert('오류');</script>");
-// 	}
-// });
-// //댓글 추가
-// app.post('/add-comment', async (req, res) => {
-//     const { comment, post_id } = req.body;
-//     try {
-//         await posts.add_comment(comment, post_id, req.session.session_id);
-//         res.send("<script>alert(id + '가' + post_id + '에 댓글이 추가되었습니다');</script>");
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.send("<script>alert('댓글이 추가에 실패하였습니다');</script>");
-//     }
-// });
-// //댓글 삭제
-// app.post('/delete-comment', async (req, res) => {
-// 	const { comment_id } = req.body;
-// 	try {
-// 		await posts.delete_comment(comment_id);
-// 		res.send("<script>alert('댓글 번호' + comment_id + '가 삭제되었습니다');</script>");
-// 	}
-// 	catch(error){
-//         console.log(error);
-//         res.send("<script>alert('댓글삭제에 실패하였습니다');</script>");
-//     }
-// });
+	try {
+		console.log(post_id, '댓글 불러오기');
+		res.send(data);
+	}
+	catch(error) {
+		console.log(error);
+		res.send("<script>alert('오류');</script>");
+	}
+});
+//댓글 추가
+app.post('/add-comment', async (req, res) => {
+    const { comment, post_id } = req.body;
+    try {
+        await posts.add_comment(comment, post_id, req.session.session_id);
+        res.send("<script>alert(id + '가' + post_id + '에 댓글이 추가되었습니다');</script>");
+    }
+    catch(error){
+        console.log(error);
+        res.send("<script>alert('댓글이 추가에 실패하였습니다');</script>");
+    }
+});
+//댓글 삭제
+app.post('/delete-comment', async (req, res) => {
+	const { comment_id } = req.body;
+	try {
+		await posts.delete_comment(comment_id);
+		res.send("<script>alert('댓글 번호' + comment_id + '가 삭제되었습니다');</script>");
+	}
+	catch(error){
+        console.log(error);
+        res.send("<script>alert('댓글삭제에 실패하였습니다');</script>");
+    }
+});
 //로그인한 유저 반환
 app.post('/login-user', async (req, res) => {
     const session_id = req.session.session_id;
 	
     res.send({ session_id });
 })
-// 이미지 파일 폴더에 저장
+// **이미지 파일 폴더에 저장**
+const IMAGE_NUMBER_FILE = './image_number.txt';
+let dataTime;
+
+// 이미지 번호 파일에서 읽어오기
+try {
+    const data = fs.readFileSync(IMAGE_NUMBER_FILE, 'utf8');
+    imageNumber = parseInt(data);
+} catch (err) {
+    console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'upload/')
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+        const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        const second = date.getSeconds().toString().padStart(2, '0');
+        dataTime = `${year}${month}${day}${hour}${minute}${second}`;
+        const folder = `images/${year}${month}${day}${hour}${minute}${second}/`;
+
+        // 해당 날짜 폴더가 없으면 생성
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true });
+        }
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, folder);
     }, 
     filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        imageNumber++;
         console.log(file)
-        cb(null, file.originalname.split('.', 1) + path.extname(file.originalname))
+        cb(null, imageNumber + path.extname(file.originalname))
+
+        // 이미지 번호 파일에 업데이트
+        fs.writeFileSync(IMAGE_NUMBER_FILE, imageNumber.toString(), 'utf8');
     }
 });
 
 const upload = multer({storage: storage});
 
-app.post('/checkImg', upload.array('images'), (req, res) => {
+app.use('/image', express.static('./images/'));
+
+app.post('/image-discrimination', upload.array('images'), (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     req.files.forEach((file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
-        const query = 'INSERT INTO testImg(fileName, userId) VALUES (?, \'test\')';
+        const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, \'test\')';
         let image = '/image/' + file.filename;
-        const values = [image];
+        const values = [image, dataTime];
 
         database.Query(query, values);
     });
-    Connection.query(sql, values,
-        (err, rows, fields) => {
-            res.send(rows);
-        }
-    );
-});
-
-// tfjsNode.js 부분으로 넘어갈 것
-app.post('/image-discrimination', async (req, res) => {
-    
-    tfjs.Predict('test1.jpg');
     res.send();
-})
+});
+// 과거 검사한 기록 select
+app.post("/record", async (req, res) => {
+    const id = req.body.id;
 
-app.post('/commitExpert', async (req, res) => {
-    const { id } = req.body;
-    try {
-        await AdminSys.updateWaitOk(id);
-        res.send();
-    }
-    catch(error){
-        console.log(error);
-    }
+    console.log(id);
+
+    const query = `SELECT 
+                        added,
+                        count(*) as total,
+                        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
+                    FROM image
+                    WHERE user_id = ?
+                    GROUP BY added`;
+
+    const values = [id];
+
+    const result = await database.Query(query, values);
+    
+    console.log(result);
+
+    res.send(result);
 });
