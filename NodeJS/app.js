@@ -257,6 +257,7 @@ try {
     console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
 }
 
+let folder = '';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const date = new Date();
@@ -267,7 +268,7 @@ const storage = multer.diskStorage({
         const minute = date.getMinutes().toString().padStart(2, '0');
         const second = date.getSeconds().toString().padStart(2, '0');
         dataTime = `${year}${month}${day}${hour}${minute}${second}`;
-        const folder = `images/${year}${month}${day}${hour}${minute}${second}/`;
+        folder = `images/${year}${month}${day}${hour}${minute}${second}/`;
 
         // 해당 날짜 폴더가 없으면 생성
         if (!fs.existsSync(folder)) {
@@ -293,18 +294,19 @@ const upload = multer({storage: storage});
 app.use('/image', express.static('./images/'));
 
 app.post('/image-discrimination', upload.array('images'), (req, res) => {
-    //tf.Predict(이미지 이름);
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     req.files.forEach((file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
-        console.log(req.session.userId);
         const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, ?)';
         let image = '/image/' + file.filename;
         const values = [image, dataTime, req.session.userId];
         database.Query(query, values);
+        console.log(folder + file.filename);
+        tf.Predict(folder + file.filename);
     });
-    res.send();
+    
+    res.send(/*검사 결과 배열 돌려주기*/);
 });
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
