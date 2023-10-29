@@ -437,6 +437,13 @@ app.post('/checkImg', upload.array('images'), (req, res) => {
     );
 });
 
+// tfjsNode.js 부분으로 넘어갈 것
+app.post('/image-discrimination', async (req, res) => {
+    
+    tfjs.Predict('test1.jpg');
+    res.send();
+})
+
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
     try {
