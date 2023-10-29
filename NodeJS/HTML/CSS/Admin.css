@@ -1,31 +1,24 @@
-#profile{
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    margin-right: 15%;
+.Board_Menu{
+	width: 10%;
+    font-size: 18px;
     height: 30px;
-}
-#profileText{
-    font-size: 1.5em;
-    color: rgb(121, 121, 121);
-    border-bottom: none;
-}
-#profileText:hover{
-    border-bottom: 2px solid rgb(121, 121, 121);
+    color: black;
+    transition: opacity 0.5s;
+    cursor: pointer;
 }
 
-#commentList{
+#usersList{
     width: 70%;
     height: 70%;
     box-shadow: inset 0px 0px 10px #666;
 }
-#commentListTable{
+#usersMenu{
     border-collapse: separate;
     border-spacing: 0 25px;
     width: 90%;
     text-align: center;
 }
-#commentListHeader{
+#usersTitle{
     height: 60px;
     width: 90%;
     font-size: 1.2em;
@@ -37,11 +30,13 @@
     box-shadow: 0px 0px 5px #444;
     border-radius: 5px;
 }
-#commentListTable button{
-    width: 80px;
+button.add_td_Tag{
+    width: 50px;
+    margin: 15px 15px 0 0;
     font-size: 15px;
     cursor: pointer;
 }
+
 #pageContainer{
     margin-top: 25px;
     font-size: 25px;

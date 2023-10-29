@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>관리자 페이지</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <script src="JavaScript/admin.js"></script>
+    </head>
+    <body onload="Board_State_Init();">
+        <div id="Logo" onclick="window.location.href = 'Admin.html'">관리자 페이지</div>
+        <div id="profile">
+            <a href="#" id="profileText">마이 페이지</a>
+        </div>
+        <br><br>
+        <center>
+            <div id="usersList">
+                <table id="usersMenu">
+                    <tr>
+                        <th class="Board_Menu" onclick="Board_Select();">승인요청</th>
+                        <th class="Board_Menu" onclick="Board_Select();">유저관리</th>
+                    </tr>
+                    <tr id="usersTitle">
+                        <th class="title" width="30%">아이디</th>
+                        <th class="title" width="30%">이름</th>
+                        <th class="title" width="20%">승인 상태</th>
+                        <th class="title" width="20%"></th>
+                    </tr>
+                </table>
+                <div id="noRequestsMessage">
+                    요청이 없습니다.
+                </div>
+                <div id="pageLink" colspan="10" style="text-align: center;"></div>
+            </div>
+        </center>
+    </body>
+</html>
