@@ -336,6 +336,24 @@ app.post("/record", async (req, res) => {
 
     res.send(result);
 });
+// 과거 검사한 기록 상세보기
+app.post("/detailsRecord", async (req, res) => {
+    const { date } = req.body;
+
+    console.log(date); // value 변수에 저장된 값 출력
+
+    const query = `select added, file_name, result
+                    from image
+                    where added = ? and user_id = 'test';`;
+
+    const values = [date];
+
+    const result = await database.Query(query, values);
+    
+    console.log(result);
+
+    res.send(result);
+});
 
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
