@@ -7,7 +7,7 @@
 
 
 ## PPK
-[PPK Download](https://github.com/rmflsdl4/ProjectSinerva/releases/download/ppk/Sinerva.ppk)
+[PPK Download](https://github.com/rmflsdl4/ProjectSinerva/releases/download/ppk/sinervaPPK.ppk)
 
 
 ## Port
