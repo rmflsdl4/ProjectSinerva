@@ -2,8 +2,8 @@
 >[Sinerva Web](https://3.133.111.198:3000)
 
 ## Sinerva AWS Ubuntu
->public IPv4 : 18.188.244.46  
->public IPv4 DNS : ec2-18-188-244-46.us-east-2.compute.amazonaws.com
+>public IPv4 : 13.125.231.64
+>public IPv4 DNS : ec2-13-125-231-64.ap-northeast-2.compute.amazonaws.com
 
 
 ## PPK
