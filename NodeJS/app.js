@@ -341,9 +341,9 @@ app.post("/detailsRecord", async (req, res) => {
 
     const query = `select added, file_name, result
                     from image
-                    where added = ? and user_id = 'test';`;
+                    where added = ? and user_id = ?;`;
 
-    const values = [date];
+    const values = [date, req.session.userId];
 
     const result = await database.Query(query, values);
     
