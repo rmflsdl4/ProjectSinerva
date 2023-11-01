@@ -315,9 +315,6 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
 
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
-    const id = req.body.id;
-
-    console.log(id);
 
     const query = `SELECT 
                         added,
@@ -328,7 +325,7 @@ app.post("/record", async (req, res) => {
                     WHERE user_id = ?
                     GROUP BY added`;
 
-    const values = [id];
+    const values = [req.session.userId];
 
     const result = await database.Query(query, values);
     
