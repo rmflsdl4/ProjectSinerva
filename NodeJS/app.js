@@ -55,7 +55,7 @@ process.on('uncaughtException', (err) => {
 // 라우팅 설정
 
 app.get('/', function(req, res){
-    fs.readFile('HTML/Login.html', function(error, data){
+    fs.readFile('HTML/Main.html', function(error, data){
         if(error){
             console.log(error);
         }
@@ -170,33 +170,32 @@ app.post('/login', (req, res) => {
             const state = arr[0];
             const userType = arr[1];
             const waitOk = arr[2];
-            if(state === 1 && userType === 'user'){
+            if(state === 1 && waitOk === 1){
                 req.session.userId = id;
-                req.session.user_type = userType;
-                console.log(`세션저장 값: ${req.session.userId}`);
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
-            }
-            else if (state === 1 && userType === 'expert' && waitOk === 1) {
-                req.session.userId = id;
-                req.session.user_type = userType;
-                console.log(`세션저장 값: ${req.session.userId}`);
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Expert.html';</script>");
-            }
-            else if (state === 1 && userType === 'admin') {
-                console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Admin.html';</script>");
+                req.session.userType = userType;
+                console.log(`세션 유저 저장 값: ${req.session.userId}`);
+                console.log(`세션 타입 저장 값: ${req.session.userType}`);
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else{
                 if (waitOk === 0) {
-                    res.send("<script>alert('승인 대기중입니다.'); location.href='Login.html';</script>");
+                    res.send("<script>alert('승인 대기중입니다.'); location.href='Main.html';</script>");
                 }
                 else {
                     res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
                 }
             }
         })
+        .catch(error => {
+            res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+        });
+})
+//로그아웃
+app.post('/logout', (req, res) => {
+    delete req.session.userId;
+    delete req.session.userType;
+
+    res.send("<script>alert('로그아웃 되었습니다.'); location.href='Main.html';</script>");
 })
 //계정찾기
 app.post('/findAccount', (req,res) => {
@@ -248,12 +247,13 @@ app.post('/users-import', async (req, res) => {
     res.send(data);
 })
 
-// //로그인한 유저 반환
-// app.post('/login-user', async (req, res) => {
-//     const session_id = req.session.session_id;
+//로그인한 유저 반환
+app.post('/login-user', async (req, res) => {
+    const userId = req.session.userId;
+    const userType = req.session.userType;
 	
-//     res.send({ session_id });
-// })
+    res.send({ userId, userType });
+})
 
 // 이미지 파일 폴더에 저장
 const IMAGE_NUMBER_FILE = './image_number.txt';
