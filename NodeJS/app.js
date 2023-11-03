@@ -54,7 +54,7 @@ process.on('uncaughtException', (err) => {
 // 라우팅 설정
 
 app.get('/', function(req, res){
-    fs.readFile('HTML/Login.html', function(error, data){
+    fs.readFile('HTML/Main.html', function(error, data){
         if(error){
             console.log(error);
         }
