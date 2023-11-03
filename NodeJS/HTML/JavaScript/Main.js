@@ -1,4 +1,5 @@
 function menuBarInit() {
+  const menuBar = document.getElementById('menuBar');
   const logIn = document.getElementById('mainLogIn');
   const SignUp = document.getElementById('mainSignUp');
   const logOut = document.getElementById('mainLogOut');
@@ -11,12 +12,14 @@ function menuBarInit() {
 
     if (loginUser.userType === 'user') {
       console.log('login: ' + loginUser.userId);
+      menuBar.style.display = 'block';
       logIn.style.display = 'none';
       SignUp.style.display = 'none';
       logOut.style.display = 'block';
       myPage.style.display = 'block';
     } 
     else if (loginUser.userType === 'expert') {
+      menuBar.style.display = 'block';
       logIn.style.display = 'none';
       SignUp.style.display = 'none';
       logOut.style.display = 'block';
