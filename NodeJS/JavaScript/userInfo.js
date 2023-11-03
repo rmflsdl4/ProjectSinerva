@@ -28,6 +28,28 @@ async function updateUserInfo(id, pw, nick_name, phone_num, email, address, user
     // }
 }
 
+async function getUserInfo(id, userType) {
+    let query;
+    let values;
+    
+    if (userType === 'user') {
+        query = 'select * from user where id = ?';
+    }
+    else {
+        query = 'select * from expert where id = ?';
+    }
+
+    values = [id];
+    const result = await database.Query(query, values);
+
+    if (result instanceof Error) {
+        return;
+    }
+
+    return result;
+}
+
 module.exports = {
-    updateUserInfo: updateUserInfo
+    updateUserInfo: updateUserInfo,
+    getUserInfo: getUserInfo
 };

@@ -387,3 +387,11 @@ app.post('/changeCommit', async (req, res) => {
         res.status(500).send("<script>alert('회원가입에 실패하였습니다.'); location.href='SignUp.html';</script>");
     }
 })
+
+//로그인한 유저의 정보만 가져옴
+app.post('/loginUserInfo', async (req, res) => {
+    const { id, userType } = req.body;
+	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})
