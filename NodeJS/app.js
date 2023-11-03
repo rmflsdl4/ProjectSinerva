@@ -173,13 +173,13 @@ app.post('/login', (req, res) => {
                 req.session.userId = id;
                 console.log(`세션저장 값: ${req.session.userId}`);
                 console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='CommonUserMain.html';</script>");
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else if (state === 1 && userType === 'expert' && waitOk === 1) {
                 req.session.userId = id;
                 console.log(`세션저장 값: ${req.session.userId}`);
                 console.log(`유저 타입: ${userType}`);
-                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Expert.html';</script>");
+                res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else if (state === 1 && userType === 'admin') {
                 console.log(`유저 타입: ${userType}`);
