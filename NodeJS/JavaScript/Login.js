@@ -10,7 +10,7 @@ async function _Login(id, pw){
                                             SELECT id
                                             FROM expert
                                             WHERE id = ? AND password = ?) as unionTable`;
-    const values = [id, pw];
+    const values = [id, pw, id, pw];
 
     const result = await database.Query(query, values);
     const user_id = result[0].count;
