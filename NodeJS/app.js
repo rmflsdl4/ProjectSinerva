@@ -386,3 +386,26 @@ app.post('/unCommit', async (req, res) => {
         console.log(error);
     }
 });
+
+app.post('/changeCommit', async (req, res) => {
+    const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
+    try{
+        changeUserInfo.updateUserInfo(id, pw, nick_name, phone_num, email, address, userType);
+    
+        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} / userType - ${userType} ]`);
+
+        res.send("<script>alert('회원가입이 완료되었습니다.'); location.href='Login.html';</script>");
+    }
+    catch(error){
+        console.error('회원가입 오류:', error);
+        res.status(500).send("<script>alert('회원가입에 실패하였습니다.'); location.href='SignUp.html';</script>");
+    }
+})
+
+//로그인한 유저의 정보만 가져옴
+app.post('/loginUserInfo', async (req, res) => {
+    const { id, userType } = req.body;
+	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})

@@ -1,7 +1,9 @@
 const database = require('../database.js');
 
 async function get_users() {
-	const query = `SELECT * FROM user`;
+	const query = `SELECT id, nick_name, waitOk, userType  FROM user
+					UNION
+					SELECT id, name, waitOk, userType FROM expert`;
 	
 	const result = await database.Query(query, null);
 	

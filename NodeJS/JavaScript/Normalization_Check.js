@@ -6,9 +6,18 @@ async function ID_Normalization_Check(value){
     let id_normal = /^[A-Za-z]{1}[A-Za-z0-9_-]{3,29}$/;
     let bool;
     if(id_normal.test(value)){
-        const query = 'SELECT COUNT(*) AS count FROM user WHERE id = ?';
+        const query = `SELECT COUNT(*) as count FROM(
+                        SELECT id
+                        FROM user
+                        WHERE id = ?
+                        UNION
+                        SELECT id
+                        FROM expert
+                        WHERE id = ?) as unionTable`;
 
-        const result = await database.Query(query, value);
+        const values = [value, value];
+
+        const result = await database.Query(query, values);
         if (result instanceof Error) {
             return;
         }
@@ -32,9 +41,18 @@ async function Nick_Name_Normalization_Check(value){
     let nick_name_normal = /^[A-Za-z0-9ㄱ-ㅎ가-힣]{1,19}$/;
     let bool;
     if(nick_name_normal.test(value)){
-        const query = 'SELECT COUNT(*) AS count FROM user WHERE nick_name = ?';
-        
-        const result = await database.Query(query, value);
+        const query = `SELECT COUNT(*) AS count FROM (
+                        SELECT nick_name 
+                        FROM user
+                        WHERE nick_name = ?
+                        UNION
+                        SELECT name
+                        FROM expert
+                        WHERE name = ? ) as unionTable`;
+
+        const values = [value, value];
+
+        const result = await database.Query(query, values);
         
         if (result instanceof Error) {
             return;
@@ -45,11 +63,20 @@ async function Nick_Name_Normalization_Check(value){
 }
 async function Phone_Num_Normalization_Check(value) {
     let bool;
-
+    
     if (value) {
-        const query = 'SELECT COUNT(*) AS count FROM user WHERE phone_num = ?';
-        
-        const result = await database.Query(query, value);
+        const query = `SELECT COUNT(*) AS count FROM (
+                        SELECT phone_num 
+                        FROM user
+                        WHERE phone_num = ?
+                        UNION
+                        SELECT phone_num
+                        FROM expert
+                        WHERE phone_num = ? ) as unionTable`;
+
+        const values = [value, value];
+
+        const result = await database.Query(query, values);
 
         if (result instanceof Error) {
             return;
@@ -74,9 +101,18 @@ async function Email_Normalization_Check(value) {
     let bool;
     
     if(email_normal.test(value)){
-        const query = 'SELECT COUNT(*) AS count FROM user WHERE email = ?';
-        
-        const result = await database.Query(query, value);
+        const query = `SELECT COUNT(*) AS count FROM (
+                        SELECT email 
+                        FROM user
+                        WHERE email = ?
+                        UNION
+                        SELECT email
+                        FROM expert
+                        WHERE email = ? ) as unionTable`;
+
+        const values = [value, value];
+
+        const result = await database.Query(query, values);
         
         if (result instanceof Error) {
             return;
