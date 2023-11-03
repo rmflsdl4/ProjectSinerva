@@ -21,7 +21,7 @@ function menuBarInit() {
       logOut.style.display = 'block';
       myPage.style.display = 'block';
       for(i = 0; i < userMenu.length; i++){
-        userMenu[i].style.display = 'block';
+        userMenu[i].style.display = '';
       }
       for(i = 0; i < expertMenu.length; i++){
         expertMenu[i].style.display = 'none';
@@ -37,7 +37,7 @@ function menuBarInit() {
         userMenu[i].style.display = 'none';
       }
       for(i = 0; i < expertMenu.length; i++){
-        expertMenu[i].style.display = 'block';
+        expertMenu[i].style.display = '';
       }
     }
     else if (loginUser.userType === 'admin') {
