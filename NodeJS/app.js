@@ -246,11 +246,11 @@ app.post('/users-import', async (req, res) => {
 })
 
 // //로그인한 유저 반환
-// app.post('/login-user', async (req, res) => {
-//     const session_id = req.session.session_id;
+app.post('/login-user', async (req, res) => {
+    const session_id = req.session.userId;
 	
-//     res.send({ session_id });
-// })
+    res.send({ session_id });
+})
 
 // 이미지 파일 폴더에 저장
 const IMAGE_NUMBER_FILE = './image_number.txt';
