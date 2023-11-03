@@ -189,6 +189,13 @@ app.post('/login', (req, res) => {
             res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
         });
 })
+//로그아웃
+app.post('/logout', (req, res) => {
+    delete req.session.userId;
+    delete req.session.userType;
+
+    res.send("<script>alert('로그아웃 되었습니다.'); location.href='Main.html';</script>");
+})
 //계정찾기
 app.post('/findAccount', (req,res) => {
     const { findId, findNickName, userType, findPhone_num, findEmail } = req.body;
