@@ -1,0 +1,51 @@
+#mainLogOut, #mainMyPage, #mainAdmin {
+    display: none;
+}
+
+#mainMenuBar {
+    color: black;
+}
+
+#userImageList, #expertInfoList {
+    margin-bottom: 30px;
+    height: 200px;
+    display: block;
+}
+#moreViewUserList, #moreViewExpertList {
+    display: block;
+    color: red;
+    text-align: right;
+    margin-right: 60px;
+}
+
+#menuBar {
+    background-color: gray;
+    margin-bottom: 30px;
+    height: 80px;
+    display: block;
+}
+#menuTable {
+    background-color: lightgray;
+    width: 50%;
+}
+#userImageList {
+    background-color: green;
+}
+#userTable {
+    background-color: lightgreen;
+}
+.userTr {
+
+}
+#expertInfoList {
+    background-color: orange;
+}
+#expertTable {
+    background-color: lightcoral;
+    width: 80%;
+}
+.experTr {
+
+}
+.requestButton {
+}
