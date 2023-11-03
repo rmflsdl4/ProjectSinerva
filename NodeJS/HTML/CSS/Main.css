@@ -22,7 +22,7 @@
     background-color: gray;
     margin-bottom: 30px;
     height: 80px;
-    display: block;
+    display: none;
 }
 #menuTable {
     background-color: lightgray;
