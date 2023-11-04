@@ -345,7 +345,9 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
         database.Query(img_query, img_values);
         tf.Predict(image_route, file.filename);
     });
-    res.send();
+    console.log(req.session.userId + " 사용자 검사 완료!!");
+
+    res.send(window.location.href = "InspectResult.html");
 });
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
