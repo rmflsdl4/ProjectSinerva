@@ -284,11 +284,11 @@ function unCommit(id) {
         location.href = 'Admin.html';
         console.log(error);
     });
-}
+} 
 //유저 상세 정보 표시
-function userInfo(user) {
+// function userInfo(user) {
     
-}
+// }
 
 // function userInfo(userId) {
 //     // 팝업 창 엘리먼트 생성

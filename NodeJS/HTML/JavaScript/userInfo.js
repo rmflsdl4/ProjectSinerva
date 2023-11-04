@@ -15,10 +15,11 @@ function userInfoInit(){
         console.log(loginUser);
 
         let userInfo = getUserInfo(loginUser.userId, loginUser.userType);
+        console.log(userInfo);
 
-        userInfo.then(data => {
+    userInfo.then(data => {
             console.log(data);
-            if (loginUser.userType === 'user') {
+        if (loginUser.userType === 'user') {
                 introduction.style.display = 'none';
                 id.value = data[0].id;
                 pw.value = data[0].password;
@@ -51,8 +52,8 @@ function userInfoInit(){
                         showPswButton.textContent = '비밀번호 보기';
                     }
                 });
-            } 
-            else if (loginUser.userType === 'expert') {
+        } 
+        else if (loginUser.userType === 'expert') {
                 id.value = data[0].id;
                 pw.value = data[0].password;
                 nick_name.value = data[0].name;
@@ -138,6 +139,7 @@ async function getUserInfo(id, userType) {
         }
 
         const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         console.error(error);

@@ -84,38 +84,38 @@ function menuBarInit() {
 }
 
 async function getUserSession() {
-    return await new Promise((resolve, reject) => {
-        fetch('/login-user', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                resolve(data);
-            })
-            .catch(error => {
-                reject(error);
-            });
-    });
+  return await new Promise((resolve, reject) => {
+      fetch('/login-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+      })
+          .then(response => response.json())
+          .then(data => {
+              resolve(data);
+          })
+          .catch(error => {
+              reject(error);
+          });
+  });
 }
 
 async function logOut() {
-    new Promise((resolve, reject) => {
-        fetch('/logout', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-        })
-            .then(data => {
-                alert('로그아웃 되었습니다.');
-            })
-            .catch(error => {
-                reject(error);
-            });
-    });
+  new Promise((resolve, reject) => {
+      fetch('/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+      })
+          .then(data => {
+              alert('로그아웃 되었습니다.');
+          })
+          .catch(error => {
+              reject(error);
+          });
+  });
 }
 
 async function showExpertList() {
@@ -163,7 +163,7 @@ async function showExpertList() {
       let requestButton = document.createElement('button');
       requestButton.className = 'requestButton';
       requestButton.textContent = '요청';
-  
+
       buttonTd.appendChild(requestButton);
       row.appendChild(buttonTd);
   

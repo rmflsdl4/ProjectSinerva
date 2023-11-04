@@ -31,13 +31,13 @@ async function deleteUser(id, userType) {
 	
 	if (userType === 'user') {
 		query = `DELETE FROM user WHERE id = ?`;
-		value = [id];
+	value = [id];
 	}
 	else {
 		query = `DELETE FROM expert WHERE id = ?`;
 		value = [id];
-	}
-
+}
+	
 	let result = await database.Query(query, value);
 	
 	if (result instanceof Error) {
