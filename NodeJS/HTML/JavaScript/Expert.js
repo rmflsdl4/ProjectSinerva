@@ -196,7 +196,7 @@ function InspectDetailsRecordRow(data) {
     tableHTML += "<th width='10%'>상태</th>";
     tableHTML += "<th width='30%'>코멘트</th>";
     tableHTML += "</tr>";
-
+    console.log(userData.userType);
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
         tableHTML += "<tr class='commentRequest'>";
