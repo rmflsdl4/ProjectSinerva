@@ -204,6 +204,7 @@ function InspectDetailsRecordRow(data) {
         tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
         tableHTML += `<td>${row.result}</td>`;
         userData.then(data => {
+            console.log(data.userType);
             if(data.userType === "user"){
                 tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
             }
