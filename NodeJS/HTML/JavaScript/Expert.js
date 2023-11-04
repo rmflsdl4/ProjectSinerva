@@ -199,6 +199,7 @@ function InspectDetailsRecordRow(data) {
     tableHTML += "</tr>";
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        let userType = "";
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.upload_date}</td>`;
@@ -206,13 +207,16 @@ function InspectDetailsRecordRow(data) {
         tableHTML += `<td>${row.result}</td>`;
         userData.then(data => {
             console.log(data.userType);
-            if(data.userType == "user"){
-                tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
-            }
-            else{
-                tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
-            }
+            userType = data.userType;
+            console.log(data.userType === "user");
+            
         })
+        if(userType === "user"){
+            tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
+        }
+        else{
+            tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+        }
         tableHTML += "</tr>";
     }
 
