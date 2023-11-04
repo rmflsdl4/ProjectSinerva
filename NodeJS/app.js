@@ -383,9 +383,9 @@ app.post("/detailsRecord", async (req, res) => {
 
     console.log(date); // value 변수에 저장된 값 출력
 
-    const query = `select added, file_name, result
+    const query = `select upload_date, file_route, result
                     from image
-                    where added = ? and user_id = ?;`;
+                    where upload_date = ? and user_id = ?;`;
 
     const values = [date, req.session.userId];
 
