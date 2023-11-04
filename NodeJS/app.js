@@ -324,8 +324,6 @@ app.post("/buildingNameInput", async (req, res) => {
         const values = [buildingName, req.session.userId];
         await database.Query(query, values);
     }
-    
-    database.Query(query, values);
 
     console.log(buildingName);
     res.send();
