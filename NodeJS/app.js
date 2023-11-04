@@ -319,7 +319,6 @@ app.post("/buildingNameInput", async (req, res) => {
     const query = 'SELECT COUNT(*) as count FROM building WHERE address = ? AND user_id = ?';
     const values = [buildingName, req.session.userId];
     const result = await database.Query(query, values);
-    console.log("반환값: " + result[0].count);
     if(!result[0].count){
         const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
         const values = [buildingName, req.session.userId];
@@ -339,10 +338,10 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
         const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
         const building_values = [buildingName, req.session.userId];
         let building_num = await database.Query(building_query, building_values);
-        console.log("건물 번호: " + building_num);
+        console.log("건물 번호: " + building_num[0].id);
         const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
         let image = file.filename;
-        const img_values = [image, dataTime, building_num, req.session.userId];
+        const img_values = [image, dataTime, building_num[0].id, req.session.userId];
         database.Query(img_query, img_values);
         tf.Predict(folder + file.filename, file.filename);
     });
