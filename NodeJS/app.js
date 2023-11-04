@@ -254,9 +254,11 @@ app.post('/login-user', async (req, res) => {
     res.send({ userId, userType });
 })
 
-// 이미지 파일 폴더에 저장
+// **이미지 파일 폴더에 저장**
 const IMAGE_NUMBER_FILE = './image_number.txt';
 let dataTime;
+let folder;
+let buildingName;
 
 // 이미지 번호 파일에서 읽어오기
 try {
@@ -266,7 +268,6 @@ try {
     console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
 }
 
-let folder = '';
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const date = new Date();
@@ -275,8 +276,19 @@ const storage = multer.diskStorage({
         const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
+        const userId = req.session.userId;
         dataTime = `${year}${month}${day}${hour}${minute}`;
-        folder = `images/${year}${month}${day}${hour}${minute}/`;
+        folder = `images/${userId}/${buildingName}/${dataTime}/`;
+
+        // 해당 유저 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}`)) {
+            fs.mkdirSync(`images/${userId}`, { recursive: true });
+        }
+
+        // 해당 건물명 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}/${buildingName}`)) {
+            fs.mkdirSync(`images/${userId}/${buildingName}`, { recursive: true });
+        }
 
         // 해당 날짜 폴더가 없으면 생성
         if (!fs.existsSync(folder)) {
@@ -290,7 +302,7 @@ const storage = multer.diskStorage({
         // 이미지 번호 증가
         imageNumber++;
         console.log(file)
-        cb(null, imageNumber + path.extname(file.originalname))
+        cb(null, "img" + imageNumber + path.extname(file.originalname))
 
         // 이미지 번호 파일에 업데이트
         fs.writeFileSync(IMAGE_NUMBER_FILE, imageNumber.toString(), 'utf8');
@@ -300,6 +312,17 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage});
 
 app.use('/image', express.static('./images/'));
+
+app.post("/buildingNameInput", async (req, res) => {
+    buildingName = req.body.buildingName;
+
+    const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
+    const values = [buildingName, req.session.userId];
+    database.Query(query, values);
+
+    console.log(buildingName);
+    res.send();
+})
 
 app.post('/image-discrimination', upload.array('images'), (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
@@ -314,23 +337,21 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
     });
     res.send();
 });
-
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
-
     const query = `SELECT 
-                        added,
-                        count(*) as total,
-                        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
-                        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
-                    FROM image
-                    WHERE user_id = ?
-                    GROUP BY added`;
+        added,
+        count(*) as total,
+        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
+    FROM image
+    WHERE user_id = ?
+    GROUP BY added`;
 
     const values = [req.session.userId];
 
     const result = await database.Query(query, values);
-    
+
     console.log(result);
 
     res.send(result);
