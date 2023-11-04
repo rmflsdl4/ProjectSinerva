@@ -316,10 +316,11 @@ app.use('/image', express.static('./images/'));
 
 app.post("/buildingNameInput", async (req, res) => {
     buildingName = req.body.buildingName;
-    const query = 'SELECT COUNT(*) FROM building WHERE address = ? AND user_id = ?';
+    const query = 'SELECT COUNT(*) as count FROM building WHERE address = ? AND user_id = ?';
     const values = [buildingName, req.session.userId];
     const result = await database.Query(query, values);
-    if(!result[0]){
+    console.log("반환값: " + result[0].count);
+    if(!result[0].count){
         const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
         const values = [buildingName, req.session.userId];
         await database.Query(query, values);
