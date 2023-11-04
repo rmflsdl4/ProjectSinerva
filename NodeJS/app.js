@@ -358,7 +358,8 @@ app.post("/record", async (req, res) => {
         SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
     FROM image
     WHERE user_id = ?
-    GROUP BY upload_date`;
+    GROUP BY upload_date
+    ORDER BY upload_date DESC`;
 
     const values = [req.session.userId];
 
