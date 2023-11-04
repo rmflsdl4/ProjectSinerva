@@ -8,12 +8,15 @@ const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
 const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
+const MainSys = require('./JavaScript/MainSys.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+const changeUserInfo = require('./JavaScript/changeUserInfo.js');
 //관리자 기능
 const AdminSys = require('./JavaScript/AdminSys.js');
+
 
 // 데이터베이스 연결
 database.Connect();
@@ -395,8 +398,16 @@ app.post("/detailsRecord", async (req, res) => {
 
     res.send(result);
 });
+// 건물 테이블 select
+app.post("/buildingSearch", async (req, res) => {
+    const query = 'SELECT address FROM building WHERE user_id = ?';
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
 
-//전문가 회원가입 요청 수락
+    console.log(result);
+    res.send(result);
+})
+
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
     try {
@@ -408,10 +419,11 @@ app.post('/commitExpert', async (req, res) => {
     }
 });
 
+//유저 삭제
 app.post('/deleteUser', async (req, res) => {
-    const { id } = req.body;
+    const { id, userType } = req.body;
     try {
-        await AdminSys.deleteUser(id);
+        await AdminSys.deleteUser(id, userType);
         res.send();
     }
     catch(error){
@@ -419,6 +431,7 @@ app.post('/deleteUser', async (req, res) => {
     }
 });
 
+//전문가 요청 수정
 app.post('/unCommit', async (req, res) => {
     const { id } = req.body;
     try {
@@ -430,21 +443,22 @@ app.post('/unCommit', async (req, res) => {
     }
 });
 
+//정보수정 버튼을 누르면 실행
 app.post('/changeCommit', async (req, res) => {
-    const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
+    const { id, pw, nick_name, phone_num, email, address, introduction} = req.body;
     try{
         changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction);
-        
+    
         if (id !== req.session.userId) {
             delete req.session.userId;
             req.session.userId = id;
         }
 
-        res.send("<script>alert('회원가입이 완료되었습니다.'); location.href='Login.html';</script>");
+        res.send("<script>alert('정보수정이 완료되었습니다.'); location.href='changeUserInfo.html';</script>");
     }
     catch(error){
-        console.error('회원가입 오류:', error);
-        res.status(500).send("<script>alert('회원가입에 실패하였습니다.'); location.href='SignUp.html';</script>");
+        console.error(error);
+        res.status(500).send("<script>alert('잘못된 입력값이 있습니다.'); location.href='changeUserInfo.html';</script>");
     }
 })
 
@@ -452,6 +466,13 @@ app.post('/changeCommit', async (req, res) => {
 app.post('/loginUserInfo', async (req, res) => {
     const { id, userType } = req.body;
 	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})
+
+//전문가만 불러옴
+app.post('/getExpertInfo', async (req, res) => {
+	const data = await MainSys.expertInfo();
 	
     res.send(data);
 })

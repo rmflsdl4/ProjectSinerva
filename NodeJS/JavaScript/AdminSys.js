@@ -14,7 +14,7 @@ async function get_users() {
 }
 
 async function updateWaitOk(id) {
-	let query = `UPDATE user SET waitOk = 1 WHERE id = ?`;
+	let query = `UPDATE expert SET waitOk = 1 WHERE id = ?`;
 	let value = [id];
 	
 	let result = await database.Query(query, value);
@@ -31,13 +31,13 @@ async function deleteUser(id, userType) {
 	
 	if (userType === 'user') {
 		query = `DELETE FROM user WHERE id = ?`;
-		value = [id];
+	value = [id];
 	}
 	else {
 		query = `DELETE FROM expert WHERE id = ?`;
 		value = [id];
-	}
-
+}
+	
 	let result = await database.Query(query, value);
 	
 	if (result instanceof Error) {
@@ -47,7 +47,7 @@ async function deleteUser(id, userType) {
 }
 
 async function unCommit(id) {
-	let query = `UPDATE user SET waitOk = 0 WHERE id = ?`;
+	let query = `UPDATE expert SET waitOk = 0 WHERE id = ?`;
 	let value = [id];
 	
 	let result = await database.Query(query, value);

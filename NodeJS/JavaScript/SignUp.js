@@ -6,8 +6,8 @@ async function User_Insert(id, pw, nick_name, phone_num, email, address, userTyp
     let result;
 
     if (userType == 'user') {
-        query = `INSERT INTO user(id, password, nick_name, phone_num, email, admin_id) VALUES (?, ?, ?, ?, ?, 'admin')`;
-        values = [id, pw, nick_name, phone_num, email];
+        query = `INSERT INTO user(id, password, nick_name, phone_num, email, address, admin_id) VALUES (?, ?, ?, ?, ?, ?, 'admin')`;
+        values = [id, pw, nick_name, phone_num, email, address];
         
         result = await database.Query(query, values);
 
@@ -16,8 +16,8 @@ async function User_Insert(id, pw, nick_name, phone_num, email, address, userTyp
         }
     }
     else {
-        query = `INSERT INTO expert(id, password, name, phone_num, email, waitOk, admin_id) VALUES (?, ?, ?, ?, ?, 0, 'admin')`;
-        values = [id, pw, nick_name, phone_num, email];
+        query = `INSERT INTO expert(id, password, name, phone_num, email, waitOk, address, admin_id) VALUES (?, ?, ?, ?, ?, 0, ?, 'admin')`;
+        values = [id, pw, nick_name, phone_num, email, address];
 
         result = await database.Query(query, values);
 

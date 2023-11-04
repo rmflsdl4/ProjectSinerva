@@ -5,87 +5,53 @@
     <title>RecordList</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link rel="stylesheet" href="CSS/ImageUpload.css"/>
-
-    <style>
-        /* 모달 팝업 스타일 */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 700px;
-        position: relative;
-        text-align: center;
-    }
-
-    .close-modal-btn {
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: 10px;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    </style>
 </head>
 <body>
-    <div class="wrapper">
-        <header>파일 업로드</header>
-        <form action="#">
-            <input type="file" class="fileInput" accept="image/jpeg" hidden multiple/>
-            <i class="fas fa-cloud-upload-alt"></i>
-            <p>브라우저 파일 업로드</p>
-        </form>
-        <section class="selectArea">
-            <li class="row" style="display: none;"></li>
-        </section>
-        <section class="buildingInputArea">
-            <div class="buildingInput">
-                <input class="buildingWrite" type="text">
-                <button class="buildingSearch">검색</button>
-                <div class="error-message"></div> <!-- 에러 메시지를 보여줄 공간 -->
-            </div>     
-        </section>
-        <section class="testBtnArea">
-            <div class="testBtnBox">
-                <button class="checkBtn">검사</button>
-                <button class="resetBtn">파일 리셋</button>
-            </div>     
-        </section>
-    </div>
+    <center>
+        <div class="wrapper">
+            <header>파일 업로드</header>
+            <form action="#">
+                <input type="file" class="fileInput" accept="image/jpeg" hidden multiple/>
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>브라우저 파일 업로드</p>
+            </form>
+            <section class="selectArea">
+                <li class="row" style="display: none;"></li>
+            </section>
+            <section class="buildingInputArea">
+                <fieldset class="buildingInput">
+                    <legend>건물명 입력</legend>
+
+                    <div class="radio-wrapper">
+                        <div>
+                            <input type="radio" id="new-registration" name="registration" value="신규등록" checked />
+                            <label for="huey">신규등록</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="re-registration" name="registration" value="재등록"/>
+                            <label for="huey">재등록</label>
+                        </div>
+                    </div>
+                    <input class="buildingWrite" type="text">
+                    <div class="error-message"></div> <!-- 에러 메시지를 보여줄 공간 -->
+                </fieldset>     
+            </section>
+            <section class="testBtnArea">
+                <div class="testBtnBox">
+                    <button class="checkBtn">검사</button>
+                    <button class="resetBtn">파일 리셋</button>
+                </div>     
+            </section>
+        </div>
+    </center>
 
     <!-- 모달 팝업 컨테이너 -->
     <div class="modal">
         <div class="modal-content">
             <span class="close-modal-btn">&times;</span>
             <center>
-                <div id="commentList">
-                    <table id="commentListTable">
-                        <tr id="commentListHeader">
-                            <th width="15%">번호</th>
-                            <th width="30%">요청 날짜</th>
-                            <th width="40%">사진</th>
-                            <th width="15%">상태</th>
-                        </tr>
-                        <tr class="commentRequest">
-                            <td>1</th>
-                            <td>2023-10-21 오후 3시 31분</td>
-                            <td><img src="img.png" alt="사진 파일 없음"></td>
-                            <td><button>수락</button></td>
-                        </tr>
+                <div id="buildingList">
+                    <table id="buildingListTable">
                     </table>
                 </div>
             </center>
@@ -93,16 +59,5 @@
     </div>
 
     <script src="JavaScript/ImageUpload.js"></script>
-    <script>
-        // 모달 팝업 열기
-        document.querySelector('.buildingSearch').addEventListener('click', function () {
-            document.querySelector('.modal').style.display = 'block';
-        });
-
-        // 모달 팝업 닫기
-        document.querySelector('.close-modal-btn').addEventListener('click', function () {
-            document.querySelector('.modal').style.display = 'none';
-        });
-    </script>
 </body>
 </html>
