@@ -11,7 +11,9 @@ function menuBarInit() {
 
   getUserSession()
   .then(loginUser => {
+    showExpertList(loginUser.userType);
     console.log(loginUser);
+    
     if (!loginUser.userType) {
       menuBar.style.display = 'block';
 
@@ -41,10 +43,10 @@ function menuBarInit() {
       logOut.style.display = 'block';
       myPage.style.display = 'block';
 
-      for(i = 0; i < userMenu.length; i++){
+      for(let i = 0; i < userMenu.length; i++){
         userMenu[i].style.display = '';
       }
-      for(i = 0; i < expertMenu.length; i++){
+      for(let i = 0; i < expertMenu.length; i++){
         expertMenu[i].style.display = 'none';
       }
     } 
@@ -55,10 +57,10 @@ function menuBarInit() {
       logOut.style.display = 'block';
       myPage.style.display = 'block';
 
-      for(i = 0; i < userMenu.length; i++){
+      for(let i = 0; i < userMenu.length; i++){
         userMenu[i].style.display = 'none';
       }
-      for(i = 0; i < expertMenu.length; i++){
+      for(let i = 0; i < expertMenu.length; i++){
         expertMenu[i].style.display = '';
       }
       for(let i = 0; i < requestButton.length; i++) {
@@ -79,8 +81,6 @@ function menuBarInit() {
       console.log('nope');
     }
   });
-
-  showExpertList();
 }
 
 async function getUserSession() {
@@ -118,12 +118,7 @@ async function logOut() {
   });
 }
 
-async function showExpertList() {
-  const expertName = document.getElementById('expertName');
-  const expertAddress = document.getElementById('expertAddress');
-  const expertIntroduction = document.getElementById('expertIntroduction');
-  const expertLike = document.getElementById('expertLike');
-
+function showExpertList(userType) {
   getExpertInfo()
   .then(expertInfo => {
     const usersMenu = document.getElementById('expertTable');
@@ -160,11 +155,14 @@ async function showExpertList() {
       let buttonTd = document.createElement('td');
       buttonTd.className = 'expertTd';
 
-      let requestButton = document.createElement('button');
-      requestButton.className = 'requestButton';
-      requestButton.textContent = '요청';
+      if (userType === 'user') {
+        let requestButton = document.createElement('button');
+        requestButton.className = 'requestButton';
+        requestButton.textContent = '요청';
 
-      buttonTd.appendChild(requestButton);
+        buttonTd.appendChild(requestButton);
+      }
+      
       row.appendChild(buttonTd);
   
       usersMenu.appendChild(row);

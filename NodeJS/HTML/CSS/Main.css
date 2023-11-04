@@ -35,7 +35,7 @@
     background-color: lightgreen;
 }
 .userTd {
-text-align: center;
+    text-align: center;
 }
 #expertInfoList {
     background-color: orange;
@@ -45,7 +45,5 @@ text-align: center;
     width: 80%;
 }
 .expertTd {
-text-align: center;
-}
-.requestButton {
+    text-align: center;
 }
