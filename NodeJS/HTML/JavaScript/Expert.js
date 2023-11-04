@@ -207,17 +207,16 @@ function InspectDetailsRecordRow(data) {
             tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
             tableHTML += `<td>${row.result}</td>`;
             if(type.userType === "user"){
-                tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
+                tableHTML += `<td><button class='InspectBtn' onclick='reqComment(${i});'>요청</button></td>`;
             }
             else{
-                tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+                tableHTML += `<td><button class='InspectBtn' onclick='reqAccept(${i});'>수락</button></td>`;
             }
             tableHTML += "</tr>";
         }
 
         table.innerHTML = tableHTML;
     });
-    
     
     InitPage();
     PageLoad();
@@ -338,4 +337,12 @@ function DetailsRecordRow(data) {
     table.innerHTML = tableHTML;
     InitPage();
     PageLoad();
+}
+
+function reqComment(value) {
+    console.log(value + '요청 버튼이 클릭되었습니다.');
+}
+
+function reqAccept(value) {
+    console.log(value + '수락 버튼이 클릭되었습니다.');
 }
