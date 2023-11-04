@@ -1,3 +1,5 @@
+
+
 var currPageNum;
 var posts; 
 var prePage;
@@ -162,66 +164,61 @@ function InspectRecordRow(data) {
     InitPage();
     PageLoad();
 }
-// 검사 결과 상세 페이지 select 결과 출력
-function InspectDetailsRecordRow(data) {
-    // 유저 데이터 타입 가져옴
-    const userData = new Promise((resolve, reject) => {
+// 유저 타입 반환
+async function getUserSession() {
+    return await new Promise((resolve, reject) => {
         fetch('/login-user', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+  }
+
+// 검사 결과 상세 페이지 select 결과 출력
+function InspectDetailsRecordRow(data) {
+    getUserSession().then(type => {
+        console.log("유저타입: " + type.userType);
+
+        // 테이블 요소를 가져옴
+        const table = document.getElementById("commentListTable");
+        let tableHTML = "";
+
+        tableHTML += "<tr id='commentListHeader'>";
+        tableHTML += "<th width='10%'>번호</th>";
+        tableHTML += "<th width='30%'>요청 날짜</th>";
+        tableHTML += "<th width='20%'>사진</th>";
+        tableHTML += "<th width='10%'>상태</th>";
+        tableHTML += "<th width='30%'>코멘트</th>";
+        tableHTML += "</tr>";
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            tableHTML += "<tr class='commentRequest'>";
+            tableHTML += `<td>${i + 1}</td>`;
+            tableHTML += `<td>${row.upload_date}</td>`;
+            tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
+            tableHTML += `<td>${row.result}</td>`;
+            if(type.userType === "user"){
+                tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
             }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            else{
+                tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
             }
-            return response.json();
-        })
-        .then(data => {
-            resolve(data);
-        })
-        .catch(error => {
-            reject(error);
-        });
+            tableHTML += "</tr>";
+        }
+
+        table.innerHTML = tableHTML;
     });
     
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='20%'>사진</th>";
-    tableHTML += "<th width='10%'>상태</th>";
-    tableHTML += "<th width='30%'>코멘트</th>";
-    tableHTML += "</tr>";
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        let userType = "";
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td>${row.upload_date}</td>`;
-        tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
-        tableHTML += `<td>${row.result}</td>`;
-        userData.then(type => {
-            console.log(type.userType);
-            userType = type.userType;
-            console.log(type.userType === "user");
-            
-        });
-        console.log(userType);
-        if(userType === "user"){
-            tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
-        }
-        else{
-            tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
-        }
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
+    
     InitPage();
     PageLoad();
 }
