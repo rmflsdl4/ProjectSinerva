@@ -13,23 +13,93 @@ function userInfoInit(){
         let userInfo = getUserInfo(loginUser.userId, loginUser.userType);
         console.log(userInfo);
 
-        if (loginUser.userType === 'user') {
-        console.log('login: ' + loginUser.userId);
-        nick_name.placeholder;
-        phone_num.placeholder;
-        email.placeholder;
-        address.placeholder;
-        } 
-        else if (loginUser.userType === 'expert') {
-       
-        }
-        else if (loginUser.userType === 'admin') {
-        
-        }
-        else {
-        console.log('nope');
-        }
+        userInfo.then(data => {
+            console.log(data);
+            if (loginUser.userType === 'user') {
+                introduction.style.display = 'none';
+                id.value = data[0].id;
+                pw.value = data[0].password;
+                nick_name.value = data[0].nick_name;
+                if (!data[0].phone_num) {
+                    phone_num.placeholder = 'xxx-xxxx-xxxx';
+                }
+                else {
+                    phone_num.value = data[0].phone_num;
+                }
+                if (!data[0].email) {
+                    email.placeholder = '이메일';
+                }
+                else {
+                    email.value = data[0].email;
+                }
+                if (!data[0].address) {
+                    address.placeholder = '주소';
+                }
+                else {
+                    address.value = data[0].address;
+                }
+                
+                showPswButton.addEventListener('click', function() {
+                    if (pw.type === 'password') {
+                        pw.type = 'text';
+                        showPswButton.textContent = '비밀번호 숨기기';
+                    } else {
+                        pw.type = 'password';
+                        showPswButton.textContent = '비밀번호 보기';
+                    }
+                });
+            } 
+            else if (loginUser.userType === 'expert') {
+                id.value = data[0].id;
+                pw.value = data[0].password;
+                nick_name.value = data[0].name;
+                if (!data[0].phone_num) {
+                    phone_num.placeholder = 'xxx-xxxx-xxxx';
+                }
+                else {
+                    phone_num.value = data[0].phone_num;
+                }
+                if (!data[0].email) {
+                    email.placeholder = '이메일';
+                }
+                else {
+                    email.value = data[0].email;
+                }
+                if (!data[0].address) {
+                    address.placeholder = '주소';
+                }
+                else {
+                    address.value = data[0].address;
+                }
+                if (!data[0].introduction) {
+                    introduction.placeholder = '소개글';
+                }
+                else {
+                    introduction.value = data[0].introduction;
+                }
+                
+                showPswButton.addEventListener('click', function() {
+                    if (pw.type === 'password') {
+                        pw.type = 'text';
+                        showPswButton.textContent = '비밀번호 숨기기';
+                    } else {
+                        pw.type = 'password';
+                        showPswButton.textContent = '비밀번호 보기';
+                    }
+                });
+            }
+            else {
+                console.log('nope');
+            }
+        });
     });
+
+    let arr = document.getElementsByTagName("input");
+    
+    for(let i = 0; i < arr.length; i++){
+        arr[i].style.marginBottom = "10px";
+    }
+    Exit_Check();
 }
 
 async function getUserSession() {

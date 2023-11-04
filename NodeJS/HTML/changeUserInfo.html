@@ -2,7 +2,6 @@
     <head>
         <title>회원정보 수정</title>
         <link rel="stylesheet" href="CSS/All.css">
-        <script src="JavaScript/FormCheck.js"></script>
         <script src="JavaScript/userInfo.js"></script>
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
@@ -17,6 +16,7 @@
                 </div>
                 <div>
                     <input id="pw" type="password" name="pw" placeholder="비밀번호*" maxlength="49" oninput="Input_Check(this);">
+                    <div id="showPswButton">비밀번호 보기</div>
                 </div>
                 <div>
                     <input id="confirm_pw" type="password" name="confirm_pw" placeholder="비밀번호 확인*"  maxlength="49" oninput="Input_Check(this);">
@@ -32,6 +32,9 @@
                 </div>
                 <div>
                     <input id="address" type="text" name="address" placeholder="주소" maxlength="200" onkeyup="Input_Check(this);">
+                </div>
+                <div>
+                    <textarea id="introduction" type="text" name="introduction" placeholder="소개글" onkeyup="Input_Check(this);"></textarea>
                 </div>
                 <div id="MainMenuBox">
                     <button id="changeCommit" type="submit" disabled onclick="window.onbeforeunload = null;">정보 수정</button>

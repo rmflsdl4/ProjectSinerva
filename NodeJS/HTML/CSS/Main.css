@@ -34,8 +34,8 @@
 #userTable {
     background-color: lightgreen;
 }
-.userTr {
-
+.userTd {
+    text-align: center;
 }
 #expertInfoList {
     background-color: orange;
@@ -44,8 +44,8 @@
     background-color: lightcoral;
     width: 80%;
 }
-.experTr {
-
+.expertTd {
+    text-align: center;
 }
 .requestButton {
 }

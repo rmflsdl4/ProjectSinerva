@@ -270,4 +270,52 @@ function unCommit(id) {
         location.href = 'Admin.html';
         console.log(error);
     });
-} 
+}
+//유저 상세 정보 표시
+// function userInfo(user) {
+    
+// }
+
+// function userInfo(userId) {
+//     // 팝업 창 엘리먼트 생성
+//     const popup = document.createElement('div');
+//     popup.className = 'popup'; // 스타일링을 위한 클래스 지정
+
+//     // 팝업 내용 추가 (예: 사용자 ID)
+//     const popupContent = document.createElement('div');
+//     popupContent.textContent = '사용자 ID: ' + userId;
+
+//     // 팝업 닫기 버튼 추가
+//     const closeButton = document.createElement('button');
+//     closeButton.textContent = '닫기';
+
+//     // 팝업 외부 클릭 시 팝업 닫기
+//     popup.addEventListener('click', (event) => {
+//         if (event.target === popup) {
+//             closePopup();
+//         }
+//     });
+
+//     closeButton.addEventListener('click', () => {
+//         closePopup();
+//     });
+
+//     // 팝업에 내용과 닫기 버튼 추가
+//     popup.appendChild(popupContent);
+//     popup.appendChild(closeButton);
+
+//     // 팝업을 body에 추가하여 화면에 보이게 함
+//     document.body.appendChild(popup);
+
+//     // 팝업을 화면 중앙으로 정렬
+//     const popupRect = popup.getBoundingClientRect();
+//     const top = (window.innerHeight - popupRect.height) / 2;
+//     const left = (window.innerWidth - popupRect.width) / 2;
+//     popup.style.top = top + 'px';
+//     popup.style.left = left + 'px';
+
+//     // 팝업 닫는 함수
+//     function closePopup() {
+//         document.body.removeChild(popup);
+//     }
+// }

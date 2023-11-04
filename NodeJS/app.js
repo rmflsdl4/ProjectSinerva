@@ -396,6 +396,7 @@ app.post("/detailsRecord", async (req, res) => {
     res.send(result);
 });
 
+//전문가 회원가입 요청 수락
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
     try {
@@ -432,9 +433,12 @@ app.post('/unCommit', async (req, res) => {
 app.post('/changeCommit', async (req, res) => {
     const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
     try{
-        changeUserInfo.updateUserInfo(id, pw, nick_name, phone_num, email, address, userType);
-    
-        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} / userType - ${userType} ]`);
+        changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction);
+        
+        if (id !== req.session.userId) {
+            delete req.session.userId;
+            req.session.userId = id;
+        }
 
         res.send("<script>alert('회원가입이 완료되었습니다.'); location.href='Login.html';</script>");
     }

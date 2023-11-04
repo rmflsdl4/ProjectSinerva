@@ -25,10 +25,19 @@ async function updateWaitOk(id) {
 	return;
 }
 
-async function deleteUser(id) {
-	let query = `DELETE FROM user WHERE id = ?`;
-	let value = [id];
+async function deleteUser(id, userType) {
+	let query;
+	let value;
 	
+	if (userType === 'user') {
+		query = `DELETE FROM user WHERE id = ?`;
+		value = [id];
+	}
+	else {
+		query = `DELETE FROM expert WHERE id = ?`;
+		value = [id];
+	}
+
 	let result = await database.Query(query, value);
 	
 	if (result instanceof Error) {

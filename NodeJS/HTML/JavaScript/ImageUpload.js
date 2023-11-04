@@ -110,6 +110,7 @@ function buildingNamePost(buildingName) {
             .then(data => {
                 
                 resolve(data);
+console.log(data);
             })
             .catch(error => {
                 reject(error);
@@ -121,9 +122,11 @@ function buildingNamePost(buildingName) {
 document.querySelector('.resetBtn').addEventListener('click', function () {
     // 파일 입력 필드 초기화
     const fileInput = document.querySelector('.fileInput');
+const buildingInput = document.querySelector('.buildingWrite');
 
     // 파일 입력 필드에서 선택한 파일 목록을 초기화
     fileInput.value = '';
+buildingInput.value = '';
 
     // 선택한 파일들을 초기화한 후, 파일 목록을 확인하여 모든 파일을 제거
     const selectedFiles = fileInput.files;
@@ -142,3 +145,77 @@ document.querySelector('.resetBtn').addEventListener('click', function () {
     // 이미지 파일을 모두 삭제
     formData.delete('images');
 });
+
+// 모달 팝업 열기
+document.querySelector('#re-registration').addEventListener('click', function () {
+    document.querySelector('.modal').style.display = 'block';
+
+    return new  Promise((resolve, reject) => {
+        fetch('/buildingSearch', {
+            method: 'POST',
+            headers: {
+                
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // JSON 데이터로 응답을 파싱
+            })
+            .then(data => {
+                resolve(data);
+                console.log(data);
+                buildingList(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+});
+
+// 모달 팝업 닫기
+document.querySelector('.close-modal-btn').addEventListener('click', function () {
+    document.querySelector('.modal').style.display = 'none';
+});
+
+// 신규 등록 radio 버튼 이벤트 동작
+document.querySelector('#new-registration').addEventListener('click', function () {
+    const buildingInput = document.querySelector('.buildingWrite');
+    buildingInput.style.display = 'block';
+    buildingInput.value = '';
+})
+
+// 건물 테이블 정보 select
+function buildingList(data) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("buildingListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='buildingListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='30%'>건물명</th>";
+    tableHTML += "<th width='15%'>선택</th>";
+    tableHTML += "</tr>";
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        tableHTML += "<tr class='buildingRequest'>";
+        tableHTML += `<td>${i + 1}</td>`;
+        tableHTML += `<td>${row.address}</td>`;
+        tableHTML += `<td><button class="selectBuilding" onclick="selectBuildingBtn(this)">선택</button></td>`;
+        tableHTML += "</tr>";
+    }
+
+    table.innerHTML = tableHTML;
+}
+
+// 선택 버튼 누를 시 
+function selectBuildingBtn(button) {
+    // 'this'는 현재 클릭한 버튼 요소를 나타냅니다.
+    const tr = button.closest('tr'); // 현재 버튼이 속한 tr 요소를 찾음
+    const address = tr.querySelector('td:nth-child(2)').textContent; // 두 번째 td 요소의 텍스트 내용을 가져옴
+    document.querySelector('.buildingWrite').value = address; // input에 주소 표시
+    document.querySelector('.modal').style.display = 'none';
+    document.querySelector('.buildingWrite').style.display = 'block';
+}
