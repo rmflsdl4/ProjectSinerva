@@ -75,24 +75,24 @@ checkBtn.addEventListener("click", () =>{
     // 변수에 저장된 값을 출력합니다.
     console.log("SetImage 함수 실행");
     console.log(buildingName);
-    // buildingNamePost(buildingName);
+    buildingNamePost(buildingName);
 
-    // return new  Promise((resolve, reject) => {
-    //     fetch('/image-discrimination', {
-    //         method: 'POST',
-    //         headers: {
+    return new  Promise((resolve, reject) => {
+        fetch('/image-discrimination', {
+            method: 'POST',
+            headers: {
                 
-    //         },
-	// 		body: formData
-    //     })
-    //         .then(data => {
-    //             resolve(data);
-    //             console.log(data);
-    //         })
-    //         .catch(error => {
-    //             reject(error);
-    //         });
-    // });
+            },
+			body: formData
+        })
+            .then(data => {
+                resolve(data);
+                console.log(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
 })
 
 function buildingNamePost(buildingName) {
