@@ -312,7 +312,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-app.use('/image', express.static('./images/'));
+app.use('/image', express.static('./'));
 
 app.post("/buildingNameInput", async (req, res) => {
     buildingName = req.body.buildingName;
