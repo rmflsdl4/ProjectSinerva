@@ -107,8 +107,9 @@ function buildingNamePost(buildingName) {
 			body: JSON.stringify(data) // 객체를 JSON 문자열로 변환하여 전송
         })
             .then(data => {
+                console.log(data.message);
+                location.href = 'InspectResult.html';
                 resolve(data);
-                console.log(data);
             })
             .catch(error => {
                 reject(error);
