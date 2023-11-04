@@ -6,6 +6,10 @@
 >public IPv4 DNS : ec2-54-180-131-244.ap-northeast-2.compute.amazonaws.com
 
 
+## MySQL
+>end-point : sinervadb.caujbsdernjk.ap-northeast-2.rds.amazonaws.com
+
+
 ## PPK
 [PPK Download](https://github.com/rmflsdl4/ProjectSinerva/releases/download/ppk/sinervaPPK.ppk)
 
