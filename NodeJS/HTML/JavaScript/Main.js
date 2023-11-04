@@ -11,9 +11,24 @@ function menuBarInit() {
   getUserSession()
   .then(loginUser => {
     console.log(loginUser);
-
-    if (loginUser.userType === 'user') {
-      
+    if (!loginUser.userType) {
+      menuBar.style.display = 'block';
+      for(let i = 0; i < userMenu.length; i++){
+        userMenu[i].style.display = '';
+        userMenu[i].addEventListener('click', function() {
+          event.preventDefault();
+          alert('로그인해야 사용가능합니다.');
+        });
+      }
+      for(let i = 0; i < expertMenu.length; i++){
+        expertMenu[i].style.display = 'none';
+        expertMenu[i].addEventListener('click', function() {
+          event.preventDefault();
+          alert('로그인해야 사용가능합니다.');
+        });
+      }
+    }
+    else if (loginUser.userType === 'user') {
       console.log('login: ' + loginUser.userId);
       menuBar.style.display = 'block';
       logIn.style.display = 'none';
