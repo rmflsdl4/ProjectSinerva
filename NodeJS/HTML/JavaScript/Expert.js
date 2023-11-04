@@ -206,7 +206,7 @@ function InspectDetailsRecordRow(data) {
         tableHTML += `<td>${row.result}</td>`;
         userData.then(data => {
             console.log(data.userType);
-            if(data.userType === "user"){
+            if(data.userType == "user"){
                 tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
             }
             else{
