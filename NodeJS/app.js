@@ -347,7 +347,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
     try {
         await Promise.all(uploadTasks);
         console.log(req.session.userId + " 사용자 검사 완료!!");
-        res.write("<script>location.href='InspectResult.html';</script>"); // 응답을 보냅니다.
+        res.write("<script>alert('검사가 완료되었습니다.'); location.href='InspectResult.html';</script>"); // 응답을 보냅니다.
         res.end();
     } catch (error) {
         console.error(error);
