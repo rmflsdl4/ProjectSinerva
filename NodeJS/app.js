@@ -277,6 +277,7 @@ const storage = multer.diskStorage({
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
         const userId = req.session.userId;
+
         dataTime = `${year}${month}${day}${hour}${minute}`;
         folder = `images/${userId}/${buildingName}/${dataTime}/`;
 
@@ -326,13 +327,17 @@ app.post("/buildingNameInput", async (req, res) => {
 
 app.post('/image-discrimination', upload.array('images'), (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
-    req.files.forEach((file) => {
+    req.files.forEach(async (file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
-        const query = 'INSERT IGNORE INTO image(file_name, added, user_id) VALUES (?, ?, ?)';
+        
+        const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
+        const building_values = [buildingName, req.session.userId];
+        let building_num = await database.Query(building_query, building_values);
+        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id) VALUES (?, ?, ?)';
         let image = file.filename;
-        const values = [image, dataTime, req.session.userId];
-        database.Query(query, values);
+        const img_values = [image, dataTime, building_num];
+        database.Query(img_query, img_values);
         tf.Predict(folder + file.filename, file.filename);
     });
     res.send();

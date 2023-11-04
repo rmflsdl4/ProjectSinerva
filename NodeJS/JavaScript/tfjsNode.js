@@ -56,23 +56,23 @@ async function PredictWithImage(imagePath) {
 
 // 이미지 파일 경로
 const resultArr = ['정상', '균열', '철근노출', '백태누수'];
-async function ProcessImageAndPredict(filePath, fileName) {
+async function ProcessImageAndPredict(filePath) {
     try {
         const predictions = await PredictWithImage(filePath);
         const MaxValue = Math.max(...predictions);
         const index = predictions.indexOf(MaxValue);
         console.log('모델 예측 결과:', resultArr[index]);
-        ResultUpdate(fileName, resultArr[index]);
+        ResultUpdate(filePath, resultArr[index]);
 
         
     } catch (error) {
         console.error('예측 중 오류 발생:', error);
     }
 }
-async function ResultUpdate(fileName, state){
+async function ResultUpdate(filePath, state){
     try{
-        query = 'UPDATE image SET result = ? WHERE file_name = ?';
-        values = [state, fileName];
+        query = 'UPDATE image SET result = ? WHERE file_route = ?';
+        values = [state, filePath];
         
         await database.Query(query, values);
     }
