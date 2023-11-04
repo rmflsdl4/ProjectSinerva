@@ -164,6 +164,27 @@ function InspectRecordRow(data) {
 }
 // 검사 결과 상세 페이지 select 결과 출력
 function InspectDetailsRecordRow(data) {
+    // 유저 데이터 타입 가져옴
+    const userData = new Promise((resolve, reject) => {
+        fetch('/login-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+        })
+        .then(data => {
+            resolve(data);
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+    
     // 테이블 요소를 가져옴
     const table = document.getElementById("commentListTable");
     let tableHTML = "";
@@ -183,7 +204,13 @@ function InspectDetailsRecordRow(data) {
         tableHTML += `<td>${row.upload_date}</td>`;
         tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
         tableHTML += `<td>${row.result}</td>`;
-        tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+        if(userData.userType === "user"){
+            tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
+        }
+        else{
+            tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+        }
+        
         tableHTML += "</tr>";
     }
 
