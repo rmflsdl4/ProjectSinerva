@@ -86,6 +86,7 @@ checkBtn.addEventListener("click", () =>{
 			body: formData
         })
             .then(data => {
+                location.href = 'InspectResult.html';
                 resolve(data);
             })
             .catch(error => {
@@ -106,14 +107,7 @@ function buildingNamePost(buildingName) {
             },
 			body: JSON.stringify(data) // 객체를 JSON 문자열로 변환하여 전송
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return location.href = 'InspectResult.html';
-        })
             .then(data => {
-                console.log(data.message);
                 
                 resolve(data);
             })
