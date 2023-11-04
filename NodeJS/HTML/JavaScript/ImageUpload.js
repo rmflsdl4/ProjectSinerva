@@ -86,7 +86,6 @@ checkBtn.addEventListener("click", () =>{
 			body: formData
         })
             .then(data => {
-                location.reload();
                 resolve(data);
             })
             .catch(error => {
