@@ -181,7 +181,7 @@ function InspectDetailsRecordRow(data) {
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.upload_date}</td>`;
-        tableHTML += `<td><img src="./${row.file_route}" style="width: 50px;"></td>`;
+        tableHTML += `<td><img src="../${row.file_route}" style="width: 50px;"></td>`;
         tableHTML += `<td>${row.result}</td>`;
         tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
         tableHTML += "</tr>";
