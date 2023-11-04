@@ -210,7 +210,8 @@ function InspectDetailsRecordRow(data) {
             userType = data.userType;
             console.log(data.userType === "user");
             
-        })
+        });
+        console.log(userType);
         if(userType === "user"){
             tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
         }
