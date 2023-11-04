@@ -370,8 +370,6 @@ app.post("/record", async (req, res) => {
 
     const result = await database.Query(query, values);
 
-    console.log(result);
-
     res.send(result);
 });
 // 과거 검사한 기록 상세보기
