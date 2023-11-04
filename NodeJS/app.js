@@ -318,7 +318,8 @@ app.post("/buildingNameInput", async (req, res) => {
     buildingName = req.body.buildingName;
     const query = 'SELECT COUNT(*) FROM building WHERE address = ? AND user_id = ?';
     const values = [buildingName, req.session.userId];
-    if(!await database.Query(query, values)){
+    const result = await database.Query(query, values);
+    if(!result[0]){
         const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
         const values = [buildingName, req.session.userId];
         await database.Query(query, values);
