@@ -62,7 +62,7 @@ async function ProcessImageAndPredict(filePath) {
         const MaxValue = Math.max(...predictions);
         const index = predictions.indexOf(MaxValue);
         console.log('모델 예측 결과:', resultArr[index]);
-        ResultUpdate(filePath, resultArr[index]);
+        await ResultUpdate(filePath, resultArr[index]);
 
         
     } catch (error) {
