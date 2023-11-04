@@ -153,8 +153,8 @@ function InspectRecordRow(data) {
         for (const key in row) {
             tableHTML += `<td>${row[key]}</td>`;
         }
-        console.log(row.added);
-        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.added}">상세보기</a></td>`;
+        console.log(row.upload_date);
+        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
         tableHTML += "</tr>";
     }
 
