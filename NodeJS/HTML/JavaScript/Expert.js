@@ -164,7 +164,6 @@ function InspectRecordRow(data) {
 }
 // 검사 결과 상세 페이지 select 결과 출력
 function InspectDetailsRecordRow(data) {
-    var userType = "";
     // 유저 데이터 타입 가져옴
     const userData = new Promise((resolve, reject) => {
         fetch('/login-user', {
@@ -180,7 +179,6 @@ function InspectDetailsRecordRow(data) {
             return response.json();
         })
         .then(data => {
-            userType = data.userType;
             resolve(data);
         })
         .catch(error => {
@@ -201,15 +199,16 @@ function InspectDetailsRecordRow(data) {
     tableHTML += "</tr>";
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
-        
+        let userType = "";
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.upload_date}</td>`;
         tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
         tableHTML += `<td>${row.result}</td>`;
-        userData.then(data => {
-            console.log(data.userType);
-            console.log(data.userType === "user");
+        userData.then(type => {
+            console.log(type.userType);
+            userType = type.userType;
+            console.log(type.userType === "user");
             
         });
         console.log(userType);
