@@ -334,10 +334,10 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
         const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
         const building_values = [buildingName, req.session.userId];
         let building_num = await database.Query(building_query, building_values);
-        console.log(building_num);
-        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id) VALUES (?, ?, ?)';
+        console.log("건물 번호: " + building_num);
+        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
         let image = file.filename;
-        const img_values = [image, dataTime, building_num];
+        const img_values = [image, dataTime, building_num, req.session.userId];
         database.Query(img_query, img_values);
         tf.Predict(folder + file.filename, file.filename);
     });
@@ -346,13 +346,13 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-        added,
+        upload_date,
         count(*) as total,
         SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
         SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
     FROM image
     WHERE user_id = ?
-    GROUP BY added`;
+    GROUP BY upload_date`;
 
     const values = [req.session.userId];
 
