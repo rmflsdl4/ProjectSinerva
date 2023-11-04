@@ -181,7 +181,7 @@ function InspectDetailsRecordRow(data) {
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.added}</td>`;
-        tableHTML += `<td><img src="./images/${row.added}/${row.file_name}" style="width: 100%;"></td>`;
+        tableHTML += `<td><img src="./${row.added}/${row.file_name}" style="width: 100%;"></td>`;
         tableHTML += `<td>${row.result}</td>`;
         tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
         tableHTML += "</tr>";
@@ -210,6 +210,7 @@ function RecordInitPage(){
             return response.json(); // JSON 데이터로 응답을 파싱
         })
         .then(data => {
+
             resolve(data);
             console.log(data); // 파싱된 JSON 데이터 출력
             recordRow(data)
