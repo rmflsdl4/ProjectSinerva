@@ -87,7 +87,7 @@ checkBtn.addEventListener("click", () =>{
         })
             .then(data => {
                 location.reload();
-                resolve();
+                resolve(data);
             })
             .catch(error => {
                 reject(error);
