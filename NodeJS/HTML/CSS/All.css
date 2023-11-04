@@ -59,7 +59,7 @@ a:hover{
 }
 
 /* Login */
-#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address{
+#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address, #introduction {
     width: 500px;
     height: 70px;
     border: 2px solid gray;
@@ -67,6 +67,11 @@ a:hover{
     font-size: 20px;
     padding: 30px;
     outline: none;
+}
+#introduction {
+    height: 90px;
+    resize: none;
+    overflow: auto;
 }
 #login{
     font-size: 17px;

@@ -122,6 +122,14 @@ async function Posts_Output(board_type){
                 waitOk.className = 'add_td_Tag';
                 waitOk.textContent = row['waitOk'];
 
+                const deleteUserButton = document.createElement('button');
+                deleteUserButton.className = 'add_td_Tag';
+                deleteUserButton.textContent = '거절';
+
+                deleteUserButton.addEventListener('click', () => {
+                    deleteUser(row['id'], row['userType']);
+                });
+
                 const commit = document.createElement('button');
                 commit.className = 'add_td_Tag';
                 commit.textContent = '승인';
@@ -133,6 +141,7 @@ async function Posts_Output(board_type){
                 tr.appendChild(id);
                 tr.appendChild(nickName);
                 tr.appendChild(waitOk);
+                tr.appendChild(deleteUserButton);
                 tr.appendChild(commit);
 
                 board.appendChild(tr);
@@ -151,7 +160,7 @@ async function Posts_Output(board_type){
             deleteUserButton.textContent = '삭제';
 
             deleteUserButton.addEventListener('click', () => {
-                deleteUser(row['id']);
+                deleteUser(row['id'], row['userType']);
             });
 
             tr.appendChild(id);
@@ -239,13 +248,13 @@ function commitExpert(id) {
     });
 }
 //삭제 버튼 누르면 실행
-function deleteUser(id) {
+function deleteUser(id, userType) {
     fetch('/deleteUser', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ id, userType })
     })
     .then(res => {
         alert(id + ' 님을 삭제 하였습니다.');
