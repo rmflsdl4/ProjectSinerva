@@ -329,9 +329,9 @@ app.post("/buildingNameInput", async (req, res) => {
     res.send();
 })
 
-app.post('/image-discrimination', upload.array('images'), (req, res) => {
+app.post('/image-discrimination', upload.array('images'), async (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
-    req.files.forEach(async (file) => {
+    await req.files.forEach(async (file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
         
