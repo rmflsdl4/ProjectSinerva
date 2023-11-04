@@ -329,21 +329,20 @@ app.post("/buildingNameInput", async (req, res) => {
     res.send();
 })
 
-app.post('/image-discrimination', upload.array('images'), async (req, res) => {
+app.post('/image-discrimination', upload.array('images'), (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
-    await req.files.forEach(async (file) => {
+    req.files.forEach(async (file) => {
         console.log('업로드한 파일 이름:', file.originalname);
         console.log('서버에 저장된 파일 이름:', file.filename);
         
         const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
         const building_values = [buildingName, req.session.userId];
         let building_num = await database.Query(building_query, building_values);
-        console.log("건물 번호: " + building_num[0].id);
         const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         database.Query(img_query, img_values);
-        tf.Predict(image_route, file.filename);
+        await tf.Predict(image_route, file.filename);
     });
     console.log(req.session.userId + " 사용자 검사 완료!!");
 
