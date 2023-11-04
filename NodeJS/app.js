@@ -347,7 +347,7 @@ app.post('/image-discrimination', upload.array('images'), (req, res) => {
     });
     console.log(req.session.userId + " 사용자 검사 완료!!");
 
-    res.send(window.location.href = "InspectResult.html");
+    res.send("<script>location.href='InspectResult.html';</script>");
 });
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
