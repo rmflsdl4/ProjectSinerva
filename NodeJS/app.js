@@ -316,9 +316,14 @@ app.use('/image', express.static('./images/'));
 
 app.post("/buildingNameInput", async (req, res) => {
     buildingName = req.body.buildingName;
-
-    const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
+    const query = 'SELECT COUNT(*) FROM building WHERE address = ? AND user_id = ?';
     const values = [buildingName, req.session.userId];
+    if(!await database.Query(query, values)){
+        const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
+        const values = [buildingName, req.session.userId];
+        await database.Query(query, values);
+    }
+    
     database.Query(query, values);
 
     console.log(buildingName);
