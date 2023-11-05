@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Flier</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <script src="JavaScript/FindAccount.js"></script>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body id="Main_BackGround" onload="InitForm(); Find_Select('id');">
+        <div>
+            <form action="/findAccount" method="POST" onsubmit="return All_Values_Check() && ShowAccountInfo();">
+                <div>
+                    <div class="findAc" onclick="Find_Select('id')">아이디 찾기</div>
+                    <div class="findAc" onclick="Find_Select('ps')">비밀번호 찾기</div>
+                </div>
+                <span>* 는 필수 입력사항 입니다.</span>
+                <div>
+                    <input type="radio" id="nomalUser" name="userType" value="user" onclick="Input_Check(this)" checked><label for="nomal">일반 사용자</label>
+                    <input type="radio" id="expertComment" name="userType" value="expert" onclick="Input_Check(this)"><label for="expert">안전 전문가</label>
+                </div>
+                <div>
+                    <input id="id" type="text" name="findId" placeholder="아이디*" maxlength="29" oninput="Input_Check(this);">
+                </div>
+                <div>
+                    <input id="nick_name" type="text" name="findNickName" placeholder="이름*" maxlength="30" onkeyup="Input_Check(this);">
+                </div>
+                <div>
+                    <input id="phone_num" type="text" name="findPhone_num" placeholder="xxx-xxxx-xxxx" maxlength="13" oninput="Input_Check(this);">
+                </div>
+                <div>
+                    <input id="email" type="text" name="findEmail" placeholder="이메일" maxlength="50" onkeyup="Input_Check(this);">
+                </div>
+                <div id="MainMenuBox">
+                    <a href="Main.html">메인으로</a>
+                    <a href="Login.html">로그인 페이지로 이동</a>
+                    <a href="SignUp.html">회원가입 페이지로 이동</a>
+                    <button id="find" type="submit" disabled onclick="window.onbeforeunload = null;">찾기</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

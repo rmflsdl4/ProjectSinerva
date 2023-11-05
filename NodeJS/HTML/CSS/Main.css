@@ -22,7 +22,7 @@
     background-color: gray;
     margin-bottom: 30px;
     height: 80px;
-    display: block;
+    display: none;
 }
 #menuTable {
     background-color: lightgray;
@@ -34,8 +34,8 @@
 #userTable {
     background-color: lightgreen;
 }
-.userTr {
-
+.userTd {
+text-align: center;
 }
 #expertInfoList {
     background-color: orange;
@@ -44,8 +44,8 @@
     background-color: lightcoral;
     width: 80%;
 }
-.experTr {
-
+.expertTd {
+text-align: center;
 }
 .requestButton {
 }

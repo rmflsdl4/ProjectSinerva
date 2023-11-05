@@ -1,16 +1,22 @@
 // 사용 모듈 로드
 const express = require('express');
+const session = require('express-session');
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
-//const posts = require('./JavaScript/Post.js');
 const database = require('./database.js');
+const tf = require('./JavaScript/tfjsNode.js');
+const MemoryStore = require('memorystore')(session);
+const MainSys = require('./JavaScript/MainSys.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
-const tfjs = require('./JavaScript/tfjsNode.js');
+const changeUserInfo = require('./JavaScript/changeUserInfo.js');
+//관리자 기능
+const AdminSys = require('./JavaScript/AdminSys.js');
+
 
 // 데이터베이스 연결
 database.Connect();
@@ -21,6 +27,17 @@ var fs = require('fs');
 app.use(express.static('HTML'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+    },
+    store: new MemoryStore({
+        checkPeriod: 86400000,
+    }),
+}));
 
 // 서버 구동
 app.listen(3000, function(){
@@ -40,7 +57,7 @@ process.on('uncaughtException', (err) => {
 // 라우팅 설정
 
 app.get('/', function(req, res){
-    fs.readFile('HTML/Login.html', function(error, data){
+    fs.readFile('HTML/Main.html', function(error, data){
         if(error){
             console.log(error);
         }
@@ -153,25 +170,34 @@ app.post('/login', (req, res) => {
     login.Login(id, pw)
         .then((arr) => {
             const state = arr[0];
-            const user_type = arr[1];
+            const userType = arr[1];
             const waitOk = arr[2];
             if(state === 1 && waitOk === 1){
-                req.session.session_id = id;
-                req.session.user_type = user_type;
-                console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
-                console.log(`세션에 ID 저장: ${req.session.session_id}`);
-                console.log(`유저 타입: ${user_type}`);
+                req.session.userId = id;
+                req.session.userType = userType;
+                console.log(`세션 유저 저장 값: ${req.session.userId}`);
+                console.log(`세션 타입 저장 값: ${req.session.userType}`);
                 res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else{
                 if (waitOk === 0) {
-                    res.send("<script>alert('승인 대기중입니다.'); location.href='Login.html';</script>");
+                    res.send("<script>alert('승인 대기중입니다.'); location.href='Main.html';</script>");
                 }
                 else {
                     res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
                 }
             }
         })
+        .catch(error => {
+            res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+        });
+})
+//로그아웃
+app.post('/logout', (req, res) => {
+    delete req.session.userId;
+    delete req.session.userType;
+
+    res.send("<script>alert('로그아웃 되었습니다.'); location.href='Main.html';</script>");
 })
 //계정찾기
 app.post('/findAccount', (req,res) => {
@@ -216,68 +242,237 @@ PW: ${userPw}입니다.`;
         })
     }
 })
-
-
 //모든 유저 가져옴
 app.post('/users-import', async (req, res) => {
-	const data = await posts.get_users();
+	const data = await AdminSys.get_users();
 	
     res.send(data);
-})
-//유저삭제
-app.post('/delete-users', async (req, res) => {
-	const { id, nick_name } = req.body;
-	console.log(id, nick_name);
-	try {
-		await posts.delete_users(id, nick_name);
-		res.send("<script>alert(id + ' 가 삭제되었습니다.'); window.location.href = '/';</script>");
-	}
-	catch(error){
-        console.log(error);
-		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-    }
 })
 
 //로그인한 유저 반환
 app.post('/login-user', async (req, res) => {
-    const session_id = req.session.session_id;
+    const userId = req.session.userId;
+    const userType = req.session.userType;
 	
-    res.send({ session_id });
+    res.send({ userId, userType });
 })
 
-// 이미지 파일 폴더에 저장
+// **이미지 파일 폴더에 저장**
+const IMAGE_NUMBER_FILE = './image_number.txt';
+let dataTime;
+let folder;
+let buildingName;
+
+// 이미지 번호 파일에서 읽어오기
+try {
+    const data = fs.readFileSync(IMAGE_NUMBER_FILE, 'utf8');
+    imageNumber = parseInt(data);
+} catch (err) {
+    console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'upload/')
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+        const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        const userId = req.session.userId;
+
+        dataTime = `${year}${month}${day}${hour}${minute}`;
+        folder = `images/${userId}/${buildingName}/${dataTime}/`;
+
+        // 해당 유저 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}`)) {
+            fs.mkdirSync(`images/${userId}`, { recursive: true });
+        }
+
+        // 해당 건물명 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}/${buildingName}`)) {
+            fs.mkdirSync(`images/${userId}/${buildingName}`, { recursive: true });
+        }
+
+        // 해당 날짜 폴더가 없으면 생성
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true });
+        }
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, folder);
     }, 
     filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        imageNumber++;
         console.log(file)
-        cb(null, file.originalname.split('.', 1) + path.extname(file.originalname))
+        cb(null, "img" + imageNumber + path.extname(file.originalname))
+
+        // 이미지 번호 파일에 업데이트
+        fs.writeFileSync(IMAGE_NUMBER_FILE, imageNumber.toString(), 'utf8');
     }
 });
 
 const upload = multer({storage: storage});
 
-app.post('/checkImg', upload.array('images'), (req, res) => {
-    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
-    req.files.forEach((file) => {
-        console.log('업로드한 파일 이름:', file.originalname);
-        console.log('서버에 저장된 파일 이름:', file.filename);
-        const query = 'INSERT INTO testImg(fileName, userId) VALUES (?, \'test\')';
-        let image = '/image/' + file.filename;
-        const values = [image];
+app.use('/images', express.static('./images/'));
 
-        database.Query(query, values);
+app.post("/buildingNameInput", async (req, res) => {
+    buildingName = req.body.buildingName;
+    const query = 'SELECT COUNT(*) as count FROM building WHERE address = ? AND user_id = ?';
+    const values = [buildingName, req.session.userId];
+    const result = await database.Query(query, values);
+    if(!result[0].count){
+        const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
+        const values = [buildingName, req.session.userId];
+        await database.Query(query, values);
+    }
+
+    console.log(buildingName);
+    res.send();
+})
+
+app.post('/image-discrimination', upload.array('images'), async (req, res) => {
+    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
+    const uploadTasks = req.files.map(async (file) => {
+        // console.log('업로드한 파일 이름:', file.originalname);
+        // console.log('서버에 저장된 파일 이름:', file.filename);
+        
+        const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
+        const building_values = [buildingName, req.session.userId];
+        let building_num = await database.Query(building_query, building_values);
+        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
+        let image_route = folder + file.filename;
+        const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
+        await database.Query(img_query, img_values);
+        await tf.Predict(image_route, file.filename);
+
+        return Promise.resolve(); 
     });
-    Connection.query(sql, values,
-        (err, rows, fields) => {
-            res.send(rows);
-        }
-    );
+    try {
+        await Promise.all(uploadTasks);
+        console.log(req.session.userId + " 사용자 검사 완료!!");
+        
+        res.send(); // 응답을 보냅니다.
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send("서버 오류 발생");
+    }
+});
+// 과거 검사한 기록 select
+app.post("/record", async (req, res) => {
+    const query = `SELECT 
+        upload_date,
+        count(*) as total,
+        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
+    FROM image
+    WHERE user_id = ?
+    GROUP BY upload_date
+    ORDER BY upload_date DESC`;
+
+    const values = [req.session.userId];
+
+    const result = await database.Query(query, values);
+
+    console.log(result);
+
+    res.send(result);
+});
+// 과거 검사한 기록 상세보기
+app.post("/detailsRecord", async (req, res) => {
+    const { date } = req.body;
+
+    console.log(date); // value 변수에 저장된 값 출력
+
+    const query = `select upload_date, file_route, result
+                    from image
+                    where upload_date = ? and user_id = ?;`;
+
+    const values = [date, req.session.userId];
+
+    const result = await database.Query(query, values);
+    
+    console.log(result);
+
+    res.send(result);
+});
+// 건물 테이블 select
+app.post("/buildingSearch", async (req, res) => {
+    const query = 'SELECT address FROM building WHERE user_id = ?';
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
+
+    console.log(result);
+    res.send(result);
+})
+
+app.post('/commitExpert', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.updateWaitOk(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
 });
 
-app.post('/image-discrimination', async (req, res) => {
+//유저 삭제
+app.post('/deleteUser', async (req, res) => {
+    const { id, userType } = req.body;
+    try {
+        await AdminSys.deleteUser(id, userType);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+//전문가 요청 수정
+app.post('/unCommit', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.unCommit(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+//정보수정 버튼을 누르면 실행
+app.post('/changeCommit', async (req, res) => {
+    const { id, pw, nick_name, phone_num, email, address, introduction} = req.body;
+    try{
+        changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction);
     
-    tfjs.Predict('test1.jpg');
-    res.send();
+        if (id !== req.session.userId) {
+            delete req.session.userId;
+            req.session.userId = id;
+        }
+
+        res.send("<script>alert('정보수정이 완료되었습니다.'); location.href='changeUserInfo.html';</script>");
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).send("<script>alert('잘못된 입력값이 있습니다.'); location.href='changeUserInfo.html';</script>");
+    }
+})
+
+//로그인한 유저의 정보만 가져옴
+app.post('/loginUserInfo', async (req, res) => {
+    const { id, userType } = req.body;
+	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})
+
+//전문가만 불러옴
+app.post('/getExpertInfo', async (req, res) => {
+	const data = await MainSys.expertInfo();
+	
+    res.send(data);
 })

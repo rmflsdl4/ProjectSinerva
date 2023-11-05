@@ -1,8 +1,7 @@
-let idc, pwc, cpwc, nnc, pnc, emc, adc;
+let idc, nnc, pnc, emc;
 
 function Input_Check(element){
     Input_Data_Check_To_Submit();
-    PW_T();
     // 패턴 체크
     let div = document.createElement("div");
     let img = document.createElement("img");
@@ -30,23 +29,6 @@ function Input_Check(element){
         div.appendChild(span);
         span.appendChild(textNode);
     }
-
-    // 비밀번호 확인 아이콘, 메세지 변경
-    function PW_T(){
-        let arr = document.getElementsByTagName("input");
-        if(arr[1].value !== "" && arr[2].value !== ""){
-            let msgBox = arr[2].nextElementSibling;
-            if(msgBox !== null){
-                if(arr[1].value !== arr[2].value){
-                    msgBox.firstElementChild.src = "Image/dcheck.png";
-                    msgBox.children[1].textContent = "비밀번호가 일치하지 않습니다.";
-                    return;
-                }
-                msgBox.firstElementChild.src = "Image/check.png";
-                msgBox.children[1].textContent = "비밀번호가 일치합니다.";
-            }
-        }
-    }
     // 빈칸이면 더 이상 실행하지 않고 margin 값 주고 종료
     if(len <= 0){
         const nextElement = childElement.nextElementSibling; // div 태그 id: MessageBox
@@ -59,58 +41,26 @@ function Input_Check(element){
     }
 
     // 분기별 함수 실행
-    if(element.name === "id"){
+    if(element.name === "findId"){
         Value_Check(element.name, element.value, null)
             .then(result => {
                 idc = result;
                 if(result){
                     img.src = "Image/check.png";
-                    textNode.nodeValue = "사용 가능한 아이디입니다.";
+                    textNode.nodeValue = "";
                 }
                 else{
                     img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "사용 불가능한 아이디입니다.";
+                    textNode.nodeValue = "잘못된 입력값입니다.";
                 }
                 MessageBox_Check();
             });
     }
-    else if(element.name === "pw"){
-        pw.value = element.value;
-        Value_Check(element.name, element.value, null)
-            .then(result => {
-                pwc = result;
-                if(result){
-                    img.src = "Image/check.png";
-                    textNode.nodeValue = "사용 가능한 비밀번호입니다.";
-                }
-                else{
-                    img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "사용 불가능한 비밀번호입니다.";
-                }
-                MessageBox_Check();
-            });
-    }
-    else if(element.name === "confirm_pw"){
-        confirm_pw = element.value;
-        Value_Check(element.name, pw.value, element.value)
-            .then(result => {
-                cpwc = result;
-                if(result){
-                    img.src = "Image/check.png";
-                    textNode.nodeValue = "비밀번호가 일치합니다.";
-                }
-                else{
-                    img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "비밀번호가 일치하지 않습니다.";
-                }
-                MessageBox_Check();
-            });
-    }
-    else if(element.name === "nick_name"){
+    else if(element.name === "findNickName"){
         const spaceBar = / /;
         if(spaceBar.test(element.value)){
             img.src = "Image/dcheck.png";
-            textNode.nodeValue = "공백은 별명에 사용할 수 없습니다.";
+            textNode.nodeValue = "공백을 사용할 수 없습니다.";
             MessageBox_Check();
             return;
         }
@@ -120,17 +70,17 @@ function Input_Check(element){
                 nnc = result;
                 if(result){
                     img.src = "Image/check.png";
-                    textNode.nodeValue = "사용 가능한 별명입니다.";
+                    textNode.nodeValue = "";
                 }
                 else{
                     img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "중복된 별명입니다.";
+                    textNode.nodeValue = "잘못된 입력값입니다.";
                 }
                 MessageBox_Check();
             });
         }
     }
-    else if (element.name === "phone_num") {
+    else if (element.name === "findPhone_num") {
         element.value = element.value.replace(/[^0-9]/g, '');
         const changeLength = document.getElementById("phone_num");
         
@@ -153,22 +103,23 @@ function Input_Check(element){
         Value_Check(element.name, element.value, null)
         .then(result => {
             pnc = result;
+            console.log(result);
             if(result){
                 img.src = "Image/check.png";
-                textNode.nodeValue = "사용 가능한 번호입니다.";
+                textNode.nodeValue = "";
             }
             else{
                 img.src = "Image/dcheck.png";
-                textNode.nodeValue = "사용 불가능한 번호입니다.";
+                textNode.nodeValue = "잘못된 입력값입니다.";
             }
             MessageBox_Check();
         });
     }
-    else if (element.name === "email") {
+    else if (element.name === "findEmail") {
         const spaceBar = / /;
         if(spaceBar.test(element.value)){
             img.src = "Image/dcheck.png";
-            textNode.nodeValue = "공백은 이메일에 사용할 수 없습니다.";
+            textNode.nodeValue = "공백을 사용할 수 없습니다.";
             MessageBox_Check();
             return;
         }
@@ -178,50 +129,15 @@ function Input_Check(element){
                 emc = result;
                 if(result){
                     img.src = "Image/check.png";
-                    textNode.nodeValue = "사용 가능한 이메일입니다.";
+                    textNode.nodeValue = "";
                 }
                 else{
                     img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "사용할 수 없는 이메일입니다.";
+                    textNode.nodeValue = "잘못된 입력값입니다.";
                 }
                 MessageBox_Check();
             });
         }
-    }
-    else if (element.name === "address") {
-        const spaceBar = / /;
-        if(spaceBar.test(element.value)){
-            img.src = "Image/dcheck.png";
-            textNode.nodeValue = "공백은 주소에 사용할 수 없습니다.";
-            MessageBox_Check();
-            return;
-        }
-        else {
-            Value_Check(element.name, element.value, null)
-            .then(result => {
-                adc = result;
-                if(result){
-                    img.src = "Image/check.png";
-                    textNode.nodeValue = "사용 가능한 주소입니다.";
-                }
-                else{
-                    img.src = "Image/dcheck.png";
-                    textNode.nodeValue = "사용 불가능한 주소입니다.";
-                }
-                MessageBox_Check();
-            });
-        }
-    }
-    else if (element.value === "expert") {
-        alert("안전 전문가는 승인을 받아야 로그인할 수 있습니다.");
-        return;
-    }
-
-    if(pw.value !== confirm_pw.value && pw.value !== null && confirm_pw.value !== null){
-        cpwc = false;
-    }
-    else{
-        cpwc = true;
     }
 }
 function InitForm(){
@@ -239,11 +155,14 @@ function Exit_Check(){
 }
 function Input_Data_Check_To_Submit(){
     let inputData = document.getElementsByTagName("input");
-    let submitButton = document.getElementById("sign_up") ? document.getElementById("sign_up"):document.getElementById("login");
+    let submitButton = document.getElementById("find") ? document.getElementById("find"):document.getElementById("login");
 
     for(let i = 0; i < inputData.length; i++){
         if(inputData[i].value === ""){
-            if (i == 4 || i == 5 || i == 6) {
+            if (i == 0 || i == 2 || i == 3) {
+                continue;
+            }
+            else if (i == 1 || i == 2 || 3) {
                 continue;
             }
             submitButton.disabled = true;
@@ -276,9 +195,72 @@ function Value_Check(name, value1, value2) {
 }
 
 function All_Values_Check(){
-    if(idc && pwc && cpwc && nnc){
+    if(idc || nnc){
         return true;
     }
     alert('입력값을 다시 확인해 주세요.');
     return false;
+}
+
+function ShowAccountInfo() {
+    const findId = document.getElementById('id').value;
+    const findNickName = document.getElementById('nick_name').value;
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    const findPhone_num = document.getElementById('phone_num').value;
+    const findEmail = document.getElementById('email').value;
+
+    fetch('/findAccount', {
+        method: 'POST',
+        body: JSON.stringify({ findId, findNickName, userType, findPhone_num, findEmail }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('오류 발생:', error);
+    });
+
+    event.preventDefault();
+}
+
+//아이디와 비밀번호 구분
+function Find_Select(type) {
+    var idButton = document.querySelector(".findAc:nth-child(1)");
+    var psButton = document.querySelector(".findAc:nth-child(2)");
+    var messageBox = document.querySelectorAll('.MessageBox');
+
+    if (type === 'id') {
+        document.getElementById('id').style.display = 'none';
+        document.getElementById('nick_name').style.display = 'block';
+        document.getElementById('phone_num').style.display = 'block';
+        document.getElementById('email').style.display = 'block';
+        idButton.style.opacity = 1;
+        psButton.style.opacity = 0.5;
+    }
+    else if (type === 'ps') {
+        document.getElementById('id').style.display = 'block';
+        document.getElementById('nick_name').style.display = 'none';
+        document.getElementById('phone_num').style.display = 'block';
+        document.getElementById('email').style.display = 'block';
+        idButton.style.opacity = 0.5;
+        psButton.style.opacity = 1;
+    }
+
+    if (type === 'id' || type === 'ps') {
+        messageBox.forEach(function(messageBox) {
+            messageBox.remove();
+        });
+        document.getElementById('id').value = '';
+        document.getElementById('nick_name').value = '';
+        document.getElementById('phone_num').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('id').style.marginBottom = '10px';
+        document.getElementById('nick_name').style.marginBottom = '10px';
+        document.getElementById('phone_num').style.marginBottom = '10px';
+        document.getElementById('email').style.marginBottom = '10px';
+    }
 }
