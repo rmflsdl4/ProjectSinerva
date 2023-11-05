@@ -58,7 +58,7 @@ function createListItem(fileName, imageUrl) {
 }
 
 // 검사 버튼 클릭시 검사할 이미지 주소들 저장 및 전송
-checkBtn.addEventListener("click", () =>{
+checkBtn.addEventListener("click", async () =>{
     // HTML에서 input 요소 값 가져오기.
     const buildingName = document.querySelector('.buildingWrite').value;
     const errorMessage = document.querySelector('.error-message');
@@ -75,7 +75,7 @@ checkBtn.addEventListener("click", () =>{
     // 변수에 저장된 값을 출력합니다.
     console.log("SetImage 함수 실행");
     console.log(buildingName);
-    buildingNamePost(buildingName);
+    await buildingNamePost(buildingName);
 
     return new  Promise((resolve, reject) => {
         fetch('/image-discrimination', {

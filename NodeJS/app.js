@@ -331,7 +331,6 @@ app.post("/buildingNameInput", async (req, res) => {
     console.log(buildingName);
     res.send();
 })
-
 app.post('/image-discrimination', upload.array('images'), async (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     const uploadTasks = req.files.map(async (file) => {
@@ -345,7 +344,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        //await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -363,7 +362,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-                    image.upload_date as upload_date,
+                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
                     count(*) as total,
                     SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
                     SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
@@ -383,6 +382,37 @@ app.post("/record", async (req, res) => {
 
     res.send(result);
 });
+// 선택한 주소에 대한 레코들들만 불러오기
+app.post("/selected-record", async (req, res) => {
+    const selectedAddress = req.body.selectedAddress;
+    if(selectedAddress == ""){
+        var sqlStr = "";
+    }
+    else{
+        var sqlStr = "AND building.address = ?";
+    }
+    const query = `SELECT 
+                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = ? ${sqlStr}
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
+
+    const values = [req.session.userId, selectedAddress];
+
+    const result = await database.Query(query, values);
+
+    console.log(result);
+
+    res.send(result);
+});
+
 // 과거 검사한 기록 상세보기
 app.post("/detailsRecord", async (req, res) => {
     const { date } = req.body;
@@ -404,6 +434,18 @@ app.post("/detailsRecord", async (req, res) => {
 // 건물 테이블 select
 app.post("/buildingSearch", async (req, res) => {
     const query = 'SELECT address FROM building WHERE user_id = ?';
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
+
+    console.log(result);
+    res.send(result);
+})
+app.post("/selectedBuildingSearch", async (req, res) => {
+    const query = `SELECT DISTINCT building.address
+                    FROM building
+                    INNER JOIN image
+                    ON building.id = image.building_id
+                    WHERE building.user_id = ?`;
     const values = [req.session.userId];
     const result = await database.Query(query, values);
 
