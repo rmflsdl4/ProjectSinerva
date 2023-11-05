@@ -151,7 +151,7 @@ function InspectRecordRow(data) {
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
         tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td><button class="checkBtn">${i + 1}</button></td>`;
+        tableHTML += `<td>${i + 1}</td>`;
         for (const key in row) {
             tableHTML += `<td>${row[key]}</td>`;
         }
@@ -298,7 +298,7 @@ function recordRow(data) {
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
         tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td><button class="checkBtn">${i + 1}</button></td>`;
+        tableHTML += `<td>${i + 1}</td>`;
         for (const key in row) {
             tableHTML += `<td>${row[key]}</td>`;
         }
