@@ -148,16 +148,30 @@ function InspectRecordRow(data) {
     tableHTML += "<th width='15%'>상세보기</th>";
     tableHTML += "</tr>";
 
+    var preAddress = data[0][0];
     for (let i = 0; i < data.length; i++) {
+        var sequenceNum;
         const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${i + 1}</td>`;
-        for (const key in row) {
-            tableHTML += `<td>${row[key]}</td>`;
+
+        if(row.address !== preAddress){
+            tableHTML += "<tr class='commentRequest'>";
+            tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
+            tableHTML += "</tr>";
+            sequenceNum = 1;
         }
-        console.log(row.upload_date);
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${sequenceNum}</td>`;
+        tableHTML += `<td>${row.upload_date}</td>`;
+        tableHTML += `<td>${row.total}</td>`;
+        tableHTML += `<td>${row.normal_count}</td>`;
+        tableHTML += `<td>${row.abnormality_count}</td>`;
+        // for (const key in row) {
+        //     tableHTML += `<td>${row[key]}</td>`;
+        // }
         tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
         tableHTML += "</tr>";
+        preAddress = row.address;
+        sequenceNum++;
     }
 
     table.innerHTML = tableHTML;
@@ -338,4 +352,23 @@ function DetailsRecordRow(data) {
     table.innerHTML = tableHTML;
     InitPage();
     PageLoad();
+}
+
+// 건물 가져오기
+async function getUserSession() {
+    return await new Promise((resolve, reject) => {
+        fetch('/login-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
 }
