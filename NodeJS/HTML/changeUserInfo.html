@@ -10,13 +10,13 @@
             <div id="Logo" onclick="window.location.href = 'changeUserInfo.html'">회원정보 수정</div>
             <a href="Main.html" id="profileText">메인으로</a>
             <a href="./Login.html" id="profileText">로그아웃</a>
-            <form action="/changeCommit" method="POST" onsubmit="return All_Values_Check()">
+            <form action="/changeCommit" method="POST" onsubmit="return All_Values_Check()" enctype="multipart/form-data">               
                 <div>
                     <input id="id" type="text" name="id" placeholder="아이디*" maxlength="29" oninput="Input_Check(this);">
                 </div>
                 <div>
                     <input id="pw" type="password" name="pw" placeholder="비밀번호*" maxlength="49" oninput="Input_Check(this);">
-<div id="showPswButton">비밀번호 보기</div>
+                    <div id="showPswButton">비밀번호 보기</div>
                 </div>
                 <div>
                     <input id="confirm_pw" type="password" name="confirm_pw" placeholder="비밀번호 확인*"  maxlength="49" oninput="Input_Check(this);">
@@ -33,9 +33,12 @@
                 <div>
                     <input id="address" type="text" name="address" placeholder="주소" maxlength="200" onkeyup="Input_Check(this);">
                 </div>
-<div>
+                <div>
                     <textarea id="introduction" type="text" name="introduction" placeholder="소개글" onkeyup="Input_Check(this);"></textarea>
                 </div>
+                <div>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                </div> 
                 <div id="MainMenuBox">
                     <button id="changeCommitButton" type="submit" onclick="window.onbeforeunload = null;">정보수정</button>
                 </div>

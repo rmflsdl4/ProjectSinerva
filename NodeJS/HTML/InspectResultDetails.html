@@ -2,6 +2,7 @@
     <head>
         <title>건물 균열 검사 상세보기</title>
         <link rel="stylesheet" href="CSS/All.css">
+        <link rel="stylesheet" href="CSS/InspectResultDetails.css">
     </head>
     <body>
         <div id="Logo" onclick="window.location.href = './CommonUserMain.html'">건물 균열 검사 기록</div>
@@ -17,9 +18,24 @@
                     <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
                 </div>
             </div>
+
+            <button class="expertRequestBtn">코멘트 요청</button>
         </center>
 
-        <script src="JavaScript/Inspect.js"></script>
+        <!-- 모달 팝업 컨테이너 -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="expertList">
+                        <table id="expertListTable">
+                        </table>
+                    </div>
+                </center>
+            </div>
+        </div>
+
+        <script src="JavaScript/InspectController.js"></script>
         <script>
             // 현재 페이지 URL에서 매개변수를 추출
             const urlParams = new URLSearchParams(window.location.search);
