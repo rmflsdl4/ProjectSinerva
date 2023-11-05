@@ -16,7 +16,6 @@ function InitPage(){
     nextPage = document.getElementById("nextPage");
     pageNum = document.getElementById("pageNum");
     pageCount = Math.ceil(posts.length / 5);
-    console.log(pageCount);
     PageLoad();
     
     prePage.style.visibility = "hidden";
@@ -134,7 +133,7 @@ function InspectDetailsRecordInitPage(date){
     });
 }
 // 검사 결과 페이지 select 결과 출력
-function InspectRecordRow(data) {
+function InspectRecordRow(data, state = false) {
     // 테이블 요소를 가져옴
     const table = document.getElementById("commentListTable");
     let tableHTML = "";
@@ -149,15 +148,16 @@ function InspectRecordRow(data) {
     tableHTML += "</tr>";
 
     var preAddress = data[0][0];
+    var sequenceNum = 1;
     for (let i = 0; i < data.length; i++) {
-        var sequenceNum;
         const row = data[i];
-
-        if(row.address !== preAddress){
-            tableHTML += "<tr class='commentRequest'>";
-            tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
-            tableHTML += "</tr>";
-            sequenceNum = 1;
+        if(state === true){
+            if(row.address !== preAddress){
+                tableHTML += "<tr class='commentRequest'>";
+                tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
+                tableHTML += "</tr>";
+                sequenceNum = 1;
+            }
         }
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${sequenceNum}</td>`;
@@ -303,7 +303,7 @@ function recordRow(data) {
     tableHTML += "<tr id='commentListHeader'>";
     tableHTML += "<th width='10%'>번호</th>";
     tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='15%'>사진</th>";
+    tableHTML += "<th width='15%'>검사 개수</th>";
     tableHTML += "<th width='15%'>정상</th>";
     tableHTML += "<th width='15%'>비정상</th>";
     tableHTML += "<th width='15%'>상세보기</th>";
@@ -316,7 +316,7 @@ function recordRow(data) {
         for (const key in row) {
             tableHTML += `<td>${row[key]}</td>`;
         }
-        tableHTML += `<td><a href="../viewDetails.html?param1=${row.added}">상세보기</a></td>`;
+        tableHTML += `<td><a href="../viewDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
         tableHTML += "</tr>";
     }
 
@@ -370,5 +370,72 @@ async function getUserSession() {
             .catch(error => {
                 reject(error);
             });
+    });
+}
+
+async function GetBuildingList(){
+    return await new Promise((resolve, reject) => {
+        fetch('/selectedBuildingSearch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+function OutputBuildingList(){
+    GetBuildingList().then(buildings => {
+        const buildingSelect = document.getElementById('buildingSelect');
+        for(var i = 0; i < buildings.length; i++){
+            var optionElement = document.createElement("option");
+            optionElement.value = buildings[i].address;
+            optionElement.text = buildings[i].address;
+            buildingSelect.appendChild(optionElement);
+        }
+    });
+}
+
+// 선택한 건물의 검사 기록을 봄
+const buildingSelect = document.getElementById('buildingSelect');
+buildingSelect.addEventListener('change', function() {
+    if(buildingSelect.value === ""){
+        InspectRecordInitPage();
+        return;
+    }
+    else{
+        SelectedBuilding(buildingSelect.value);
+    }
+})
+
+function SelectedBuilding(selectedAddress){
+    return new Promise((resolve, reject) => {
+        fetch('/selected-record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ selectedAddress })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            InspectRecordRow(data, true)
+        })
+        .catch(error => {
+            reject(error);
+        });
     });
 }

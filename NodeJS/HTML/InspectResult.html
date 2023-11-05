@@ -3,18 +3,19 @@
         <title>건물 균열 검사: 사용자</title>
         <link rel="stylesheet" href="CSS/All.css">
     </head>
-    <body onload="InspectRecordInitPage();">
-        <div id="Logo" onclick="window.location.href = './CommonUserMain.html'">건물 균열 검사 기록</div>
+    <body onload="InspectRecordInitPage(); OutputBuildingList();">
+        <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
         <div id="profile">
-            <a href="#" id="profileText">마이 페이지</a>
+            <a href="changeUserInfo.html" id="profileText">마이 페이지</a>
         </div>
         <br><br>
-        <div id="buildingList">
-
-
-        </div>
         <center>
             <div id="commentList">
+                <div id="buildingList">
+                    <select id="buildingSelect">
+                        <option selected value="">전체 보기</option>
+                    </select>
+                </div>
                 <table id="commentListTable">
                 </table>
                 <div id="pageContainer">
