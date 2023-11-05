@@ -1,9 +1,11 @@
 const database = require('../database.js');
 
-async function updateUserInfo(loginId, loginUserType, id, pw, nick_name, phone_num, email, address, introduction) {
+async function updateUserInfo(loginId, loginUserType, id, pw, nick_name, phone_num, email, address, introduction, image_route) {
     let query;
     let values;
     let result;
+    let expertQuert;
+    let expertValues;
 
     if (loginUserType == 'user') {
         query = 'UPDATE user SET id = ?, password = ?, nick_name = ?, phone_num = ?, email = ?, address = ? WHERE id = ?';
@@ -21,10 +23,13 @@ async function updateUserInfo(loginId, loginUserType, id, pw, nick_name, phone_n
 
         result = await database.Query(query, values);
 
+        const expertQuert = 'update expert set expert_route = ? where id = ?';
+        const expertValues = [image_route, id];
+        await database.Query(expertQuert, expertValues);
+
         if (result instanceof Error) {
             return;
         }
-
     }
 }
 

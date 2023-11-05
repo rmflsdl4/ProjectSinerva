@@ -1,5 +1,3 @@
-
-
 var currPageNum;
 var posts; 
 var prePage;
@@ -7,6 +5,8 @@ var nextPage;
 var pageCount;
 var pageNum;
 var itemsPerPage = 5;
+let imgId = [];
+let requestDate;
 
 function InitPage(){
     currPageNum = 1;
@@ -16,7 +16,6 @@ function InitPage(){
     nextPage = document.getElementById("nextPage");
     pageNum = document.getElementById("pageNum");
     pageCount = Math.ceil(posts.length / 5);
-    console.log(pageCount);
     PageLoad();
     
     prePage.style.visibility = "hidden";
@@ -75,268 +74,6 @@ function SetNextNum(){
 }
 function SetCurrentPageText(currentPageNum){
     pageNum.textContent = currentPageNum;
-}
-
-// ** 검사 **
-// 검사 결과 페이지 select 요청
-function InspectRecordInitPage(){
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/record', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            InspectRecordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 검사 결과 상세 페이지 select 요청
-function InspectDetailsRecordInitPage(date){
-    console.log(date);
-
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/detailsRecord', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ date })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            InspectDetailsRecordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 검사 결과 페이지 select 결과 출력
-function InspectRecordRow(data) {
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='15%'>사진</th>";
-    tableHTML += "<th width='15%'>정상</th>";
-    tableHTML += "<th width='15%'>비정상</th>";
-    tableHTML += "<th width='15%'>상세보기</th>";
-    tableHTML += "</tr>";
-
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td><button class="checkBtn">${i + 1}</button></td>`;
-        for (const key in row) {
-            tableHTML += `<td>${row[key]}</td>`;
-        }
-        console.log(row.upload_date);
-        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
-    InitPage();
-    PageLoad();
-}
-// 유저 타입 반환
-async function getUserSession() {
-    return await new Promise((resolve, reject) => {
-        fetch('/login-user', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                resolve(data);
-            })
-            .catch(error => {
-                reject(error);
-            });
-    });
-  }
-
-// 검사 결과 상세 페이지 select 결과 출력
-function InspectDetailsRecordRow(data) {
-    getUserSession().then(type => {
-        console.log("유저타입: " + type.userType);
-
-        // 테이블 요소를 가져옴
-        const table = document.getElementById("commentListTable");
-        let tableHTML = "";
-
-        tableHTML += "<tr id='commentListHeader'>";
-        tableHTML += "<th width='10%'>번호</th>";
-        tableHTML += "<th width='30%'>요청 날짜</th>";
-        tableHTML += "<th width='20%'>사진</th>";
-        tableHTML += "<th width='10%'>상태</th>";
-        tableHTML += "<th width='30%'>코멘트</th>";
-        tableHTML += "</tr>";
-        for (let i = 0; i < data.length; i++) {
-            const row = data[i];
-            tableHTML += "<tr class='commentRequest'>";
-            tableHTML += `<td>${i + 1}</td>`;
-            tableHTML += `<td>${row.upload_date}</td>`;
-            tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
-            tableHTML += `<td>${row.result}</td>`;
-            if(type.userType === "user"){
-                tableHTML += `<td><button class='InspectBtn'>요청</button></td>`;
-            }
-            else{
-                tableHTML += `<td><button class='InspectBtn'>수락</button></td>`;
-            }
-            tableHTML += "</tr>";
-        }
-
-        table.innerHTML = tableHTML;
-    });
-    
-    InitPage();
-    PageLoad();
-}
-
-// ** 불러오기 **
-// 불러오기 페이지 select 요청
-function RecordInitPage(){
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/record', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            recordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 불러오기 상세 페이지 select 요청
-function DetailsRecordInitPage(date){
-    console.log(date);
-
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/detailsRecord', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ date })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            DetailsRecordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 불러오기 페이지 select 결과 출력
-function recordRow(data) {
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='15%'>사진</th>";
-    tableHTML += "<th width='15%'>정상</th>";
-    tableHTML += "<th width='15%'>비정상</th>";
-    tableHTML += "<th width='15%'>상세보기</th>";
-    tableHTML += "</tr>";
-
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td><button class="checkBtn">${i + 1}</button></td>`;
-        for (const key in row) {
-            tableHTML += `<td>${row[key]}</td>`;
-        }
-        tableHTML += `<td><a href="../viewDetails.html?param1=${row.added}">상세보기</a></td>`;
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
-    InitPage();
-    PageLoad();
-}
-// 불러오기 상세 페이지 select 결과 출력
-function DetailsRecordRow(data) {
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='20%'>사진</th>";
-    tableHTML += "<th width='10%'>상태</th>";
-    tableHTML += "<th width='30%'>코멘트</th>";
-    tableHTML += "</tr>";
-
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td>${row.added}</td>`;
-        tableHTML += `<td><img src="./images/${row.added}/${row.file_name}" style="width: 100%;"></td>`;
-        tableHTML += `<td>${row.result}</td>`;
-        tableHTML += "<td>코멘트</td>";
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
-    InitPage();
-    PageLoad();
 }
 
 //관리자 코멘트 기능 ExpertRequestComment.html
@@ -708,4 +445,525 @@ function commitComment(imgId, userId, value) {
         location.href = 'ExpertRequestComment.html';
         console.log(error);
     });
+}
+
+// ** 검사 **
+// 검사 결과 페이지 select 요청
+function InspectRecordInitPage(){
+    // 해당 사용자 과거 기록 select 요청
+    return new  Promise((resolve, reject) => {
+        fetch('/record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            InspectRecordRow(data)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+// 검사 결과 상세 페이지 select 요청
+function InspectDetailsRecordInitPage(date){
+    console.log(date);
+    requestDate = date;
+
+    // 해당 사용자 과거 기록 select 요청
+    return new  Promise((resolve, reject) => {
+        fetch('/detailsRecord', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            InspectDetailsRecordRow(data)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+// 검사 결과 페이지 select 결과 출력
+function InspectRecordRow(data, state = false) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("commentListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='commentListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='30%'>요청 날짜</th>";
+    tableHTML += "<th width='15%'>사진</th>";
+    tableHTML += "<th width='15%'>정상</th>";
+    tableHTML += "<th width='15%'>비정상</th>";
+    tableHTML += "<th width='15%'>상세보기</th>";
+    tableHTML += "</tr>";
+
+    var preAddress = data[0][0];
+    var sequenceNum = 1;
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        if(state === true){
+            if(row.address !== preAddress){
+                tableHTML += "<tr class='commentRequest'>";
+                tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
+                tableHTML += "</tr>";
+                sequenceNum = 1;
+            }
+        }
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${sequenceNum}</td>`;
+        tableHTML += `<td>${row.upload_date}</td>`;
+        tableHTML += `<td>${row.total}</td>`;
+        tableHTML += `<td>${row.normal_count}</td>`;
+        tableHTML += `<td>${row.abnormality_count}</td>`;
+        // for (const key in row) {
+        //     tableHTML += `<td>${row[key]}</td>`;
+        // }
+        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
+        tableHTML += "</tr>";
+        preAddress = row.address;
+        sequenceNum++;
+    }
+
+    table.innerHTML = tableHTML;
+    InitPage();
+    PageLoad();
+}
+// 유저 타입 반환
+async function getUserSession() {
+    return await new Promise((resolve, reject) => {
+        fetch('/login-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+// 검사 결과 상세 페이지 select 결과 출력
+function InspectDetailsRecordRow(data) {
+    getUserSession().then(type => {
+        console.log("유저타입: " + type.userType);
+
+        // 테이블 요소를 가져옴
+        const table = document.getElementById("commentListTable");
+        let tableHTML = "";
+
+        tableHTML += "<tr id='commentListHeader'>";
+        tableHTML += "<th width='10%'>번호</th>";
+        tableHTML += "<th width='30%'>요청 날짜</th>";
+        tableHTML += "<th width='20%'>사진</th>";
+        tableHTML += "<th width='10%'>상태</th>";
+        tableHTML += "<th width='30%'>코멘트</th>";
+        tableHTML += "</tr>";
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            imgId[i] = row.img_id;
+            tableHTML += "<tr class='commentRequest'>";
+            tableHTML += `<td>${i + 1}</td>`;
+            tableHTML += `<td>${row.upload_date}</td>`;
+            tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
+            tableHTML += `<td>${row.result}</td>`;
+            if(type.userType === "user"){
+                tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
+            }
+            else{
+                tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+            }
+            tableHTML += "</tr>";
+        }
+
+        table.innerHTML = tableHTML;
+    });
+
+    InitPage();
+    PageLoad();
+}
+
+// 건물 가져오기
+async function getUserSession() {
+    return await new Promise((resolve, reject) => {
+        fetch('/login-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+async function GetBuildingList(){
+    return await new Promise((resolve, reject) => {
+        fetch('/selectedBuildingSearch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+function OutputBuildingList(){
+    GetBuildingList().then(buildings => {
+        const buildingSelect = document.getElementById('buildingSelect');
+        for(var i = 0; i < buildings.length; i++){
+            var optionElement = document.createElement("option");
+            optionElement.value = buildings[i].address;
+            optionElement.text = buildings[i].address;
+            buildingSelect.appendChild(optionElement);
+        }
+    });
+}
+
+// 선택한 건물의 검사 기록을 봄
+const buildingSelect = document.getElementById('buildingSelect');
+buildingSelect.addEventListener('change', function() {
+    if(buildingSelect.value === ""){
+        InspectRecordInitPage();
+        return;
+    }
+    else{
+        SelectedBuilding(buildingSelect.value);
+    }
+})
+
+function SelectedBuilding(selectedAddress){
+    return new Promise((resolve, reject) => {
+        fetch('/selected-record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ selectedAddress })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            InspectRecordRow(data, true)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+
+// 요청 버튼 모달 팝업 열기
+document.querySelector('.expertRequestBtn').addEventListener('click', function () {
+    document.querySelector('.modal').style.display = 'block';
+
+    return new  Promise((resolve, reject) => {
+        fetch('/expertSearch', {
+            method: 'POST',
+            headers: {
+                
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // JSON 데이터로 응답을 파싱
+            })
+            .then(data => {
+                resolve(data);
+                console.log(data);
+                expertList(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+});
+
+// 전문가 테이블 정보 select
+function expertList(data) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("expertListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='expertListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='10%'>이름</th>";
+    tableHTML += "<th width='10%'>평점</th>";
+    tableHTML += "<th width='60%'>소개</th>";
+    tableHTML += "<th width='10%'>선택</th>";
+    tableHTML += "</tr>";
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        tableHTML += "<tr class='expertRequest'>";
+        tableHTML += `<td style="display: none;">${row.expert_id}</td>`; // 이 부분을 숨김 처리
+        tableHTML += `<td>${i + 1}</td>`;
+        tableHTML += `<td>${row.name}</td>`;
+        tableHTML += `<td>${row.rating}</td>`;
+        tableHTML += `<td><textarea readonly rows="7" cols="50">${row.introduction}</textarea></td>`;
+        tableHTML += `<td><button class="selectExpert" onclick="selectExpertBtn(this)">선택</button></td>`;
+        tableHTML += "</tr>";
+    }
+
+    table.innerHTML = tableHTML;
+
+    // 코멘트 요청 테이블로 값 전달
+}
+
+// selectExpertBtn 함수를 아래에 정의합니다.
+function selectExpertBtn(button) {
+    const tr = button.closest('tr'); // 현재 버튼이 속한 tr 요소를 찾음
+    const expertId = tr.querySelector('td:nth-child(1)').textContent; // 첫 번째 td 요소의 텍스트 내용을 가져옴
+    
+    return new Promise((resolve, reject) => {
+        fetch('/commentRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ expertId, imgId, requestDate })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // return response.json(); // JSON 데이터로 응답을 파싱
+            })
+            .then(data => {
+                resolve(data);
+                console.log(data);
+                document.querySelector('.modal').style.display = 'none';
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+// 모달 팝업 닫기
+document.querySelector('.close-modal-btn').addEventListener('click', function () {
+    document.querySelector('.modal').style.display = 'none';
+});
+
+// ** 불러오기 **
+// 불러오기 페이지 select 요청
+function RecordInitPage(){
+    // 해당 사용자 과거 기록 select 요청
+    return new  Promise((resolve, reject) => {
+        fetch('/record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            recordRow(data)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+// 불러오기 상세 페이지 select 요청
+function DetailsRecordInitPage(date){
+    console.log(date);
+
+    // 해당 사용자 과거 기록 select 요청
+    return new  Promise((resolve, reject) => {
+        fetch('/detailsRecord', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            DetailsRecordRow(data)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+// 불러오기 페이지 select 결과 출력
+function recordRow(data) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("commentListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='commentListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='30%'>요청 날짜</th>";
+    tableHTML += "<th width='15%'>검사 개수</th>";
+    tableHTML += "<th width='15%'>정상</th>";
+    tableHTML += "<th width='15%'>비정상</th>";
+    tableHTML += "<th width='15%'>상세보기</th>";
+    tableHTML += "</tr>";
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${i + 1}</td>`;
+        for (const key in row) {
+            tableHTML += `<td>${row[key]}</td>`;
+        }
+        tableHTML += `<td><a href="../viewDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
+        tableHTML += "</tr>";
+    }
+
+    table.innerHTML = tableHTML;
+    InitPage();
+    PageLoad();
+}
+// 불러오기 상세 페이지 select 결과 출력
+function DetailsRecordRow(data) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("commentListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='commentListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='30%'>요청 날짜</th>";
+    tableHTML += "<th width='20%'>사진</th>";
+    tableHTML += "<th width='10%'>상태</th>";
+    tableHTML += "<th width='30%'>코멘트</th>";
+    tableHTML += "</tr>";
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${i + 1}</td>`;
+        tableHTML += `<td>${row.added}</td>`;
+        tableHTML += `<td><img src="./images/${row.added}/${row.file_name}" style="width: 100%;"></td>`;
+        tableHTML += `<td>${row.result}</td>`;
+        tableHTML += "<td>코멘트</td>";
+        tableHTML += "</tr>";
+    }
+
+    table.innerHTML = tableHTML;
+    InitPage();
+    PageLoad();
+}
+// 전문가 리스트 페이지 select 요청
+function ExpertListInitPage(){
+    // 해당 사용자 과거 기록 select 요청
+    return new  Promise((resolve, reject) => {
+        fetch('/expertList', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON 데이터로 응답을 파싱
+        })
+        .then(data => {
+            resolve(data);
+            console.log(data); // 파싱된 JSON 데이터 출력
+            expertListRow(data)
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+
+// 전문가 리스트 테이블 동적 생성
+function expertListRow(data) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("commentListTable");
+    let tableHTML = "";
+
+    tableHTML += "<tr id='commentListHeader'>";
+    tableHTML += "<th width='5%'>번호</th>";
+    tableHTML += "<th width='15%'>사진</th>";
+    tableHTML += "<th width='10%'>이름</th>";
+    tableHTML += "<th width='15%'>전화번호</th>";
+    tableHTML += "<th width='15%'>이메일</th>";
+    tableHTML += "<th width='20%'>주소</th>";
+    tableHTML += "<th width='20%'>소개글</th>";
+    tableHTML += "<th width='5%'>평점</th>";
+    tableHTML += "</tr>";
+
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${i + 1}</td>`;
+        tableHTML += `<td>${row.expert_route}</td>`;
+        tableHTML += `<td>${row.name}</td>`;
+        tableHTML += `<td>${row.phone_num}</td>`;
+        tableHTML += `<td>${row.email}</td>`;
+        tableHTML += `<td>${row.address}</td>`;
+        tableHTML += `<td><textarea readonly rows="7" cols="40">${row.introduction}</textarea></td>`;
+        tableHTML += `<td>${row.rating}</td>`;
+        tableHTML += "</tr>";
+    }
+
+    table.innerHTML = tableHTML;
+    InitPage();
+    PageLoad();
 }

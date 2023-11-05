@@ -58,7 +58,7 @@ function createListItem(fileName, imageUrl) {
 }
 
 // 검사 버튼 클릭시 검사할 이미지 주소들 저장 및 전송
-checkBtn.addEventListener("click", () =>{
+checkBtn.addEventListener("click", async () =>{
     // HTML에서 input 요소 값 가져오기.
     const buildingName = document.querySelector('.buildingWrite').value;
     const errorMessage = document.querySelector('.error-message');
@@ -75,7 +75,7 @@ checkBtn.addEventListener("click", () =>{
     // 변수에 저장된 값을 출력합니다.
     console.log("SetImage 함수 실행");
     console.log(buildingName);
-    buildingNamePost(buildingName);
+    await buildingNamePost(buildingName);
 
     return new  Promise((resolve, reject) => {
         fetch('/image-discrimination', {
@@ -110,7 +110,7 @@ function buildingNamePost(buildingName) {
             .then(data => {
                 
                 resolve(data);
-console.log(data);
+                console.log(data);
             })
             .catch(error => {
                 reject(error);
@@ -122,11 +122,11 @@ console.log(data);
 document.querySelector('.resetBtn').addEventListener('click', function () {
     // 파일 입력 필드 초기화
     const fileInput = document.querySelector('.fileInput');
-const buildingInput = document.querySelector('.buildingWrite');
+    const buildingInput = document.querySelector('.buildingWrite');
 
     // 파일 입력 필드에서 선택한 파일 목록을 초기화
     fileInput.value = '';
-buildingInput.value = '';
+    buildingInput.value = '';
 
     // 선택한 파일들을 초기화한 후, 파일 목록을 확인하여 모든 파일을 제거
     const selectedFiles = fileInput.files;

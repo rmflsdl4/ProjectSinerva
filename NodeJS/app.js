@@ -342,11 +342,11 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
         const building_values = [buildingName, req.session.userId];
         let building_num = await database.Query(building_query, building_values);
-        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
+        const img_query = 'INSERT INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        //await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -364,14 +364,17 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-        upload_date,
-        count(*) as total,
-        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
-        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
-    FROM image
-    WHERE user_id = ?
-    GROUP BY upload_date
-    ORDER BY upload_date DESC`;
+                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = ?
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
 
     const values = [req.session.userId];
 
@@ -381,6 +384,37 @@ app.post("/record", async (req, res) => {
 
     res.send(result);
 });
+// 선택한 주소에 대한 레코들들만 불러오기
+app.post("/selected-record", async (req, res) => {
+    const selectedAddress = req.body.selectedAddress;
+    if(selectedAddress == ""){
+        var sqlStr = "";
+    }
+    else{
+        var sqlStr = "AND building.address = ?";
+    }
+    const query = `SELECT 
+                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = ? ${sqlStr}
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
+
+    const values = [req.session.userId, selectedAddress];
+
+    const result = await database.Query(query, values);
+
+    console.log(result);
+
+    res.send(result);
+});
+
 // 과거 검사한 기록 상세보기
 app.post("/detailsRecord", async (req, res) => {
     const { date } = req.body;
@@ -408,8 +442,19 @@ app.post("/buildingSearch", async (req, res) => {
     console.log(result);
     res.send(result);
 })
+app.post("/selectedBuildingSearch", async (req, res) => {
+    const query = `SELECT DISTINCT building.address
+                    FROM building
+                    INNER JOIN image
+                    ON building.id = image.building_id
+                    WHERE building.user_id = ?`;
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
 
-//전문가 요청 승인
+    console.log(result);
+    res.send(result);
+})
+
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
     try {
