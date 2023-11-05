@@ -26,8 +26,8 @@
                     <tr>
                         <!-- 유저용 -->
                         <th class="userMenu" width="10%"><a href="ImageUpload.html" id="mainMenuBar">검사</a></th>
-                        <th class="userMenu" width="10%"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
-                        <th class="userMenu" width="10%"><a href="#" id="mainMenuBar">전문가 리스트</a></th>
+                        <th class="userMenu" width="10%"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="userMenu" width="10%"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
                         <!-- 전문가용 -->
                         <th class="expertMenu" width="10%"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
                         <th class="expertMenu" width="10%"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
@@ -38,16 +38,17 @@
             <div id="commentList">
                 <table id="commentListTable">
                     <tr>
-                        <th class="Board_Menu" onclick="Board_Select();">코멘트 요청</th>
-                        <th class="Board_Menu" onclick="Board_Select();">코멘트 작성완료</th>
+                        <th class="Board_Menu" style="width: 13%;" onclick="Board_Select();">코멘트 요청</th>
+                        <th class="Board_Menu" style="width: 16%;" onclick="Board_Select();">코멘트 작성완료</th>
                     </tr>
                     <tr id="commentListHeader">
-                        <th width="10%">번호</th>
-                        <th width="10%">유저 아이디</th>
-                        <th width="20%">요청 날짜</th>
-                        <th width="20%">검사 날짜</th>
-                        <th width="20%">사진</th>
-                        <th width="20%"></th>
+                        <th width="5%">번호</th>
+                        <th width="5%">유저 아이디</th>
+                        <th width="16%">요청 날짜</th>
+                        <th width="16%">검사 날짜</th>
+                        <th width="15%">사진</th>
+                        <th width="13%"></th>
+                        <th width="10%"></th>
                     </tr>
                 </table>
                 <div id="noRequestsMessage">
@@ -56,6 +57,8 @@
                 <div id="pageContainer">
                     <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
                 </div>
+                <table id="expertTable" style="display: none;"> <!-- 오류보기싫어서 만들었음 -->
+                </table>
             </div>
         </center>
 

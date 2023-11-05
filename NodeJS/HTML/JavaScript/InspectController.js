@@ -221,11 +221,11 @@ async function Posts_Output(board_type){
                     reqDenied(row['img_id'], row['user_id']);
                 });
 
-                const commit = document.createElement('button');
-                commit.className = 'add_td_Tag';
-                commit.textContent = '승인';
+                const submit = document.createElement('button');
+                submit.className = 'add_td_Tag';
+                submit.textContent = '승인';
 
-                commit.addEventListener('click', () => {
+                submit.addEventListener('click', () => {
                     reqAccept(row['img_id'], row['user_id']);
                 });
 
@@ -235,7 +235,7 @@ async function Posts_Output(board_type){
                 tr.appendChild(uploadDate);
                 tr.appendChild(imageCell);
                 tr.appendChild(reqDeniedButton);
-                tr.appendChild(commit);
+                tr.appendChild(submit);
 
                 board.appendChild(tr);
             }
@@ -295,47 +295,73 @@ async function Posts_Output(board_type){
             });
 
             const commentButton = document.createElement('td');
-            commentButton.className = 'add_td_Tag';
-            commentButton.textContent = '코멘트 달기';
+            const showCommentButton = document.createElement('td');
 
+            if (!row['comment']) {
+                commentButton.className = 'commentButton';
+                commentButton.textContent = '코멘트 달기';
+            }
+            else {
+                commentButton.className = 'commentButton';
+                commentButton.textContent = '수정하기';
+
+                showCommentButton.className = 'showComment';
+                showCommentButton.textContent = '보기';
+            }
+
+            //코멘트 입력 및 수정
             commentButton.addEventListener('click', () => {
                 const modal = document.querySelector('.modal');
                 modal.style.display = 'block';
-
+            
                 const commentInput = document.createElement('textarea');
-                commentInput.className = 'add_td_Tag';
+                commentInput.className = 'commentTextarea';
                 commentInput.placeholder = '코멘트를 달아주세요';
                 commentInput.style.width = '500px';
                 commentInput.style.height = '200px';
                 commentInput.style.resize = 'none';
-
-                const commitButton = document.createElement('button');
-                commitButton.className = 'add_td_Tag';
-                commitButton.textContent = '작성 완료';
-
-                commitButton.addEventListener('click', () => {
+            
+                const submitButton = document.createElement('button');
+                submitButton.className = 'commentSubmit';
+                submitButton.textContent = '작성 완료';
+            
+                submitButton.addEventListener('click', () => {
                     const commentValue = commentInput.value; // textarea의 값을 가져옵니다
                     console.log(commentValue);
-                    commitComment(row['img_id'], row['user_id'], commentValue);
+                    submitComment(row['img_id'], row['user_id'], commentValue);
                 });
-
+            
                 buildingList.appendChild(commentInput);
-                buildingList.appendChild(commitButton);
+                buildingList.appendChild(submitButton);
             });
 
+            //코멘트 출력
+            showCommentButton.addEventListener('click', () => {
+                const modal = document.querySelector('.modal');
+                modal.style.display = 'block';
+            
+                const commentInput = document.createElement('textarea');
+                commentInput.className = 'commentTextarea';
+                commentInput.placeholder = row['comment'];
+                commentInput.style.width = '500px';
+                commentInput.style.height = '200px';
+                commentInput.style.resize = 'none';
+            
+                buildingList.appendChild(commentInput);
+            });
+            
             const closeModalButton = document.querySelector('.close-modal-btn');
             closeModalButton.addEventListener('click', function () {
                 const modal = document.querySelector('.modal');
                 modal.style.display = 'none';
+                // 모달이 닫힐 때 입력란을 초기화합니다.
+                const commentTextarea = document.querySelector('.commentTextarea');
+                const commentSubmit = document.querySelector('.commentSubmit');
+                if (commentTextarea) {
+                    commentTextarea.remove();
+                    commentSubmit.remove();
+                }
             });
-
-            // const deleteUserButton = document.createElement('button');
-            // deleteUserButton.className = 'add_td_Tag';
-            // deleteUserButton.textContent = '삭제';
-
-            // deleteUserButton.addEventListener('click', () => {
-            //     deleteUser(row['id'], row['userType']);
-            // });
 
             tr.appendChild(num);
             tr.appendChild(userId);
@@ -343,20 +369,7 @@ async function Posts_Output(board_type){
             tr.appendChild(uploadDate);
             tr.appendChild(imageCell);
             tr.appendChild(commentButton);
-            
-            // tr.appendChild(deleteUserButton);
-
-            // if (row['userType'] === 'expert' && row['waitOk'] === 1) {
-            //     const unCommitButton = document.createElement('button');
-            //     unCommitButton.className = 'unCommitButtonClass';
-            //     unCommitButton.textContent = '권한수정';
-
-            //     unCommitButton.addEventListener('click', () => {
-            //         unCommit(row['id']);
-            //     });
-
-            //     tr.appendChild(unCommitButton);
-            // }
+            tr.appendChild(showCommentButton);
 
             board.appendChild(tr);
         }
@@ -366,7 +379,7 @@ async function Posts_Output(board_type){
         console.log(board_type);
     }
 }
-//모든 코멘트 가져오기
+//모든 코멘트 요청 가져오기
 function commentImport() {
 	return new Promise((resolve, reject) => {
         fetch('/reqCommentImport', {
@@ -387,6 +400,7 @@ function commentImport() {
     });
 }
 
+//검사 요청 수락
 function reqAccept(imgId, userId) {
     fetch('/reqAccept', {
         method: 'POST',
@@ -401,12 +415,13 @@ function reqAccept(imgId, userId) {
         console.log(res);
     })
     .catch(error => {
-        alert('commitExpert 오류');
+        alert('submitExpert 오류');
         location.href = 'ExpertRequestComment.html';
         console.log(error);
     });
 }
 
+//검사 요청 거절
 function reqDenied(imgId, userId) {
     fetch('/reqDenied', {
         method: 'POST',
@@ -421,14 +436,15 @@ function reqDenied(imgId, userId) {
         console.log(res);
     })
     .catch(error => {
-        alert('commitExpert 오류');
+        alert('submitExpert 오류');
         location.href = 'ExpertRequestComment.html';
         console.log(error);
     });
 }
 
-function commitComment(imgId, userId, value) {
-    fetch('/commitComment', {
+//코멘트 달기
+function submitComment(imgId, userId, value) {
+    fetch('/submitComment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -441,7 +457,7 @@ function commitComment(imgId, userId, value) {
         console.log(res);
     })
     .catch(error => {
-        alert('commitExpert 오류');
+        alert('submitExpert 오류');
         location.href = 'ExpertRequestComment.html';
         console.log(error);
     });
