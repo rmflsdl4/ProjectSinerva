@@ -371,7 +371,7 @@ app.post("/record", async (req, res) => {
                     FROM image
                     INNER JOIN building
                     ON image.building_id = building.id
-                    WHERE image.user_id = 'test'
+                    WHERE image.user_id = ?
                     GROUP BY image.upload_date
                     ORDER BY image.upload_date, building.address DESC`;
 
