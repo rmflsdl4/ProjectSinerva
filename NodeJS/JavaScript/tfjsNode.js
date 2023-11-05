@@ -1,4 +1,4 @@
-const tf = require('@tensorflow/tfjs-node');
+//const tf = require('@tensorflow/tfjs-node');
 const database = require('../database.js');
 const { createCanvas, loadImage } = require('canvas');
 const modelPath = 'tfjs_model(final)/model.json';

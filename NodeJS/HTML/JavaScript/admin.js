@@ -41,6 +41,7 @@ async function Posts_Output(board_type){
     const board = document.getElementById('usersMenu');	//목록
     const tds = document.getElementsByClassName('add_td_Tag');	//게시물
     const pageContainer = document.getElementById('pageLink');
+    const userTypeTh = document.querySelector('.title[width="20%"]');
 	//console.log(tds);
 
 	let users = await Users_Import();	//모든 유저 가져오기
@@ -62,6 +63,8 @@ async function Posts_Output(board_type){
         });
     }
 	console.log(experts);
+
+    
 
     while (tds.length > 0) {
         tds[0].parentNode.remove(); // 부모 노드를 통해 tr 요소를 삭제합니다.
@@ -94,12 +97,11 @@ async function Posts_Output(board_type){
         const tr = document.createElement('tr'); // 새로운 테이블 행 생성
         tr.className = 'userInfo';
 
-        tr.addEventListener('click', () => {
-            userInfo(row);
-        });
+        // tr.addEventListener('click', () => {
+        //     userInfo(nowPagePosts);
+        // });
 
         const row = nowPagePosts[idx]; // rows를 nowPagePosts로 변경
-        const userTypeTh = document.querySelector('.title[width="20%"]');
 
         if (row['userType'] === 'admin') {
             continue;
@@ -114,10 +116,11 @@ async function Posts_Output(board_type){
         nickName.textContent = row['nick_name'];
 
         if (board_type === '승인요청') {
-            userTypeTh.textContent = '승인요청';
+            userTypeTh.textContent = '승인 상태';
             if (row['userType'] === 'expert' && row['waitOk'] === 0) {
                 const noRequestsMessage = document.getElementById('noRequestsMessage');
                 noRequestsMessage.style.display = 'none';
+
                 const waitOk = document.createElement('td');
                 waitOk.className = 'add_td_Tag';
                 waitOk.textContent = row['waitOk'];
@@ -146,11 +149,15 @@ async function Posts_Output(board_type){
 
                 board.appendChild(tr);
             }
+            else {
+                console.log('오류');
+            }
         } 
         else if (row['waitOk'] !== 0) {
             userTypeTh.textContent = '유저타입';
             const noRequestsMessage = document.getElementById('noRequestsMessage');
             noRequestsMessage.style.display = 'none';
+
             const userType = document.createElement('td');
             userType.className = 'add_td_Tag';
             userType.textContent = row['userType'];
@@ -182,6 +189,9 @@ async function Posts_Output(board_type){
 
             board.appendChild(tr);
         }
+        else {
+            console.log('오류');
+        }
         console.log(board_type);
     }
 
@@ -207,6 +217,10 @@ async function Posts_Output(board_type){
 		
 		pageContainer.appendChild(pageLink);
 	}
+
+    if (experts.length === 0) {
+        console.log('값이 없어요');
+    }
 }
 //모든 유저 가져오기
 function Users_Import() {

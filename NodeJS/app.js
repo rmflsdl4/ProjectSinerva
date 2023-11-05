@@ -9,6 +9,7 @@ const database = require('./database.js');
 const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
+const reqComment = require('./JavaScript/reqComment.js');
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
@@ -408,6 +409,7 @@ app.post("/buildingSearch", async (req, res) => {
     res.send(result);
 })
 
+//전문가 요청 승인
 app.post('/commitExpert', async (req, res) => {
     const { id } = req.body;
     try {
@@ -475,4 +477,56 @@ app.post('/getExpertInfo', async (req, res) => {
 	const data = await MainSys.expertInfo();
 	
     res.send(data);
+})
+
+//모든 전문가 요청 가져옴
+app.post('/reqCommentImport', async (req, res) => {
+	const data = await reqComment.commentImport();
+	
+    res.send(data);
+})
+
+//전문가 코멘트 요청 버튼을 누르면 실행
+app.post('/reqAccept', async (req, res) => {
+	const { imgId } = req.body;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+    const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    const userId = req.session.userId;
+    dataTime = `${year}${month}${day}${hour}${minute}`;
+
+    try {
+        await reqComment.updateReqDependingOn(imgId, dataTime);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+//전문가 코멘트 거절 버튼을 누르면 실행
+app.post('/reqDenied', async (req, res) => {
+	const { imgId } = req.body;
+    try {
+        await reqComment.deleteReqDependingOn(imgId);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+app.post('/commitComment', async (req, res) => {
+    const { imgId, value } = req.body;
+    try {
+        await reqComment.updateCommitComment(imgId, value);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
 })
