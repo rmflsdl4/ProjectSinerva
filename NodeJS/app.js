@@ -363,14 +363,17 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-        upload_date,
-        count(*) as total,
-        SUM(CASE WHEN result = '정상' THEN 1 ELSE 0 END) AS normal_count,
-        SUM(CASE WHEN result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count
-    FROM image
-    WHERE user_id = ?
-    GROUP BY upload_date
-    ORDER BY upload_date DESC`;
+                    image.upload_date as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = 'test'
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
 
     const values = [req.session.userId];
 
