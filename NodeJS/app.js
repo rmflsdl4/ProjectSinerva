@@ -341,7 +341,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
         const building_values = [buildingName, req.session.userId];
         let building_num = await database.Query(building_query, building_values);
-        const img_query = 'INSERT IGNORE INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
+        const img_query = 'INSERT INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
