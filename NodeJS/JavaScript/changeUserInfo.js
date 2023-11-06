@@ -23,8 +23,8 @@ async function updateUserInfo(loginId, loginUserType, id, pw, nick_name, phone_n
 
         result = await database.Query(query, values);
 
-        const expertQuert = 'update expert set expert_route = ? where id = ?';
-        const expertValues = [image_route, id];
+        expertQuert = 'update expert set expert_route = ? where id = ?';
+        expertValues = [image_route, id];
         await database.Query(expertQuert, expertValues);
 
         if (result instanceof Error) {

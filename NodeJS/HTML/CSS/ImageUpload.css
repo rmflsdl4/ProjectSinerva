@@ -10,6 +10,33 @@ body {
     justify-content: center;
     min-height: 100vh;
 }
+#Logo {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 20px;
+}
+#Logo:hover::before {
+    width: 100%;
+}
+#Logo::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: #333;
+    transition: width 0.3s ease;
+}
 .wrapper {
     width: 550px;
     padding: 30px;

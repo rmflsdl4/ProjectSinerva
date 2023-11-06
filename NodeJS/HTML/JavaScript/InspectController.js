@@ -7,6 +7,7 @@ var pageNum;
 var itemsPerPage = 5;
 let imgId = [];
 let requestDate;
+let commentImgId = [];
 
 function InitPage(){
     currPageNum = 1;
@@ -539,6 +540,14 @@ function InspectRecordRow(data, state = false) {
     var sequenceNum = 1;
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        const dateStr = row.upload_date; // 예: '202311051449'
+        const year = dateStr.substring(0, 4);
+        const month = dateStr.substring(4, 6);
+        const day = dateStr.substring(6, 8);
+        const hour = dateStr.substring(8, 10);
+        const minute = dateStr.substring(10, 12);
+        const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+
         if(state === true){
             if(row.address !== preAddress){
                 tableHTML += "<tr class='commentRequest'>";
@@ -549,7 +558,7 @@ function InspectRecordRow(data, state = false) {
         }
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${sequenceNum}</td>`;
-        tableHTML += `<td>${row.upload_date}</td>`;
+        tableHTML += `<td>${upload_date}</td>`;
         tableHTML += `<td>${row.total}</td>`;
         tableHTML += `<td>${row.normal_count}</td>`;
         tableHTML += `<td>${row.abnormality_count}</td>`;
@@ -603,16 +612,13 @@ function InspectDetailsRecordRow(data) {
         tableHTML += "</tr>";
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
-            imgId[i] = row.img_id;
+            commentImgId[i] = row.img_id;
             tableHTML += "<tr class='commentRequest'>";
             tableHTML += `<td>${i + 1}</td>`;
             tableHTML += `<td>${row.upload_date}</td>`;
             tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
             tableHTML += `<td>${row.result}</td>`;
-            if(type.userType === "user"){
-                tableHTML += "<td><button class='InspectBtn'>요청</button></td>";
-            }
-            else{
+            if(type.userType !== "user"){
                 tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
             }
             tableHTML += "</tr>";
@@ -711,34 +717,6 @@ function SelectedBuilding(selectedAddress){
     });
 }
 
-// 요청 버튼 모달 팝업 열기
-document.querySelector('.expertRequestBtn').addEventListener('click', function () {
-    document.querySelector('.modal').style.display = 'block';
-
-    return new  Promise((resolve, reject) => {
-        fetch('/expertSearch', {
-            method: 'POST',
-            headers: {
-                
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // JSON 데이터로 응답을 파싱
-            })
-            .then(data => {
-                resolve(data);
-                console.log(data);
-                expertList(data);
-            })
-            .catch(error => {
-                reject(error);
-            });
-    });
-});
-
 // 전문가 테이블 정보 select
 function expertList(data) {
     // 테이블 요소를 가져옴
@@ -781,18 +759,25 @@ function selectExpertBtn(button) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ expertId, imgId, requestDate })
+            body: JSON.stringify({ expertId, commentImgId, requestDate })
         })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                // return response.json(); // JSON 데이터로 응답을 파싱
+                return response.text(); // 응답 텍스트로 받기
             })
             .then(data => {
                 resolve(data);
-                console.log(data);
+                if (data === "duplicate") {
+                    alert("이미 요청된 이미지들 입니다.");
+                } else {
+                    // JSON 형식의 응답을 처리할 수 있다면 이곳에서 처리
+                    console.log(data);
+                }
                 document.querySelector('.modal').style.display = 'none';
+                // 현재 페이지를 검사 결과 페이지 이동
+                window.location.href = '../InspectResult.html';
             })
             .catch(error => {
                 reject(error);
@@ -969,7 +954,7 @@ function expertListRow(data) {
         const row = data[i];
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td>${row.expert_route}</td>`;
+        tableHTML += `<td><img src="${row.expert_route}" style="width: 100%;"></td>`;
         tableHTML += `<td>${row.name}</td>`;
         tableHTML += `<td>${row.phone_num}</td>`;
         tableHTML += `<td>${row.email}</td>`;
