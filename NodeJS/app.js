@@ -583,7 +583,7 @@ app.post('/reqCommentImport', async (req, res) => {
 //전문가 코멘트 요청 버튼을 누르면 실행
 app.post('/reqAccept', async (req, res) => {
 	const { imgId } = req.body;
-
+    console.log(imgId);
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
