@@ -7,6 +7,7 @@
 }
 
 #userImageList, #expertInfoList {
+    margin-top: 30px;
     margin-bottom: 30px;
     height: 200px;
     display: block;
@@ -16,6 +17,7 @@
     color: red;
     text-align: right;
     margin-right: 60px;
+    width: 80%;
 }
 
 #menuBar {
@@ -29,10 +31,20 @@
     width: 50%;
 }
 #userImageList {
-    background-color: green;
+    width: 80%;
+    height: 500px;
+    background-color: rgb(196, 194, 194);
+    border: 3px solid rgb(100, 100, 100);
+}
+#userImageList > span > h1{
+    height: 20px;
+}
+#image{
+    margin-right: 55%;
 }
 #userTable {
-    background-color: lightgreen;
+    height: 250px;
+    display: inline-block;
 }
 .userTd {
 text-align: center;
@@ -47,3 +59,4 @@ text-align: center;
 .expertTd {
 text-align: center;
 }
+
