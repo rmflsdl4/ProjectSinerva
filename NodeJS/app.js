@@ -533,7 +533,7 @@ app.post('/reqCommentImport', async (req, res) => {
 
 //전문가 코멘트 요청 버튼을 누르면 실행
 app.post('/reqAccept', async (req, res) => {
-	const { imgId } = req.body;
+	const { imgUploadDate } = req.body;
 
     const date = new Date();
     const year = date.getFullYear();
@@ -545,7 +545,7 @@ app.post('/reqAccept', async (req, res) => {
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
     try {
-        await reqComment.updateReqDependingOn(imgId, dataTime);
+        await reqComment.updateReqDependingOn(imgUploadDate, dataTime);
         res.send();
     }
     catch(error){
@@ -555,9 +555,9 @@ app.post('/reqAccept', async (req, res) => {
 
 //전문가 코멘트 거절 버튼을 누르면 실행
 app.post('/reqDenied', async (req, res) => {
-	const { imgId } = req.body;
+	const { imgUploadDate } = req.body;
     try {
-        await reqComment.deleteReqDependingOn(imgId);
+        await reqComment.deleteReqDependingOn(imgUploadDate);
         res.send();
     }
     catch(error){
@@ -565,8 +565,9 @@ app.post('/reqDenied', async (req, res) => {
     }
 })
 
-app.post('/commitComment', async (req, res) => {
+app.post('/submitComment', async (req, res) => {
     const { imgId, value } = req.body;
+    console.log(imgId, value);
     try {
         await reqComment.updateCommitComment(imgId, value);
         res.send();
@@ -575,3 +576,12 @@ app.post('/commitComment', async (req, res) => {
         console.log(error);
     }
 })
+
+app.post('/seeMore', async (req, res) => {
+    const { imgUploadDate } = req.body;
+	const data = await reqComment.seeMore(imgUploadDate);
+	
+    res.send(data);
+})
+
+

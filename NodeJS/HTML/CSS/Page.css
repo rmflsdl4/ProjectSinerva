@@ -86,3 +86,8 @@
     font-size: 20px;
     cursor: pointer;
 }
+
+.more {
+    text-align: center;
+    margin-right: 10px;
+}

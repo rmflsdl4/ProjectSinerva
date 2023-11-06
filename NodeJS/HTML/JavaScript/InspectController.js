@@ -117,7 +117,7 @@ function Board_State_Init(){
 async function Posts_Output(board_type){
     const board = document.getElementById('commentListTable');	//목록
     const tds = document.getElementsByClassName('add_td_Tag');	//게시물
-    const imagePopUp = document.getElementById('buildingList');
+    const popUp = document.getElementById('buildingList');
 	//console.log(tds);
 
 	let comments = await commentImport();	//모든 코멘트 가져오기
@@ -155,9 +155,6 @@ async function Posts_Output(board_type){
         const row = reqComment[idx]; // rows를 nowPagePosts로 변경
         const userTypeTh = document.querySelector('.title[width="20%"]');
 
-        if (row['userType'] === 'admin') {
-            continue;
-        }
         //코멘트 요청
         if (board_type === '코멘트 요청') {
             // userTypeTh.textContent = '코멘트 요청';
@@ -192,6 +189,7 @@ async function Posts_Output(board_type){
 
                 imageCell.addEventListener('click', () => {
                     const modal = document.querySelector('.modal');
+
                     modal.style.display = 'block';
                     image.style.width = '100%';
                 
@@ -200,7 +198,8 @@ async function Posts_Output(board_type){
                     modal.querySelector('.modal-content').appendChild(imageClone);
                 });
                 
-                document.querySelector('.close-modal-btn').addEventListener('click', function () {
+                const closeImageButton = document.querySelector('.close-modal-btn');
+                closeImageButton.addEventListener('click', function () {
                     const modal = document.querySelector('.modal');
                     modal.style.display = 'none';
                     image.style.width = '50px';
@@ -218,7 +217,7 @@ async function Posts_Output(board_type){
                 reqDeniedButton.textContent = '거절';
 
                 reqDeniedButton.addEventListener('click', () => {
-                    reqDenied(row['img_id'], row['user_id']);
+                    reqDenied(row['imgUploadDate'], row['user_id']);
                 });
 
                 const submit = document.createElement('button');
@@ -226,7 +225,71 @@ async function Posts_Output(board_type){
                 submit.textContent = '승인';
 
                 submit.addEventListener('click', () => {
-                    reqAccept(row['img_id'], row['user_id']);
+                    reqAccept(row['imgUploadDate'], row['user_id']);
+                });
+                
+                const more = document.createElement('button');
+                more.className = 'add_td_Tag';
+                more.textContent = '더보기';
+
+                more.addEventListener('click', () => {
+                    seeMore(row['imgUploadDate'])
+                    .then(value => {
+                        const seeMoreTable = document.createElement('table');
+                        seeMoreTable.className = 'seeMoreTable';
+                        
+                        console.log(value);
+                        for (let i = 0; i < value.length; i++) {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'block';
+
+                            const tr = document.createElement('tr');
+                            tr.className = 'seeMoreTr';
+
+                            const userId = document.createElement('td');
+                            userId.className = 'more';
+                            userId.textContent = value[i].user_id;
+                            userId.style.width = '20%';
+
+                            const reqDate = document.createElement('td');
+                            reqDate.className = 'more';
+                            reqDate.textContent = value[i].requestDate;
+                            reqDate.style.width = '20%';
+
+                            const uploadDate = document.createElement('td');
+                            uploadDate.className = 'more';
+                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.style.width = '30%';
+
+                            const imageCell = document.createElement('td');
+                            imageCell.className = 'more';
+
+                            const image = document.createElement('img');
+                            image.src = value[i].file_route;
+                            image.style.width = '200px';
+
+                            imageCell.appendChild(image);
+
+                            tr.appendChild(userId);
+                            tr.appendChild(reqDate);
+                            tr.appendChild(uploadDate);
+                            tr.appendChild(imageCell);
+
+                            seeMoreTable.appendChild(tr);
+                        }
+
+                        const closeSeeMoreButton = document.querySelector('.close-modal-btn');
+                        closeSeeMoreButton.addEventListener('click', function () {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'none';
+                            const seeMoreTable = document.querySelector('.seeMoreTable');
+                            if (seeMoreTable) {
+                                seeMoreTable.remove();
+                            }
+                        });
+
+                        popUp.appendChild(seeMoreTable);
+                    });
                 });
 
                 tr.appendChild(num);
@@ -236,6 +299,7 @@ async function Posts_Output(board_type){
                 tr.appendChild(imageCell);
                 tr.appendChild(reqDeniedButton);
                 tr.appendChild(submit);
+                tr.appendChild(more);
 
                 board.appendChild(tr);
             }
@@ -311,43 +375,159 @@ async function Posts_Output(board_type){
 
             //코멘트 입력 및 수정
             commentButton.addEventListener('click', () => {
-                const modal = document.querySelector('.modal');
-                modal.style.display = 'block';
-            
-                const commentInput = document.createElement('textarea');
-                commentInput.className = 'commentTextarea';
-                commentInput.placeholder = '코멘트를 달아주세요';
-                commentInput.style.width = '500px';
-                commentInput.style.height = '200px';
-                commentInput.style.resize = 'none';
-            
-                const submitButton = document.createElement('button');
-                submitButton.className = 'commentSubmit';
-                submitButton.textContent = '작성 완료';
-            
-                submitButton.addEventListener('click', () => {
-                    const commentValue = commentInput.value; // textarea의 값을 가져옵니다
-                    console.log(commentValue);
-                    submitComment(row['img_id'], row['user_id'], commentValue);
-                });
-            
-                buildingList.appendChild(commentInput);
-                buildingList.appendChild(submitButton);
+                seeMore(row['imgUploadDate'])
+                    .then(value => {
+                        const seeMoreTable = document.createElement('table');
+                        seeMoreTable.className = 'seeMoreTable';
+                        
+                        console.log(value);
+                        for (let i = 0; i < value.length; i++) {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'block';
+
+                            const tr = document.createElement('tr');
+                            tr.className = 'seeMoreTr';
+
+                            const userId = document.createElement('td');
+                            userId.className = 'more';
+                            userId.textContent = value[i].user_id;
+                            userId.style.width = '20%';
+
+                            const uploadDate = document.createElement('td');
+                            uploadDate.className = 'more';
+                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.style.width = '30%';
+
+                            const imageCell = document.createElement('td');
+                            imageCell.className = 'more';
+
+                            const image = document.createElement('img');
+                            image.src = value[i].file_route;
+                            image.style.width = '200px';
+
+                            imageCell.appendChild(image);
+
+                            const textareaCell = document.createElement('td');
+                            textareaCell.className = 'more';
+
+                            const commentInput = document.createElement('textarea');
+                            commentInput.className = 'commentTextarea';
+                            if (value[i].comment) {
+                                commentInput.value = value[i].comment;
+                            }
+                            else {
+                                commentInput.placeholder = '코멘트를 달아주세요';   
+                            }
+                            commentInput.style.width = '300px';
+                            commentInput.style.height = '120px';
+                            commentInput.style.resize = 'none';
+
+                            textareaCell.appendChild(commentInput);
+
+                            const buttonCell = document.createElement('td');
+                            buttonCell.className = 'more';
+
+                            const submitButton = document.createElement('button');
+                            submitButton.className = 'commentSubmit';
+                            submitButton.textContent = '작성 완료';
+                        
+                            submitButton.addEventListener('click', () => {
+                                let commentValue = commentInput.value; // textarea의 값을 가져옵니다
+                                console.log(value[i].img_id, commentValue);
+                                submitComment(value[i].img_id, value[i].user_id, commentValue);
+                            });
+
+                            buttonCell.appendChild(submitButton);
+
+                            tr.appendChild(userId);
+                            tr.appendChild(uploadDate);
+                            tr.appendChild(imageCell);
+                            tr.appendChild(textareaCell);
+                            tr.appendChild(buttonCell);
+
+                            seeMoreTable.appendChild(tr);
+                        }
+
+                        const closeCommitModelButton = document.querySelector('.close-modal-btn');
+                        closeCommitModelButton.addEventListener('click', function () {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'none';
+                            const seeMoreTable = document.querySelector('.seeMoreTable');
+                            if (seeMoreTable) {
+                                seeMoreTable.remove();
+                            }
+                            Posts_Output('코멘트 작성완료');
+                        });
+
+                        popUp.appendChild(seeMoreTable);
+                    });
             });
 
             //코멘트 출력
             showCommentButton.addEventListener('click', () => {
-                const modal = document.querySelector('.modal');
-                modal.style.display = 'block';
-            
-                const commentInput = document.createElement('textarea');
-                commentInput.className = 'commentTextarea';
-                commentInput.placeholder = row['comment'];
-                commentInput.style.width = '500px';
-                commentInput.style.height = '200px';
-                commentInput.style.resize = 'none';
-            
-                buildingList.appendChild(commentInput);
+                seeMore(row['imgUploadDate'])
+                    .then(value => {
+                        const seeMoreTable = document.createElement('table');
+                        seeMoreTable.className = 'seeMoreTable';
+                        
+                        console.log(value);
+                        for (let i = 0; i < value.length; i++) {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'block';
+
+                            const tr = document.createElement('tr');
+                            tr.className = 'seeMoreTr';
+
+                            const userId = document.createElement('td');
+                            userId.className = 'more';
+                            userId.textContent = value[i].user_id;
+                            userId.style.width = '20%';
+
+                            const reqDate = document.createElement('td');
+                            reqDate.className = 'more';
+                            reqDate.textContent = value[i].requestDate;
+                            reqDate.style.width = '20%';
+
+                            const uploadDate = document.createElement('td');
+                            uploadDate.className = 'more';
+                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.style.width = '30%';
+
+                            const imageCell = document.createElement('td');
+                            imageCell.className = 'more';
+
+                            const image = document.createElement('img');
+                            image.src = value[i].file_route;
+                            image.style.width = '200px';
+
+                            imageCell.appendChild(image);
+
+                            const comment = document.createElement('td');
+                            comment.className = 'more';
+                            comment.textContent = value[i].comment;
+                            comment.style.width = '30%';
+
+                            tr.appendChild(userId);
+                            tr.appendChild(reqDate);
+                            tr.appendChild(uploadDate);
+                            tr.appendChild(imageCell);
+                            tr.appendChild(comment);
+
+                            seeMoreTable.appendChild(tr);
+                        }
+
+                        const closeViewCommentModelButton = document.querySelector('.close-modal-btn');
+                        closeViewCommentModelButton.addEventListener('click', function () {
+                            const modal = document.querySelector('.modal');
+                            modal.style.display = 'none';
+                            const seeMoreTable = document.querySelector('.seeMoreTable');
+                            if (seeMoreTable) {
+                                seeMoreTable.remove();
+                            }
+                        });
+
+                        popUp.appendChild(seeMoreTable);
+                    });
             });
             
             const closeModalButton = document.querySelector('.close-modal-btn');
@@ -379,7 +559,7 @@ async function Posts_Output(board_type){
         console.log(board_type);
     }
 }
-//모든 코멘트 요청 가져오기
+//모든 코멘트 요청 가져오기 (업로드 날짜별로)
 function commentImport() {
 	return new Promise((resolve, reject) => {
         fetch('/reqCommentImport', {
@@ -400,14 +580,34 @@ function commentImport() {
     });
 }
 
+//더 보기 버튼을 누르면 실행
+function seeMore(imgUploadDate) {
+	return new Promise((resolve, reject) => {
+        fetch('/seeMore', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ imgUploadDate })
+        })
+			.then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
 //검사 요청 수락
-function reqAccept(imgId, userId) {
+function reqAccept(imgUploadDate, userId) {
     fetch('/reqAccept', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ imgId })
+        body: JSON.stringify({ imgUploadDate })
     })
     .then(res => {
         alert(userId + ' 님의 요청을 수락했습니다.');
@@ -422,13 +622,13 @@ function reqAccept(imgId, userId) {
 }
 
 //검사 요청 거절
-function reqDenied(imgId, userId) {
+function reqDenied(imgUploadDate, userId) {
     fetch('/reqDenied', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ imgId })
+        body: JSON.stringify({ imgUploadDate })
     })
     .then(res => {
         alert(userId + ' 님의 요청을 거절했습니다.');
@@ -452,13 +652,11 @@ function submitComment(imgId, userId, value) {
         body: JSON.stringify({ imgId, value })
     })
     .then(res => {
-        alert(userId + ' 님에게 코멘트를 달았습니다.');
-        location.href = 'ExpertRequestComment.html';
+        alert(imgId + ' 번 이미지의 ' +userId + ' 님에게 코멘트를 달았습니다.');
         console.log(res);
     })
     .catch(error => {
         alert('submitExpert 오류');
-        location.href = 'ExpertRequestComment.html';
         console.log(error);
     });
 }

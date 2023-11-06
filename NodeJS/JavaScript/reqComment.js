@@ -3,7 +3,8 @@ const database = require('../database.js');
 async function commentImport() {
 	const query = `SELECT * FROM commentRequest as c
                     JOIN image as i
-                        ON c.img_id = i.img_id`;
+                        ON c.img_id = i.img_id
+					GROUP BY imgUploadDate`;
 	
 	const result = await database.Query(query, null);
 	
@@ -13,9 +14,9 @@ async function commentImport() {
 	return result;
 }
 
-async function updateReqDependingOn(imgId, dataTime) {
-	let query = `UPDATE commentRequest SET requestDate = ?, reqDependingOn = 'Y' WHERE img_id = ?`;
-	let value = [dataTime, imgId];
+async function updateReqDependingOn(imgUploadDate, dataTime) {
+	let query = `UPDATE commentRequest SET requestDate = ?, reqDependingOn = 'Y' WHERE imgUploadDate = ?`;
+	let value = [dataTime, imgUploadDate];
 	
 	let result = await database.Query(query, value);
 	
@@ -25,9 +26,9 @@ async function updateReqDependingOn(imgId, dataTime) {
 	return;
 }
 
-async function deleteReqDependingOn(imgId) {
-	let query = `DELETE FROM commentRequest WHERE img_id = ?`;
-	let value = [imgId];
+async function deleteReqDependingOn(imgUploadDate) {
+	let query = `DELETE FROM commentRequest WHERE imgUploadDate = ?`;
+	let value = [imgUploadDate];
 	
 	let result = await database.Query(query, value);
 	
@@ -49,9 +50,26 @@ async function updateCommitComment(imgId, inputValue) {
 	return;
 }
 
+async function seeMore(imgUploadDate) {
+	const query = `SELECT * FROM commentRequest as c
+                    JOIN image as i
+                        ON c.img_id = i.img_id
+					WHERE imgUploadDate = ?`;
+	
+	let value = [imgUploadDate];
+
+	let result = await database.Query(query, value);
+	
+	if (result instanceof Error) {
+		console.error(result);
+	}
+	return result;
+}
+
 module.exports = {
     commentImport: commentImport,
 	updateReqDependingOn: updateReqDependingOn,
 	deleteReqDependingOn: deleteReqDependingOn,
-	updateCommitComment: updateCommitComment
+	updateCommitComment: updateCommitComment,
+	seeMore: seeMore
 };
