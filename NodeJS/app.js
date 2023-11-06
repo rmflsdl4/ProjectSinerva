@@ -394,7 +394,7 @@ app.post("/selected-record", async (req, res) => {
         var sqlStr = "AND building.address = ?";
     }
     const query = `SELECT 
-                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    image.upload_date as upload_date,
                     count(*) as total,
                     SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
                     SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
