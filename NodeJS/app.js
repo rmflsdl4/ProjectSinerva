@@ -324,7 +324,7 @@ app.post("/buildingNameInput", async (req, res) => {
     const values = [buildingName, req.session.userId];
     const result = await database.Query(query, values);
     if(!result[0].count){
-        const query = 'INSERT IGNORE INTO building(address, user_id) VALUES (?, ?)';
+        const query = 'INSERT INTO building(address, user_id) VALUES (?, ?)';
         const values = [buildingName, req.session.userId];
         await database.Query(query, values);
     }
@@ -346,7 +346,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        //await tf.Predict(image_route, file.filename);
+        await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -364,7 +364,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    image.upload_date as upload_date,
                     count(*) as total,
                     SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
                     SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
@@ -394,7 +394,7 @@ app.post("/selected-record", async (req, res) => {
         var sqlStr = "AND building.address = ?";
     }
     const query = `SELECT 
-                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    image.upload_date as upload_date,
                     count(*) as total,
                     SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
                     SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
@@ -421,9 +421,9 @@ app.post("/detailsRecord", async (req, res) => {
 
     console.log(date); // value 변수에 저장된 값 출력
 
-    const query = `select upload_date, file_route, result
+    const query = `select img_id, upload_date, file_route, result
                     from image
-                    where upload_date = ? and user_id = ?;`;
+                    where upload_date = ? and user_id = ?`;
 
     const values = [date, req.session.userId];
 
@@ -490,11 +490,60 @@ app.post('/unCommit', async (req, res) => {
     }
 });
 
+// ** 전문가 사진 폴더에 저장 **
+const EXPERT_IMAGE_NUMBER_FILE = './expert_image_number.txt';
+let expertFolder;
+let ExpertImageNumber;
+let expertFileName = "";
+
+// 이미지 번호 파일에서 읽어오기
+try {
+    const data = fs.readFileSync(EXPERT_IMAGE_NUMBER_FILE, 'utf8');
+    ExpertImageNumber = parseInt(data);
+} catch (err) {
+    console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
+}
+
+const exStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const expertId = req.session.userId;
+
+        expertFolder = `ExpertImg/${expertId}/`;
+
+        // 해당 전문가 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(`ExpertImg/${expertId}`)) {
+            fs.mkdirSync(`ExpertImg/${expertId}`, { recursive: true });
+        }
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, expertFolder);
+    }, 
+    filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        ExpertImageNumber++;
+        console.log(file);
+        expertFileName += "img" + ExpertImageNumber + path.extname(file.originalname);
+        cb(null, expertFileName);
+
+        // 이미지 번호 파일에 업데이트
+        fs.writeFileSync(EXPERT_IMAGE_NUMBER_FILE, ExpertImageNumber.toString(), 'utf8');
+    }
+});
+
+const exUpload = multer({storage: exStorage});
+
+app.use('/ExpertImg', express.static('./ExpertImg/'));
+
 //정보수정 버튼을 누르면 실행
-app.post('/changeCommit', async (req, res) => {
+app.post('/changeCommit', exUpload.single('profile_picture'), async (req, res) => {
     const { id, pw, nick_name, phone_num, email, address, introduction} = req.body;
+    // 파일 이름을 가져옵니다.
+    const profile_picture = req.file.originalname;
+    console.log("폴더 : " + expertFolder);
+    console.log("파일 이름 : " + expertFileName);
+    let image_route = expertFolder + expertFileName;
     try{
-        changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction);
+        changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction, image_route);
     
         if (id !== req.session.userId) {
             delete req.session.userId;
@@ -526,7 +575,7 @@ app.post('/getExpertInfo', async (req, res) => {
 
 //모든 전문가 요청 가져옴
 app.post('/reqCommentImport', async (req, res) => {
-	const data = await reqComment.commentImport();
+	const data = await reqComment.commentImport(req.session.userId);
 	
     res.send(data);
 })
@@ -544,6 +593,8 @@ app.post('/reqAccept', async (req, res) => {
     const userId = req.session.userId;
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
+    console.log("수락한 이미지 아이디: " + imgId);
+    console.log("이미지 수락일자: " + dataTime);
     try {
         await reqComment.updateReqDependingOn(imgUploadDate, dataTime);
         res.send();
@@ -585,3 +636,79 @@ app.post('/seeMore', async (req, res) => {
 })
 
 
+// 전문가 테이블 select
+app.post("/expertSearch", async (req, res) => {
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+                    FROM expert AS e
+                    LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    GROUP BY e.id`;
+    const result = await database.Query(query);
+
+    // console.log(result);
+    res.send(result);
+})
+// 코멘트 요청 테이블 insert
+app.post("/commentRequest", async (req, res) => {
+    const { expertId, commentImgId, requestDate } = req.body;
+    let value = 0;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    dataTime = `${year}${month}${day}${hour}${minute}`;
+
+    // 비동기 처리를 위한 Promise 배열 생성
+    const promises = commentImgId.map(async (commentImgId) => {
+        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?, AND expert_id = ?';
+        const values = [commentImgId, req.session.userId, expertId];
+        const result = await database.Query(query, values);
+        value += result[0].count;
+    });
+
+    try {
+        // 모든 비동기 작업이 완료될 때까지 대기
+        await Promise.all(promises);
+
+        if (value === 0) {
+            commentImgId.forEach(async (commentImgId) => {
+                const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
+                const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
+                await database.Query(query, values);
+            });
+            res.send('success');
+        } else {
+            res.send('duplicate');
+        }
+    } catch (error) {
+        console.error(error);
+        res.send('error');
+    }
+});
+
+// 전문가 리스트 select
+app.post("/expertList", async (req, res) => {
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+                    FROM expert AS e
+                    LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    GROUP BY e.id`;
+
+    const result = await database.Query(query);
+
+    res.send(result);
+});
+
+// 사용자 코멘트 결과 확인
+app.post("/commentResult", async (req, res) => {
+    const query = `select count(*)
+                    from image as i inner join commentRequest as c
+                        on i.img_id = c.img_id 
+                    where i.upload_date = ? and i.user_id = ? and c.reqDependingOn = 'Y'`;
+    const values = [req.session.userId, req.session.userId];
+
+    const result = await database.Query(query);
+
+    res.send(result);
+});

@@ -1,12 +1,15 @@
 const database = require('../database.js');
 
-async function commentImport() {
+async function commentImport(expertId) {
 	const query = `SELECT * FROM commentRequest as c
                     JOIN image as i
                         ON c.img_id = i.img_id
-					GROUP BY imgUploadDate`;
+					GROUP BY imgUploadDate
+					HAVING expert_id = ?`;
 	
-	const result = await database.Query(query, null);
+	const value = [expertId];
+
+	const result = await database.Query(query, value);
 	
 	if (result instanceof Error) {
 		console.error(result);

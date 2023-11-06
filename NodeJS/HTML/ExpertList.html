@@ -2,6 +2,7 @@
     <head>
         <title>건물 균열 검사: 사용자</title>
         <link rel="stylesheet" href="CSS/All.css">
+        <link rel="stylesheet" href="CSS/ExpertList.css">
     </head>
     <body onload="ExpertListInitPage();">
         <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
@@ -19,6 +20,28 @@
             </div>
         </center>
 
-        <script src="JavaScript/Expert.js"></script>
+        <!-- 모달 팝업 컨테이너 -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="expertContent">
+                    </div>
+                </center>
+            </div>
+        </div>
+
+        <script src="JavaScript/InspectController.js"></script>
+        <script>
+            // expertIntroductionBtn 버튼에 대한 클릭 이벤트를 설정합니다.
+            document.querySelectorAll('.expertIntroductionBtn').forEach(button => {
+                button.addEventListener('click', function () {
+                    console.log("버튼이 클릭되었습니다.");
+
+                    // 모달 팝업 열기 및 내용 설정
+                    document.querySelector('.modal').style.display = 'block';
+                });
+            });
+        </script>
     </body>
 </html>

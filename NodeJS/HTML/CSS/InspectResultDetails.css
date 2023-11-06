@@ -77,3 +77,10 @@
 .expertRequestBtn:hover {
     background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
 }
+
+.requestBtn {
+    text-align: center;
+}
+textarea {
+    resize: none;
+}

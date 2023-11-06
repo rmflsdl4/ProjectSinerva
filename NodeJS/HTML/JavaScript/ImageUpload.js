@@ -3,7 +3,7 @@ const fileInput = document.querySelector(".fileInput");
 const selectArea = document.querySelector(".selectArea");      // 부모 요소인 selectArea에 클릭 이벤트 리스너를 추가
 const checkBtn = document.querySelector(".checkBtn");
 const formData = new FormData();
-
+const loadingBox = document.getElementById('loadingBox');
 // 파일 업로드 form 태그 클릭시
 form.addEventListener("click", ()=>{
     fileInput.click();
@@ -59,6 +59,7 @@ function createListItem(fileName, imageUrl) {
 
 // 검사 버튼 클릭시 검사할 이미지 주소들 저장 및 전송
 checkBtn.addEventListener("click", async () =>{
+    loadingBox.style.display = 'flex';
     // HTML에서 input 요소 값 가져오기.
     const buildingName = document.querySelector('.buildingWrite').value;
     const errorMessage = document.querySelector('.error-message');
