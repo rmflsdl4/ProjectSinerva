@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Popins", sans-serif;
+}
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+.wrapper {
+    width: 850px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 5px;
+}
+.wrapper header {
+    color: #6990f2;
+    font-size: 27px;
+    font-weight: 600;
+    text-align: center;
+}
+.wrapper form {
+    height: 167px;
+    display: flex;
+    margin: 30px 0;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 5px;
+    border: 2px dashed #6990f2;
+}
+.wrapper form:hover {
+    background: linear-gradient(to bottom, #87CEEB, #B0E0E6);
+}
+form i {
+    font-size: 50px;
+}
+form p {
+    font-size: 16px;
+    margin-top: 15px;
+}
+section .row {
+    background: #e9f0ff;
+    margin-bottom: 10px;
+    list-style: none;
+    padding: 15px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+section .row i{
+    font-size: 30px;
+    color: #6990f2;
+}
+section .details span {
+    font-size: 14px;
+}
+.selectArea {
+    max-height: 350px;
+    overflow-y: scroll;
+}
+.selectArea::-webkit-scrollbar {
+    width: 0px;
+}
+.selectArea .row .content .imgContent {
+    width: 100%;
+    margin-left: 15px;
+}
+.selectArea .details {
+    display: flex;
+    align-items: center;
+    margin-bottom: 7px;
+}
+.imgContent {
+    display: inline-block;
+}
+.imgContent img {
+    width: 50px; 
+    height: 50px;
+}
+
+/* 삭제 버튼 스타일 */
+.removeBtn {
+    background-color: #FF3333;
+    color: white;
+    font-size: 14px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+/* 삭제 버튼 호버(마우스 오버) 스타일 */
+.removeBtn:hover {
+    background-color: #FF0000;
+}
+
+
+/* 검사 버튼 스타일 */
+.checkBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 26px;
+    padding: 20px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* 버튼 호버(마우스 오버) 스타일 */
+.checkBtn:hover {
+    background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
+}
+
+.testBtnArea {
+    margin-top: 30px;
+}
+
+.testBtnBox {
+    text-align: center;
+}

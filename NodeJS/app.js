@@ -1,35 +1,29 @@
 // 사용 모듈 로드
 const express = require('express');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
 const normalization = require('./JavaScript/Normalization_Check.js');
 const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
-const posts = require('./JavaScript/Post.js');
+const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
+// const tf = require('./JavaScript/tfjsNode.js');
+const MemoryStore = require('memorystore')(session);
+const MainSys = require('./JavaScript/MainSys.js');
+const reqComment = require('./JavaScript/reqComment.js');
+//유저 기능
 var bodyParser = require('body-parser');
-const predictionDB = require('./JavaScript/PredictionDB');
 const multer = require('multer');
 const path = require('path');
+const changeUserInfo = require('./JavaScript/changeUserInfo.js');
+//관리자 기능
+const AdminSys = require('./JavaScript/AdminSys.js');
 
 
 // 데이터베이스 연결
 database.Connect();
 // 모듈에서 사용할 로직들
 const app = express();
-
-app.use(bodyParser.json({limit: '50mb'})); 
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 var fs = require('fs');
-const sessionStore = new MySQLStore({
-    host: 'svc.sel4.cloudtype.app',
-    user: 'root',
-    password: 'tkfkdgo3@',
-    database: 'flier',
-    port: '32388',
-    charset: 'UTF8MB4',
-    expiration: 24 * 60 * 60 * 1000
-});
 
 app.use(express.static('HTML'))
 app.use(express.json());
@@ -41,7 +35,9 @@ app.use(session({
     cookie: {
         maxAge: 24 * 60 * 60 * 1000,
     },
-    store: sessionStore,
+    store: new MemoryStore({
+        checkPeriod: 86400000,
+    }),
 }));
 
 // 서버 구동
@@ -52,7 +48,7 @@ app.listen(3000, function(){
 // 서버 오류 처리
 process.on('uncaughtException', (err) => {
     console.error('오류가 발생했습니다:', err);
-
+  
     database.Close();
     
     process.exit(1); // 0이 아닌 값은 비정상적인 종료를 나타냄
@@ -62,7 +58,7 @@ process.on('uncaughtException', (err) => {
 // 라우팅 설정
 
 app.get('/', function(req, res){
-    fs.readFile('HTML/Login.html', function(error, data){
+    fs.readFile('HTML/Main.html', function(error, data){
         if(error){
             console.log(error);
         }
@@ -72,12 +68,12 @@ app.get('/', function(req, res){
         }
     });
 });
-// 회원가입 입력값 검사
+// 회원가입 입력값 검사 및 계정 찾기 입력값 검사
 app.post('/check-input', (req, res) => {
     const { name, value1, value2 } = req.body;
     
     // 분기별로 처리 로직 수행
-    if (name === 'id') {
+    if (name === 'id') {                //회원가입 분기
         normalization.ID_Check(value1)
             .then(result => {
                 res.json({ result });
@@ -93,20 +89,63 @@ app.post('/check-input', (req, res) => {
                 res.json({ result });
             });
     } else if (name === 'nick_name') {
-        console.log(value1);
+        //console.log(value1);
         normalization.Nick_Name_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'phone_num') {
+        //console.log(value1);
+        normalization.Phone_Num_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'email') {
+        //console.log(value1);
+        normalization.Email_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'address') {
+        //console.log(value1);
+        normalization.Address_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findId') {         //계정 찾기 분기
+        //console.log(value1);
+        normalization.FindId_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findNickName') {
+        //console.log(value1);
+        normalization.FindNickName_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findPhone_num') {
+        //console.log(value1);
+        normalization.FindPhone_num_Check(value1)
+            .then(result => {
+                res.json({ result });
+            });
+    } else if (name === 'findEmail') {
+        //console.log(value1);
+        normalization.FindEmail_Check(value1)
             .then(result => {
                 res.json({ result });
             });
     }
 });
+//회원가입
 app.post('/sign-up', (req, res) => {
-    const { id, pw, nick_name } = req.body;
+    const { id, pw, nick_name, phone_num, email, address, userType} = req.body;
 
     try{
-        signup.Add_User(id, pw, nick_name);
+        signup.Add_User(id, pw, nick_name, phone_num, email, address, userType);
     
-        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} ]`);
+        console.log(`신규 회원 정보 [ ID - ${id} / NAME - ${nick_name} / userType - ${userType} ]`);
 
         res.send("<script>alert('회원가입이 완료되었습니다.'); location.href='Login.html';</script>");
     }
@@ -115,6 +154,7 @@ app.post('/sign-up', (req, res) => {
         res.status(500).send("<script>alert('회원가입에 실패하였습니다.'); location.href='SignUp.html';</script>");
     }
 });
+//로그인
 app.post('/login', (req, res) => {
     const now = new Date();
     const year = now.getFullYear();
@@ -131,217 +171,520 @@ app.post('/login', (req, res) => {
     login.Login(id, pw)
         .then((arr) => {
             const state = arr[0];
-            const user_type = arr[1];
-            if(state === 1){
-                req.session.session_id = id;
-                req.session.user_type = user_type;
-                console.log(`회원 [ ${id} ] 접속.... 접속 시간 : ${formattedDate}`);
-                console.log(`세션에 ID 저장: ${req.session.session_id}`);
-                console.log(`유저 타입: ${user_type}`);
+            const userType = arr[1];
+            const waitOk = arr[2];
+            if(state === 1 && waitOk === 1){
+                req.session.userId = id;
+                req.session.userType = userType;
+                console.log(`세션 유저 저장 값: ${req.session.userId}`);
+                console.log(`세션 타입 저장 값: ${req.session.userType}`);
                 res.send("<script>alert('로그인에 성공하였습니다.'); location.href='Main.html';</script>");
             }
             else{
-                res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+                if (waitOk === 0) {
+                    res.send("<script>alert('승인 대기중입니다.'); location.href='Main.html';</script>");
+                }
+                else {
+                    res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+                }
             }
         })
+        .catch(error => {
+            res.send("<script>alert('로그인에 실패하였습니다.'); location.href='Login.html';</script>");
+        });
 })
-app.post('/posts-import', async (req, res) => {
-    const data = await posts.Get_List();
-    
+//로그아웃
+app.post('/logout', (req, res) => {
+    delete req.session.userId;
+    delete req.session.userType;
 
-    res.send(data);
+    res.send("<script>alert('로그아웃 되었습니다.'); location.href='Main.html';</script>");
 })
-app.post('/view-post', async (req, res) => {
-    const { post_id } = req.body;
-    await posts.Add_View_Count(post_id);
-    const data = await posts.Get_Post(post_id);
-    const session_id = req.session.session_id;
-    res.send( { data, session_id });
-})
+//계정찾기
+app.post('/findAccount', (req,res) => {
+    const { findId, findNickName, userType, findPhone_num, findEmail } = req.body;
 
-app.post('/add-post', async (req, res) => {
-    const { formData } = req.body;
-    const { board_type, title, content, lock_state } = formData;
-    console.log(board_type, title, content, lock_state);
-    try{
-        await posts.Add_Post(board_type, title, content, req.session.session_id, lock_state);
-        res.send("<script>alert('게시글을 등록하였습니다.'); location.href='Main.html';</script>");
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('게시글 등록에 실패하였습니다.'); location.href='Main.html';</script>");
-    }
-})
-app.post('/post-lock-check', async (req, res) => {
-    const { post_id } = req.body;
-    
-    try{
-        const isLock = await posts.Lock_Check(post_id, req.session.session_id);
-        console.log(isLock);
-        res.send(isLock);
-    }
-    catch(error){
-        console.log(error);
-        res.send('false');
-    }
-})
-// 제목, 내용, 게시글 넘버 받아서 게시글 업데이트
-app.post('/update-post', async (req, res) => {
-    const { title, content, post_id } = req.body;
+    if (findNickName) {
+        findAccount.FindId( findNickName, userType, findPhone_num, findEmail )
+        .then((arr) => {
+            const userId = arr[0];
+            const userNickName = arr[1];
 
-    try{
-        await posts.Update_Post(title, content, post_id);
-        res.send("<script>alert('게시글을 수정하였습니다.'); location.href='Main.html';</script>");
+            if(userId !== null && userNickName !== null){
+                console.log(`ID: ${userId}`);
+                console.log(`Nick_Name: ${userNickName}`);
+                const message = `${userNickName}님의 계정을 찾았습니다.
+ID: ${userId}입니다.`;
+                res.json({ message });
+            }
+            else{
+                const message = `계정을 찾을 수 없습니다.`;
+                res.json({ message });
+            }
+        })
     }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('게시글 수정에 실패하였습니다.'); location.href='Main.html';</script>");
-    }
-})
-// post_id받아서 delete_post로 넘김
-app.post('/delete-post', async (req, res) => {
-	const { post_id } = req.body;
-	console.log(post_id);
-	try {
-		await posts.delete_post(post_id);
-		res.send("<script>alert('삭제되었습니다.'); window.location.href = '/';</script>");
-	}
-	catch(error){
-        console.log(error);
-		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-    }
-})
-// 유저 타입 반환
-app.post('/get-user-type', async (req, res) => {
-    const user_type = req.session.user_type;
-    
-    res.send(user_type);
-})
-// 선택한 게시글 삭제 (관리자 전용)
-app.post('/selected-posts-delete', async (req, res) => {
-    const { posts_id } = req.body;
+    else if (findId) {
+        findAccount.FindPw( findId, userType, findPhone_num, findEmail )
+        .then((arr) => {
+            const userPw = arr[0];
+            const userNickName = arr[1];
 
-    try{
-        if(posts_id.length > 0){
-            await posts.Posts_Delete(posts_id);
-        }
-        res.send();
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('오류 발생. 삭제 실패.'); window.location.href = 'Main.html';</script>");
+            if(userPw !== null && userNickName !== null){
+                console.log(`PW: ${userPw}`);
+                console.log(`Nick_Name: ${userNickName}`);
+                const message = `${userNickName}님의 계정을 찾았습니다.
+PW: ${userPw}입니다.`;
+                res.json({ message });
+            }
+            else{
+                const message = `계정을 찾을 수 없습니다.`;
+                res.json({ message });
+            }
+        })
     }
 })
 //모든 유저 가져옴
 app.post('/users-import', async (req, res) => {
-	const data = await posts.get_users();
+	const data = await AdminSys.get_users();
 	
     res.send(data);
 })
-//유저삭제
-app.post('/delete-users', async (req, res) => {
-	const { id, nick_name } = req.body;
-	console.log(id, nick_name);
-	try {
-		await posts.delete_users(id, nick_name);
-		res.send("<script>alert(id + ' 가 삭제되었습니다.'); window.location.href = '/';</script>");
-	}
-	catch(error){
-        console.log(error);
-		res.send("<script>alert('삭제 실패'); window.location.href = '/';</script>");
-    }
-})
-app.post('/select-posts', async (req, res) => {
-    const { formData } = req.body;
-    const { col, search_content, board_type } = formData;
 
-    try{
-        const data = await posts.Search(col, search_content, board_type);
-        console.log(data);
-        res.send(data);
-    }
-    catch(error){
-        console.log(error);
-    }
-
-})
-//댓글 불러오기
-app.post('/load-comment', async (req, res) => {
-	const { post_id } = await req.body;
-	const data = await posts.load_comments(post_id);
-	
-	try {
-		console.log(post_id, '댓글 불러오기');
-		res.send(data);
-	}
-	catch(error) {
-		console.log(error);
-		res.send("<script>alert('오류');</script>");
-	}
-});
-//댓글 추가
-app.post('/add-comment', async (req, res) => {
-    const { comment, post_id } = req.body;
-    try {
-        await posts.add_comment(comment, post_id, req.session.session_id);
-        res.send("<script>alert(id + '가' + post_id + '에 댓글이 추가되었습니다');</script>");
-    }
-    catch(error){
-        console.log(error);
-        res.send("<script>alert('댓글이 추가에 실패하였습니다');</script>");
-    }
-});
-//댓글 삭제
-app.post('/delete-comment', async (req, res) => {
-	const { comment_id } = req.body;
-	try {
-		await posts.delete_comment(comment_id);
-		res.send("<script>alert('댓글 번호' + comment_id + '가 삭제되었습니다');</script>");
-	}
-	catch(error){
-        console.log(error);
-        res.send("<script>alert('댓글삭제에 실패하였습니다');</script>");
-    }
-});
 //로그인한 유저 반환
 app.post('/login-user', async (req, res) => {
-    const session_id = req.session.session_id;
+    const userId = req.session.userId;
+    const userType = req.session.userType;
 	
-    res.send({ session_id });
-});
-//이미지 검사 요청
-// app.post('/checkImg', async (req, res) => {
-//     const { checkImgTest } = req.body;
-//     predictionDB.InsertImage(checkImgTest);
-//     res.send();
-// });
-// 이미지 파일 폴더에 저장
+    res.send({ userId, userType });
+})
+
+// **이미지 파일 폴더에 저장**
+const IMAGE_NUMBER_FILE = './image_number.txt';
+let dataTime;
+let folder;
+let buildingName;
+
+// 이미지 번호 파일에서 읽어오기
+try {
+    const data = fs.readFileSync(IMAGE_NUMBER_FILE, 'utf8');
+    imageNumber = parseInt(data);
+} catch (err) {
+    console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'upload/')
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+        const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        const userId = req.session.userId;
+
+        dataTime = `${year}${month}${day}${hour}${minute}`;
+        folder = `images/${userId}/${buildingName}/${dataTime}/`;
+
+        // 해당 유저 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}`)) {
+            fs.mkdirSync(`images/${userId}`, { recursive: true });
+        }
+
+        // 해당 건물명 폴더가 없으면 생성
+        if (!fs.existsSync(`images/${userId}/${buildingName}`)) {
+            fs.mkdirSync(`images/${userId}/${buildingName}`, { recursive: true });
+        }
+
+        // 해당 날짜 폴더가 없으면 생성
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder, { recursive: true });
+        }
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, folder);
     }, 
     filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        imageNumber++;
         console.log(file)
-        cb(null, file.originalname.split('.', 1) + path.extname(file.originalname))
+        cb(null, "img" + imageNumber + path.extname(file.originalname))
+
+        // 이미지 번호 파일에 업데이트
+        fs.writeFileSync(IMAGE_NUMBER_FILE, imageNumber.toString(), 'utf8');
     }
 });
 
 const upload = multer({storage: storage});
 
-app.post('/checkImg', upload.array('images'), (req, res) => {
-    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
-    req.files.forEach((file) => {
-        console.log('업로드한 파일 이름:', file.originalname);
-        console.log('서버에 저장된 파일 이름:', file.filename);
-        const query = 'INSERT INTO testImg(fileName, userId) VALUES (?, \'test\')';
-        let image = '/image/' + file.filename;
-        const values = [image];
+app.use('/images', express.static('./images/'));
 
-        database.Query(query, values);
+app.post("/buildingNameInput", async (req, res) => {
+    buildingName = req.body.buildingName;
+    const query = 'SELECT COUNT(*) as count FROM building WHERE address = ? AND user_id = ?';
+    const values = [buildingName, req.session.userId];
+    const result = await database.Query(query, values);
+    if(!result[0].count){
+        const query = 'INSERT INTO building(address, user_id) VALUES (?, ?)';
+        const values = [buildingName, req.session.userId];
+        await database.Query(query, values);
+    }
+
+    console.log(buildingName);
+    res.send();
+})
+
+app.post('/image-discrimination', upload.array('images'), async (req, res) => {
+    // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
+    const uploadTasks = req.files.map(async (file) => {
+        // console.log('업로드한 파일 이름:', file.originalname);
+        // console.log('서버에 저장된 파일 이름:', file.filename);
+        
+        const building_query = 'SELECT id FROM building WHERE address = ? AND user_id = ?';
+        const building_values = [buildingName, req.session.userId];
+        let building_num = await database.Query(building_query, building_values);
+        const img_query = 'INSERT INTO image(file_route, upload_date, building_id, user_id) VALUES (?, ?, ?, ?)';
+        let image_route = folder + file.filename;
+        const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
+        await database.Query(img_query, img_values);
+        //await tf.Predict(image_route, file.filename);
+
+        return Promise.resolve(); 
     });
-    Connection.query(sql, values,
-        (err, rows, fields) => {
-            res.send(rows);
+    try {
+        await Promise.all(uploadTasks);
+        console.log(req.session.userId + " 사용자 검사 완료!!");
+        
+        res.send(); // 응답을 보냅니다.
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send("서버 오류 발생");
+    }
+});
+// 과거 검사한 기록 select
+app.post("/record", async (req, res) => {
+    const query = `SELECT 
+                    image.upload_date as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = ?
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
+
+    const values = [req.session.userId];
+
+    const result = await database.Query(query, values);
+
+    console.log(result);
+
+    res.send(result);
+});
+// 선택한 주소에 대한 레코들들만 불러오기
+app.post("/selected-record", async (req, res) => {
+    const selectedAddress = req.body.selectedAddress;
+    if(selectedAddress == ""){
+        var sqlStr = "";
+    }
+    else{
+        var sqlStr = "AND building.address = ?";
+    }
+    const query = `SELECT 
+                    DATE_FORMAT(STR_TO_DATE(image.upload_date, '%Y%m%d%H%i%s'), '%Y-%m-%d %H:%i') as upload_date,
+                    count(*) as total,
+                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                    building.address as address
+                    FROM image
+                    INNER JOIN building
+                    ON image.building_id = building.id
+                    WHERE image.user_id = ? ${sqlStr}
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC`;
+
+    const values = [req.session.userId, selectedAddress];
+
+    const result = await database.Query(query, values);
+
+    console.log(result);
+
+    res.send(result);
+});
+
+// 과거 검사한 기록 상세보기
+app.post("/detailsRecord", async (req, res) => {
+    const { date } = req.body;
+
+    console.log(date); // value 변수에 저장된 값 출력
+
+    const query = `select img_id, upload_date, file_route, result
+                    from image
+                    where upload_date = ? and user_id = ?;`;
+
+    const values = [date, req.session.userId];
+
+    const result = await database.Query(query, values);
+    
+    console.log(result);
+
+    res.send(result);
+});
+// 건물 테이블 select
+app.post("/buildingSearch", async (req, res) => {
+    const query = 'SELECT address FROM building WHERE user_id = ?';
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
+
+    console.log(result);
+    res.send(result);
+})
+app.post("/selectedBuildingSearch", async (req, res) => {
+    const query = `SELECT DISTINCT building.address
+                    FROM building
+                    INNER JOIN image
+                    ON building.id = image.building_id
+                    WHERE building.user_id = ?`;
+    const values = [req.session.userId];
+    const result = await database.Query(query, values);
+
+    console.log(result);
+    res.send(result);
+})
+
+app.post('/commitExpert', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.updateWaitOk(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+//유저 삭제
+app.post('/deleteUser', async (req, res) => {
+    const { id, userType } = req.body;
+    try {
+        await AdminSys.deleteUser(id, userType);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+//전문가 요청 수정
+app.post('/unCommit', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await AdminSys.unCommit(id);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+});
+
+// ** 전문가 사진 폴더에 저장 **
+const EXPERT_IMAGE_NUMBER_FILE = './expert_image_number.txt';
+let expertFolder;
+let ExpertImageNumber;
+let expertFileName = "";
+
+// 이미지 번호 파일에서 읽어오기
+try {
+    const data = fs.readFileSync(EXPERT_IMAGE_NUMBER_FILE, 'utf8');
+    ExpertImageNumber = parseInt(data);
+} catch (err) {
+    console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
+}
+
+const exStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const expertId = req.session.userId;
+
+        expertFolder = `ExpertImg/${expertId}/`;
+
+        // 해당 전문가 아이디 폴더가 없으면 생성
+        if (!fs.existsSync(`ExpertImg/${expertId}`)) {
+            fs.mkdirSync(`ExpertImg/${expertId}`, { recursive: true });
         }
-    );
+
+        // 이미지 파일을 해당 날짜 폴더에 저장
+        cb(null, expertFolder);
+    }, 
+    filename: (req, file, cb) => {
+        // 이미지 번호 증가
+        ExpertImageNumber++;
+        console.log(file);
+        expertFileName += "img" + ExpertImageNumber + path.extname(file.originalname);
+        cb(null, expertFileName);
+
+        // 이미지 번호 파일에 업데이트
+        fs.writeFileSync(EXPERT_IMAGE_NUMBER_FILE, ExpertImageNumber.toString(), 'utf8');
+    }
+});
+
+const exUpload = multer({storage: exStorage});
+
+app.use('/ExpertImg', express.static('./ExpertImg/'));
+
+//정보수정 버튼을 누르면 실행
+app.post('/changeCommit', exUpload.single('profile_picture'), async (req, res) => {
+    const { id, pw, nick_name, phone_num, email, address, introduction} = req.body;
+    // 파일 이름을 가져옵니다.
+    const profile_picture = req.file.originalname;
+    console.log("폴더 : " + expertFolder);
+    console.log("파일 이름 : " + expertFileName);
+    let image_route = expertFolder + expertFileName;
+    try{
+        changeUserInfo.updateUserInfo(req.session.userId, req.session.userType, id, pw, nick_name, phone_num, email, address, introduction, image_route);
+    
+        if (id !== req.session.userId) {
+            delete req.session.userId;
+            req.session.userId = id;
+        }
+
+        res.send("<script>alert('정보수정이 완료되었습니다.'); location.href='changeUserInfo.html';</script>");
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).send("<script>alert('잘못된 입력값이 있습니다.'); location.href='changeUserInfo.html';</script>");
+    }
+})
+
+//로그인한 유저의 정보만 가져옴
+app.post('/loginUserInfo', async (req, res) => {
+    const { id, userType } = req.body;
+	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})
+
+//전문가만 불러옴
+app.post('/getExpertInfo', async (req, res) => {
+	const data = await MainSys.expertInfo();
+	
+    res.send(data);
+})
+
+//모든 전문가 요청 가져옴
+app.post('/reqCommentImport', async (req, res) => {
+	const data = await reqComment.commentImport();
+	
+    res.send(data);
+})
+
+//전문가 코멘트 요청 버튼을 누르면 실행
+app.post('/reqAccept', async (req, res) => {
+	const { imgId } = req.body;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
+    const day = date.getDate().toString().padStart(2, '0'); // 일은 두 자리로 포맷
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    const userId = req.session.userId;
+    dataTime = `${year}${month}${day}${hour}${minute}`;
+
+    try {
+        await reqComment.updateReqDependingOn(imgId, dataTime);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+//전문가 코멘트 거절 버튼을 누르면 실행
+app.post('/reqDenied', async (req, res) => {
+	const { imgId } = req.body;
+    try {
+        await reqComment.deleteReqDependingOn(imgId);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+app.post('/commitComment', async (req, res) => {
+    const { imgId, value } = req.body;
+    try {
+        await reqComment.updateCommitComment(imgId, value);
+        res.send();
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+// 전문가 테이블 select
+app.post("/expertSearch", async (req, res) => {
+    const query = `select e.id as expert_id, e.name as name, e.introduction as introduction, ROUND(AVG(ue.rating), 1) as rating
+                    from expert as e inner join user_has_expert as ue
+                        on e.id = ue.expert_id
+                        group by e.id`;
+    const result = await database.Query(query);
+
+    // console.log(result);
+    res.send(result);
+})
+// 코멘트 요청 테이블 insert
+app.post("/commentRequest", async (req, res) => {
+    const { expertId, commentImgId, requestDate } = req.body;
+    let value = 0;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    dataTime = `${year}${month}${day}${hour}${minute}`;
+
+    // 비동기 처리를 위한 Promise 배열 생성
+    const promises = commentImgId.map(async (commentImgId) => {
+        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?';
+        const values = [commentImgId, req.session.userId];
+        const result = await database.Query(query, values);
+        value += result[0].count;
+    });
+
+    try {
+        // 모든 비동기 작업이 완료될 때까지 대기
+        await Promise.all(promises);
+
+        if (value === 0) {
+            commentImgId.forEach(async (commentImgId) => {
+                const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
+                const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
+                await database.Query(query, values);
+            });
+            res.send('success');
+        } else {
+            res.send('duplicate');
+        }
+    } catch (error) {
+        console.error(error);
+        res.send('error');
+    }
+});
+
+// 전문가 리스트 select
+app.post("/expertList", async (req, res) => {
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+                    FROM expert AS e
+                    LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    GROUP BY e.id`;
+
+    const result = await database.Query(query);
+
+    res.send(result);
 });

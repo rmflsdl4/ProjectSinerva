@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>건물 균열 검사 상세보기</title>
+        <link rel="stylesheet" href="CSS/All.css">
+    </head>
+    <body>
+        <div id="Logo" onclick="window.location.href = './CommonUserMain.html'">건물 균열 검사 기록</div>
+        <div id="profile">
+            <a href="#" id="profileText">마이 페이지</a>
+        </div>
+        <br><br>
+        <center>
+            <div id="commentList">
+                <table id="commentListTable">
+                </table>
+                <div id="pageContainer">
+                    <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
+                </div>
+            </div>
+        </center>
+
+        <script src="JavaScript/InspectController.js"></script>
+        <script>
+            // 현재 페이지 URL에서 매개변수를 추출
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // 매개변수에서 값을 읽기
+            const param1 = urlParams.get('param1');
+            DetailsRecordInitPage(param1);
+
+            console.log(`param1: ${param1}`);
+        </script>
+    </body>
+</html>

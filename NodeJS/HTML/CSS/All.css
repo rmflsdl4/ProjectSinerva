@@ -1,0 +1,111 @@
+@import url("./font.css"); /* 글꼴 */
+@import url("./InspectResult.css"); /* 안전 전문가 */
+@import url("./Admin.css"); /* 관리자 */
+@import url("./Main.css"); /* 메인 */
+@import url("./Page.css");
+@import url("./InspectResult.css");
+
+/* Main */
+html, body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #F5F5F5;;
+}
+a{
+    text-decoration: none;
+    margin-right: 25px;
+    color: #C0C0C0;
+}
+a:hover{
+    border-bottom: 1px solid #C0C0C0;
+}
+#Logo {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 20px;
+}
+#Logo:hover::before {
+    width: 100%;
+}
+#Logo::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: #333;
+    transition: width 0.3s ease;
+}
+#Main_BackGround{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#MainMenuBox{
+    font-size: 17px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+/* Login */
+#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address, #introduction {
+    width: 500px;
+    height: 70px;
+    border: 2px solid gray;
+    border-radius: 5px;
+    font-size: 20px;
+    padding: 30px;
+    outline: none;
+}
+#introduction {
+    height: 90px;
+    resize: none;
+    overflow: auto;
+}
+#login{
+    font-size: 17px;
+    width: 100px;
+    height: 30px;
+    background-color: #347236;
+    border: none;
+    color: white;
+    margin-left: auto;
+}
+
+/* SignUp & FindAccount*/
+#sign_up, #find{
+    font-size: 18px;
+    width: 100px;
+    height: 30px;
+    background-color: #347236;
+    border: none;
+    color: white;
+    margin-left: auto;
+}
+.findAc {
+    display: inline-block;
+}
+.MessageBox{
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.MessageBox > Img{
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}

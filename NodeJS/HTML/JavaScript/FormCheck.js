@@ -1,4 +1,4 @@
-let idc, pwc, cpwc, nnc;
+let idc, pwc, cpwc, nnc, pnc, emc, adc;
 
 function Input_Check(element){
     Input_Data_Check_To_Submit();
@@ -130,6 +130,92 @@ function Input_Check(element){
             });
         }
     }
+    else if (element.name === "phone_num") {
+        element.value = element.value.replace(/[^0-9]/g, '');
+        const changeLength = document.getElementById("phone_num");
+        
+        if (element.value.startsWith("02")) {
+            changeLength.maxLength = 12;
+
+            element.value = element.value
+            .replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,2})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+            .replace(/(\-{1,2})$/g, "");
+        } else {
+            changeLength.maxLength = 13;
+
+            element.value = element.value
+            .replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+            .replace(/(\-{1,2})$/g, "");
+        }
+        
+        Value_Check(element.name, element.value, null)
+        .then(result => {
+            pnc = result;
+            if(result){
+                img.src = "Image/check.png";
+                textNode.nodeValue = "사용 가능한 번호입니다.";
+            }
+            else{
+                img.src = "Image/dcheck.png";
+                textNode.nodeValue = "사용 불가능한 번호입니다.";
+            }
+            MessageBox_Check();
+        });
+    }
+    else if (element.name === "email") {
+        const spaceBar = / /;
+        if(spaceBar.test(element.value)){
+            img.src = "Image/dcheck.png";
+            textNode.nodeValue = "공백은 이메일에 사용할 수 없습니다.";
+            MessageBox_Check();
+            return;
+        }
+        else {
+            Value_Check(element.name, element.value, null)
+            .then(result => {
+                emc = result;
+                if(result){
+                    img.src = "Image/check.png";
+                    textNode.nodeValue = "사용 가능한 이메일입니다.";
+                }
+                else{
+                    img.src = "Image/dcheck.png";
+                    textNode.nodeValue = "사용할 수 없는 이메일입니다.";
+                }
+                MessageBox_Check();
+            });
+        }
+    }
+    else if (element.name === "address") {
+        const spaceBar = / /;
+        if(spaceBar.test(element.value)){
+            img.src = "Image/dcheck.png";
+            textNode.nodeValue = "공백은 주소에 사용할 수 없습니다.";
+            MessageBox_Check();
+            return;
+        }
+        else {
+            Value_Check(element.name, element.value, null)
+            .then(result => {
+                adc = result;
+                if(result){
+                    img.src = "Image/check.png";
+                    textNode.nodeValue = "사용 가능한 주소입니다.";
+                }
+                else{
+                    img.src = "Image/dcheck.png";
+                    textNode.nodeValue = "사용 불가능한 주소입니다.";
+                }
+                MessageBox_Check();
+            });
+        }
+    }
+    else if (element.value === "expert") {
+        alert("안전 전문가는 승인을 받아야 로그인할 수 있습니다.");
+        return;
+    }
 
     if(pw.value !== confirm_pw.value && pw.value !== null && confirm_pw.value !== null){
         cpwc = false;
@@ -157,6 +243,9 @@ function Input_Data_Check_To_Submit(){
 
     for(let i = 0; i < inputData.length; i++){
         if(inputData[i].value === ""){
+            if (i == 4 || i == 5 || i == 6) {
+                continue;
+            }
             submitButton.disabled = true;
             submitButton.style.backgroundColor = "#347236";
             return;
@@ -193,4 +282,3 @@ function All_Values_Check(){
     alert('입력값을 다시 확인해 주세요.');
     return false;
 }
-  
