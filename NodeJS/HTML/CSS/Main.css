@@ -1,9 +1,5 @@
-#mainLogOut, #mainMyPage, #mainAdmin {
+#userName, #mainLogOut, #mainMyPage, #mainAdmin {
     display: none;
-}
-
-#mainMenuBar {
-    color: black;
 }
 
 #userImageList, #expertInfoList {
@@ -21,26 +17,33 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    display: none;
-    border: 1px solid red;
+    width: 72%;
+    margin-left: 14%;
+    height: 35px;
 }
-#menuTable{
-    width: 80%;
-    margin: 0 auto;
-    border: 1px solid blue;
-    justify-content: space-around;
+
+#menuTable {
+    text-align: center;
 }
-.userMenu, .expertMent{
-    text-align: left;
-    flex-grow: 1;
-    font-size: 20px;
+
+.userMenu, .expertMenu {
+    display: inline-block;
     margin: 0 10px;
+    width: 150px;
+    text-align: center;
 }
-.userMenu:hover, .expertMenu:hover{
-    background-color: black;
-    color: white;
+
+.userMenu > a, .expertMenu > a {
+    display: block; 
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 22px;
+    text-decoration: none;
 }
+
+
+
 #userImageList {
     background-color: green;
 }

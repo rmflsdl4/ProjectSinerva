@@ -14,7 +14,11 @@ function menuBarInit() {
   .then(loginUser => {
     showExpertList(loginUser.userType);
     console.log(loginUser);
-    userName.textContent = loginUser.userId + "님 환영합니다.";
+    if(loginUser.userId !== undefined){
+      userName.textContent = loginUser.userId + "님 환영합니다.";
+      userName.style.display = 'block';
+    }
+    
     if (!loginUser.userType) {
       menuBar.style.display = 'block';
 
