@@ -8,12 +8,13 @@ function menuBarInit() {
   const userMenu = document.getElementsByClassName('userMenu');
   const expertMenu = document.getElementsByClassName('expertMenu');
   const requestButton = document.getElementsByClassName('requestButton');
+  const userName = document.getElementById('userName');
 
   getUserSession()
   .then(loginUser => {
     showExpertList(loginUser.userType);
     console.log(loginUser);
-    
+    userName.textContent = loginUser.userId + "님 환영합니다.";
     if (!loginUser.userType) {
       menuBar.style.display = 'block';
 

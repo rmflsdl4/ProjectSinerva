@@ -17,16 +17,29 @@
     text-align: right;
     margin-right: 60px;
 }
-
 #menuBar {
-    background-color: gray;
-    margin-bottom: 30px;
-    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     display: none;
+    border: 1px solid red;
 }
-#menuTable {
-    background-color: lightgray;
-    width: 50%;
+#menuTable{
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid blue;
+    justify-content: space-around;
+}
+.userMenu, .expertMent{
+    text-align: left;
+    flex-grow: 1;
+    font-size: 20px;
+    margin: 0 10px;
+}
+.userMenu:hover, .expertMenu:hover{
+    background-color: black;
+    color: white;
 }
 #userImageList {
     background-color: green;
