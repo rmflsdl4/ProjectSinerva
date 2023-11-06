@@ -109,3 +109,11 @@ a:hover{
     height: 20px;
     margin-right: 8px;
 }
+textarea {
+    resize: none;
+}
+
+.requestWait, .requestComplit {
+    display: inline-block;
+    cursor: pointer;
+}

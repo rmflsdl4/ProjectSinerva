@@ -374,7 +374,7 @@ app.post("/record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ?
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date DESC`;
+                    ORDER BY image.upload_date, building.address DESC`;
 
     const values = [req.session.userId];
 
@@ -404,7 +404,7 @@ app.post("/selected-record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ? ${sqlStr}
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date DESC`;
+                    ORDER BY image.upload_date, building.address DESC`;
 
     const values = [req.session.userId, selectedAddress];
 
@@ -423,7 +423,7 @@ app.post("/detailsRecord", async (req, res) => {
 
     const query = `select img_id, upload_date, file_route, result
                     from image
-                    where upload_date = ? and user_id = ?;`;
+                    where upload_date = ? and user_id = ?`;
 
     const values = [date, req.session.userId];
 
@@ -575,14 +575,15 @@ app.post('/getExpertInfo', async (req, res) => {
 
 //모든 전문가 요청 가져옴
 app.post('/reqCommentImport', async (req, res) => {
-	const data = await reqComment.commentImport();
+	const data = await reqComment.commentImport(req.session.userId);
 	
     res.send(data);
 })
 
 //전문가 코멘트 요청 버튼을 누르면 실행
 app.post('/reqAccept', async (req, res) => {
-	const { imgId } = req.body;
+	const { imgUploadDate } = req.body;
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1이 필요하며, 두 자리로 포맷
@@ -595,7 +596,7 @@ app.post('/reqAccept', async (req, res) => {
     console.log("수락한 이미지 아이디: " + imgId);
     console.log("이미지 수락일자: " + dataTime);
     try {
-        await reqComment.updateReqDependingOn(imgId, dataTime);
+        await reqComment.updateReqDependingOn(imgUploadDate, dataTime);
         res.send();
     }
     catch(error){
@@ -605,9 +606,9 @@ app.post('/reqAccept', async (req, res) => {
 
 //전문가 코멘트 거절 버튼을 누르면 실행
 app.post('/reqDenied', async (req, res) => {
-	const { imgId } = req.body;
+	const { imgUploadDate } = req.body;
     try {
-        await reqComment.deleteReqDependingOn(imgId);
+        await reqComment.deleteReqDependingOn(imgUploadDate);
         res.send();
     }
     catch(error){
@@ -615,8 +616,9 @@ app.post('/reqDenied', async (req, res) => {
     }
 })
 
-app.post('/commitComment', async (req, res) => {
+app.post('/submitComment', async (req, res) => {
     const { imgId, value } = req.body;
+    console.log(imgId, value);
     try {
         await reqComment.updateCommitComment(imgId, value);
         res.send();
@@ -625,6 +627,14 @@ app.post('/commitComment', async (req, res) => {
         console.log(error);
     }
 })
+
+app.post('/seeMore', async (req, res) => {
+    const { imgUploadDate } = req.body;
+	const data = await reqComment.seeMore(imgUploadDate);
+	
+    res.send(data);
+})
+
 
 // 전문가 테이블 select
 app.post("/expertSearch", async (req, res) => {
@@ -652,8 +662,8 @@ app.post("/commentRequest", async (req, res) => {
 
     // 비동기 처리를 위한 Promise 배열 생성
     const promises = commentImgId.map(async (commentImgId) => {
-        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?';
-        const values = [commentImgId, req.session.userId];
+        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?, AND expert_id = ?';
+        const values = [commentImgId, req.session.userId, expertId];
         const result = await database.Query(query, values);
         value += result[0].count;
     });
@@ -684,6 +694,19 @@ app.post("/expertList", async (req, res) => {
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
                     GROUP BY e.id`;
+
+    const result = await database.Query(query);
+
+    res.send(result);
+});
+
+// 사용자 코멘트 결과 확인
+app.post("/commentResult", async (req, res) => {
+    const query = `select count(*)
+                    from image as i inner join commentRequest as c
+                        on i.img_id = c.img_id 
+                    where i.upload_date = ? and i.user_id = ? and c.reqDependingOn = 'Y'`;
+    const values = [req.session.userId, req.session.userId];
 
     const result = await database.Query(query);
 
