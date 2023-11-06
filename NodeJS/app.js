@@ -346,7 +346,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        //await tf.Predict(image_route, file.filename);
+        await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
