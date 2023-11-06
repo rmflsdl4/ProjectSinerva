@@ -374,7 +374,7 @@ app.post("/record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ?
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId];
 
@@ -404,7 +404,7 @@ app.post("/selected-record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ? ${sqlStr}
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId, selectedAddress];
 
@@ -628,10 +628,10 @@ app.post('/commitComment', async (req, res) => {
 
 // 전문가 테이블 select
 app.post("/expertSearch", async (req, res) => {
-    const query = `select e.id as expert_id, e.name as name, e.introduction as introduction, ROUND(AVG(ue.rating), 1) as rating
-                    from expert as e inner join user_has_expert as ue
-                        on e.id = ue.expert_id
-                        group by e.id`;
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+                    FROM expert AS e
+                    LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    GROUP BY e.id`;
     const result = await database.Query(query);
 
     // console.log(result);
