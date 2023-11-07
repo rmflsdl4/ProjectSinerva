@@ -374,7 +374,7 @@ app.post("/record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ?
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId];
 
@@ -404,7 +404,7 @@ app.post("/selected-record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ? ${sqlStr}
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId, selectedAddress];
 
