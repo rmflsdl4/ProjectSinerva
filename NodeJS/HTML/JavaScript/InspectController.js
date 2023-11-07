@@ -950,8 +950,8 @@ function expertList(data) {
 function selectExpertBtn(button) {
     const tr = button.closest('tr'); // 현재 버튼이 속한 tr 요소를 찾음
     const expertId = tr.querySelector('td:nth-child(1)').textContent; // 첫 번째 td 요소의 텍스트 내용을 가져옴
-    console.log(commentImgId);
-    console.log(expertId);
+    console.log("코멘트 아이디: " + commentImgId);
+    console.log("전문가 아이디: " + expertId);
     
     return new Promise((resolve, reject) => {
         fetch('/commentRequest', {
