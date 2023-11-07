@@ -318,6 +318,7 @@ const upload = multer({storage: storage});
 
 app.use('/images', express.static('./images/'));
 
+// 검사 페이지 건물명 입력
 app.post("/buildingNameInput", async (req, res) => {
     buildingName = req.body.buildingName;
     const query = 'SELECT COUNT(*) as count FROM building WHERE address = ? AND user_id = ?';
@@ -333,6 +334,7 @@ app.post("/buildingNameInput", async (req, res) => {
     res.send();
 })
 
+// 검사 페이지 이미지 업로드
 app.post('/image-discrimination', upload.array('images'), async (req, res) => {
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     const uploadTasks = req.files.map(async (file) => {
@@ -364,17 +366,18 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
 // 과거 검사한 기록 select
 app.post("/record", async (req, res) => {
     const query = `SELECT 
-                    image.upload_date as upload_date,
-                    count(*) as total,
-                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
-                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
-                    building.address as address
+                        image.upload_date as upload_date,
+                        count(*) as total,
+                        SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                        SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                        building.address as address,
+                        commentRequest.reqDependingOn as reqDependingOn
                     FROM image
-                    INNER JOIN building
-                    ON image.building_id = building.id
-                    WHERE image.user_id = ?
+                    INNER JOIN building ON image.building_id = building.id
+                    LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                    WHERE image.user_id = ? AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date DESC`;
+                    ORDER BY image.upload_date, building.address DESC;`;
 
     const values = [req.session.userId];
 
@@ -386,33 +389,38 @@ app.post("/record", async (req, res) => {
 });
 // 선택한 주소에 대한 레코들들만 불러오기
 app.post("/selected-record", async (req, res) => {
-    const selectedAddress = req.body.selectedAddress;
+    const {selectedAddress, MenuValue} = req.body;
     if(selectedAddress == ""){
         var sqlStr = "";
     }
     else{
-        var sqlStr = "AND building.address = ?";
+        if(MenuValue === "전체보기") {
+            var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N') AND building.address = ?";
+        }
+        else if(MenuValue === "코멘트 요청완료") {
+            var sqlStr = "AND commentRequest.reqDependingOn = 'Y' AND building.address = ?";
+        }
+        else {
+            var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N') AND building.address = ?";
+        }
     }
+
     const query = `SELECT 
-                    image.upload_date as upload_date,
-                    count(*) as total,
-                    SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
-                    SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
-                    building.address as address
+                        image.upload_date as upload_date,
+                        count(*) as total,
+                        SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                        SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                        building.address as address
                     FROM image
-                    INNER JOIN building
-                    ON image.building_id = building.id
-                    WHERE image.user_id = ? ${sqlStr}
+                    INNER JOIN building ON image.building_id = building.id
+                    LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                    WHERE image.user_id = ? ${sqlStr} 
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date DESC`;
+                    ORDER BY image.upload_date, building.address DESC`;
+        const values = [req.session.userId, selectedAddress];
+        const result = await database.Query(query, values);
 
-    const values = [req.session.userId, selectedAddress];
-
-    const result = await database.Query(query, values);
-
-    console.log(result);
-
-    res.send(result);
+        res.send(result);
 });
 
 // 과거 검사한 기록 상세보기
@@ -421,9 +429,10 @@ app.post("/detailsRecord", async (req, res) => {
 
     console.log(date); // value 변수에 저장된 값 출력
 
-    const query = `select img_id, upload_date, file_route, result
-                    from image
-                    where upload_date = ? and user_id = ?`;
+    const query = `select i.img_id as img_id, i.upload_date as upload_date, i.file_route as file_route, i.result as result, c.comment as comment
+                    from image as i left outer join commentRequest as c
+                        on i.img_id = c.img_id
+                    where i.upload_date = ? and i.user_id = ?`;
 
     const values = [date, req.session.userId];
 
@@ -442,16 +451,29 @@ app.post("/buildingSearch", async (req, res) => {
     console.log(result);
     res.send(result);
 })
+
+// 건물명 종류 선택
 app.post("/selectedBuildingSearch", async (req, res) => {
-    const query = `SELECT DISTINCT building.address
-                    FROM building
-                    INNER JOIN image
-                    ON building.id = image.building_id
-                    WHERE building.user_id = ?`;
+    const { MenuValue } = req.body;
+
+    if(MenuValue === "전체보기") {
+        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+    }
+    else if(MenuValue === "코멘트 요청완료") {
+        var sqlStr = "AND commentRequest.reqDependingOn = 'Y'";
+    }
+    else {
+        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+    }
+
+    const query = `SELECT DISTINCT building.address as address
+                        FROM building
+                        INNER JOIN image ON building.id = image.building_id
+                        LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                        WHERE building.user_id = ? ${sqlStr}`;
     const values = [req.session.userId];
     const result = await database.Query(query, values);
 
-    console.log(result);
     res.send(result);
 })
 
@@ -538,7 +560,6 @@ app.use('/ExpertImg', express.static('./ExpertImg/'));
 app.post('/changeCommit', exUpload.single('profile_picture'), async (req, res) => {
     const { id, pw, nick_name, phone_num, email, address, introduction} = req.body;
     // 파일 이름을 가져옵니다.
-    const profile_picture = req.file.originalname;
     console.log("폴더 : " + expertFolder);
     console.log("파일 이름 : " + expertFileName);
     let image_route = expertFolder + expertFileName;
@@ -634,10 +655,9 @@ app.post('/seeMore', async (req, res) => {
     res.send(data);
 })
 
-
 // 전문가 테이블 select
 app.post("/expertSearch", async (req, res) => {
-    const query = `SELECT e.id AS expert_id, e.id, e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
                     GROUP BY e.id`;
@@ -646,6 +666,7 @@ app.post("/expertSearch", async (req, res) => {
     // console.log(result);
     res.send(result);
 })
+
 // 코멘트 요청 테이블 insert
 app.post("/commentRequest", async (req, res) => {
     const { expertId, commentImgId, requestDate } = req.body;
@@ -701,13 +722,63 @@ app.post("/expertList", async (req, res) => {
 
 // 사용자 코멘트 결과 확인
 app.post("/commentResult", async (req, res) => {
-    const query = `select count(*)
-                    from image as i inner join commentRequest as c
-                        on i.img_id = c.img_id 
-                    where i.upload_date = ? and i.user_id = ? and c.reqDependingOn = 'Y'`;
-    const values = [req.session.userId, req.session.userId];
+    const { MenuValue } = req.body;
+    
+    if(MenuValue === "전체보기") {
+        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+    }
+    else if(MenuValue === "코멘트 요청완료") {
+        var sqlStr = "AND commentRequest.reqDependingOn = 'Y'";
+    }
+    else {
+        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+    }
 
-    const result = await database.Query(query);
+    const query = `SELECT 
+                        image.upload_date as upload_date,
+                        count(*) as total,
+                        SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
+                        SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
+                        building.address as address,
+                        commentRequest.reqDependingOn as reqDependingOn
+                    FROM image
+                    INNER JOIN building ON image.building_id = building.id
+                    LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                    WHERE image.user_id = ? ${sqlStr}
+                    GROUP BY image.upload_date
+                    ORDER BY image.upload_date, building.address DESC;`;
+        const values = [req.session.userId];
+        const result = await database.Query(query, values);
 
-    res.send(result);
+        res.send(result);
+});
+
+// 전문가 평가 점수 insert
+app.post("/ratingInput", async (req, res) => {
+    const { starRating, requestDate } = req.body;
+    let value = 0;
+    
+    const query = `select expert_id
+                    from commentRequest
+                    where imgUploadDate = ? and user_id = ?
+                    group by imgUploadDate`;
+    const values = [requestDate, req.session.userId];
+    const result = await database.Query(query, values);
+    let expertId = result[0].expert_id;
+
+    // 이미 평가한 전문가인지 확인
+    const duplQuery = 'SELECT COUNT(*) as count FROM user_has_expert WHERE user_id = ? AND expert_id = ?';
+    const duplValues = [req.session.userId, expertId];
+    const duplResult = await database.Query(duplQuery, duplValues);
+    value += duplResult[0].count;
+    console.log(value);
+
+    if (value === 0) {
+        const inQuery = `insert into user_has_expert(user_id, expert_id, rating) values(?, ?, ?)`;
+        const inValues = [req.session.userId, expertId, starRating];
+        await database.Query(inQuery, inValues);
+        res.send('success');
+    } else {
+        res.send('duplicate');
+    }
 });
