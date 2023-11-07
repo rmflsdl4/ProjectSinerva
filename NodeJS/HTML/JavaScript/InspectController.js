@@ -385,7 +385,6 @@ async function Posts_Output(board_type){
                 commentButton.className = 'commentButton';
                 commentButton.textContent = '코멘트 달기';
                 
-                commentButton.style.display = 'none';
                 showCommentButton.style.display = 'none';
             }
             else {
