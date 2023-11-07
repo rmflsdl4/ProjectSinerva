@@ -374,7 +374,7 @@ app.post("/record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ?
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId];
 
@@ -404,7 +404,7 @@ app.post("/selected-record", async (req, res) => {
                     ON image.building_id = building.id
                     WHERE image.user_id = ? ${sqlStr}
                     GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    ORDER BY image.upload_date DESC`;
 
     const values = [req.session.userId, selectedAddress];
 
@@ -593,7 +593,6 @@ app.post('/reqAccept', async (req, res) => {
     const userId = req.session.userId;
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
-    console.log("수락한 이미지 아이디: " + imgId);
     console.log("이미지 수락일자: " + dataTime);
     try {
         await reqComment.updateReqDependingOn(imgUploadDate, dataTime);
