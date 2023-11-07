@@ -48,7 +48,7 @@
     font-size: 25px;
     color: #666;
 }
-#prePage, #nextPage{
+#prePage, #nextPage, .commentButton, .commentButton, .showComment, .commentRequest img {
     cursor: pointer;
 }
 #pageNum{

@@ -33,6 +33,15 @@
     cursor: pointer;
 }
 
-textarea {
+.commentRequest > td > img{
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.commentRequest > td > textarea{
+    display: inline;
+    height: 50px;
     resize: none;
+    vertical-align: middle;
+    border: none;
+    background-color: #F5F5F5;
 }

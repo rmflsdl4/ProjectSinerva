@@ -155,7 +155,7 @@ async function Posts_Output(board_type){
 
         const row = reqComment[idx]; // rows를 nowPagePosts로 변경
         const userTypeTh = document.querySelector('.title[width="20%"]');
-
+        
         //코멘트 요청
         if (board_type === '코멘트 요청') {
             // userTypeTh.textContent = '코멘트 요청';
@@ -192,10 +192,18 @@ async function Posts_Output(board_type){
                     const modal = document.querySelector('.modal');
                     modal.style.display = 'block';
                     image.style.width = '100%';
-                
-                    // 이미지를 복제하여 모달 팝업에 추가
-                    const imageClone = image.cloneNode(true);
-                    modal.querySelector('.modal-content').appendChild(imageClone);
+
+                    seeMore(row['imgUploadDate'])
+                    .then(value => {
+                        console.log(value.length);
+                        for (let i = 0; i < value.length; i++) {
+                            image.src = value[i].file_route;
+
+                            // 이미지를 복제하여 모달 팝업에 추가
+                            const imageClone = image.cloneNode(true);
+                            modal.querySelector('.modal-content').appendChild(imageClone);
+                        }
+                    });
                 });
                 
                 const closeImageButton = document.querySelector('.close-modal-btn');
@@ -206,9 +214,11 @@ async function Posts_Output(board_type){
                 
                     // 모달 팝업 내용을 비우지 않고 복제된 이미지만 제거
                     const modalContent = modal.querySelector('.modal-content');
-                    const clonedImage = modalContent.querySelector('img');
-                    if (clonedImage) {
-                        modalContent.removeChild(clonedImage);
+                    const clonedImages = modalContent.querySelectorAll('img');
+                    if (clonedImages.length > 0) {
+                        clonedImages.forEach((img) => {
+                            modalContent.removeChild(img);
+                        });
                     }
                 });
 
@@ -340,9 +350,17 @@ async function Posts_Output(board_type){
                 modal.style.display = 'block';
                 image.style.width = '100%';
             
-                // 이미지를 복제하여 모달 팝업에 추가
-                const imageClone = image.cloneNode(true);
-                modal.querySelector('.modal-content').appendChild(imageClone);
+                seeMore(row['imgUploadDate'])
+                .then(value => {
+                    console.log(value.length);
+                    for (let i = 0; i < value.length; i++) {
+                        image.src = value[i].file_route;
+
+                        // 이미지를 복제하여 모달 팝업에 추가
+                        const imageClone = image.cloneNode(true);
+                        modal.querySelector('.modal-content').appendChild(imageClone);
+                    }
+                });
             });
             
             document.querySelector('.close-modal-btn').addEventListener('click', function () {
@@ -352,9 +370,11 @@ async function Posts_Output(board_type){
             
                 // 모달 팝업 내용을 비우지 않고 복제된 이미지만 제거
                 const modalContent = modal.querySelector('.modal-content');
-                const clonedImage = modalContent.querySelector('img');
-                if (clonedImage) {
-                    modalContent.removeChild(clonedImage);
+                const clonedImages = modalContent.querySelectorAll('img');
+                if (clonedImages.length > 0) {
+                    clonedImages.forEach((img) => {
+                        modalContent.removeChild(img);
+                    });
                 }
             });
 
@@ -364,6 +384,9 @@ async function Posts_Output(board_type){
             if (!row['comment']) {
                 commentButton.className = 'commentButton';
                 commentButton.textContent = '코멘트 달기';
+                
+                commentButton.style.display = 'none';
+                showCommentButton.style.display = 'none';
             }
             else {
                 commentButton.className = 'commentButton';
@@ -456,7 +479,7 @@ async function Posts_Output(board_type){
                             if (seeMoreTable) {
                                 seeMoreTable.remove();
                             }
-                            Posts_Output('코멘트 작성완료');
+                            Posts_Output('코멘트 관리');
                         });
 
                         popUp.appendChild(seeMoreTable);
@@ -570,7 +593,9 @@ function commentImport() {
         })
 			.then(response => response.json())
             .then(data => {
-                resolve(data);
+                const result = data;
+                
+                resolve(result);
             })
             .catch(error => {
                 reject(error);
@@ -948,7 +973,8 @@ function expertList(data) {
 function selectExpertBtn(button) {
     const tr = button.closest('tr'); // 현재 버튼이 속한 tr 요소를 찾음
     const expertId = tr.querySelector('td:nth-child(1)').textContent; // 첫 번째 td 요소의 텍스트 내용을 가져옴
-    console.log(commentImgId);
+    console.log("코멘트 아이디: " + commentImgId);
+    console.log("전문가 아이디: " + expertId);
     
     return new Promise((resolve, reject) => {
         fetch('/commentRequest', {

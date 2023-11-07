@@ -637,7 +637,7 @@ app.post('/seeMore', async (req, res) => {
 
 // 전문가 테이블 select
 app.post("/expertSearch", async (req, res) => {
-    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+    const query = `SELECT e.id AS expert_id, e.id, e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
                     GROUP BY e.id`;
@@ -661,7 +661,7 @@ app.post("/commentRequest", async (req, res) => {
 
     // 비동기 처리를 위한 Promise 배열 생성
     const promises = commentImgId.map(async (commentImgId) => {
-        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?, AND expert_id = ?';
+        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ? AND expert_id = ?';
         const values = [commentImgId, req.session.userId, expertId];
         const result = await database.Query(query, values);
         value += result[0].count;
