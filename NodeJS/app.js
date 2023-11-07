@@ -661,7 +661,7 @@ app.post("/commentRequest", async (req, res) => {
 
     // 비동기 처리를 위한 Promise 배열 생성
     const promises = commentImgId.map(async (commentImgId) => {
-        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ?, AND expert_id = ?';
+        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ? AND expert_id = ?';
         const values = [commentImgId, req.session.userId, expertId];
         const result = await database.Query(query, values);
         value += result[0].count;
