@@ -8,6 +8,7 @@ var itemsPerPage = 5;
 let imgId = [];
 let requestDate;
 let commentImgId = [];
+let MenuValue;
 
 function InitPage(){
     currPageNum = 1;
@@ -608,7 +609,7 @@ function seeMore(imgUploadDate) {
         fetch('/seeMore', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ imgUploadDate })
         })
@@ -711,7 +712,7 @@ function InspectRecordInitPage(){
     });
 }
 // 검사 결과 상세 페이지 select 요청
-function InspectDetailsRecordInitPage(date){
+function InspectDetailsRecordInitPage(date, requestResult){
     console.log(date);
     requestDate = date;
 
@@ -733,7 +734,7 @@ function InspectDetailsRecordInitPage(date){
         .then(data => {
             resolve(data);
             console.log(data); // 파싱된 JSON 데이터 출력
-            InspectDetailsRecordRow(data)
+            InspectDetailsRecordRow(data, requestResult)
         })
         .catch(error => {
             reject(error);
@@ -785,7 +786,7 @@ function InspectRecordRow(data, state = false) {
         //     tableHTML += `<td>${row[key]}</td>`;
         // }
         console.log(row.upload_date);
-        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
+        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}">상세보기</a></td>`;
         tableHTML += "</tr>";
         preAddress = row.address;
         sequenceNum++;
@@ -815,36 +816,181 @@ async function getUserSession() {
 }
 
 // 검사 결과 상세 페이지 select 결과 출력
-function InspectDetailsRecordRow(data) {
+function InspectDetailsRecordRow(data, requestResult) {
     getUserSession().then(type => {
         console.log("유저타입: " + type.userType);
+        console.log("코멘트 결과: " + requestResult);
 
-        // 테이블 요소를 가져옴
-        const table = document.getElementById("commentListTable");
-        let tableHTML = "";
+        if (requestResult === "Y") {
+            // 테이블 요소를 가져옴
+            const table = document.getElementById("commentListTable");
+            let tableHTML = "";
 
-        tableHTML += "<tr id='commentListHeader'>";
-        tableHTML += "<th width='10%'>번호</th>";
-        tableHTML += "<th width='30%'>요청 날짜</th>";
-        tableHTML += "<th width='20%'>사진</th>";
-        tableHTML += "<th width='10%'>상태</th>";
-        tableHTML += "<th width='30%'>코멘트</th>";
-        tableHTML += "</tr>";
-        for (let i = 0; i < data.length; i++) {
-            const row = data[i];
-            commentImgId[i] = row.img_id;
-            tableHTML += "<tr class='commentRequest'>";
-            tableHTML += `<td>${i + 1}</td>`;
-            tableHTML += `<td>${row.upload_date}</td>`;
-            tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
-            tableHTML += `<td>${row.result}</td>`;
-            if(type.userType !== "user"){
-                tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
-            }
+            tableHTML += "<tr id='commentListHeader'>";
+            tableHTML += "<th width='10%'>번호</th>";
+            tableHTML += "<th width='30%'>요청 날짜</th>";
+            tableHTML += "<th width='20%'>사진</th>";
+            tableHTML += "<th width='10%'>상태</th>";
+            tableHTML += "<th width='30%'>코멘트</th>";
             tableHTML += "</tr>";
-        }
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                const dateStr = row.upload_date; // 예: '202311051449'
+                const year = dateStr.substring(0, 4);
+                const month = dateStr.substring(4, 6);
+                const day = dateStr.substring(6, 8);
+                const hour = dateStr.substring(8, 10);
+                const minute = dateStr.substring(10, 12);
+                const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
 
-        table.innerHTML = tableHTML;
+                commentImgId[i] = row.img_id;
+                tableHTML += "<tr class='commentRequest'>";
+                tableHTML += `<td>${i + 1}</td>`;
+                tableHTML += `<td>${upload_date}</td>`;
+                tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
+                tableHTML += `<td>${row.result}</td>`;
+                if(row.comment !== null) {
+                    tableHTML += `<td>${row.comment}</td>`;
+                }
+                if(type.userType !== "user"){
+                    tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+                }
+                tableHTML += "</tr>";
+            }
+
+            table.innerHTML = tableHTML;
+
+            // **평가 버튼 생성 및 별점 기능 추가**
+            const expertRequestBtns = document.getElementsByClassName("expertRequestBtn");
+            for (const btn of expertRequestBtns) {
+                btn.style.display = "none";
+            }
+        
+            const btnDivs = document.getElementsByClassName("requestBtn");
+        
+            for (const btnDiv of btnDivs) {
+                const newButton = document.createElement("button");
+                newButton.textContent = "평가";
+                // 버튼에 클래스 이름 추가
+                newButton.classList.add("ratingBtn");
+                
+                // 전문가 평가 버튼 이벤트
+                newButton.addEventListener("click", function() {
+                    document.querySelector('.star-modal').style.display = 'block';
+
+                    // 별점 주기
+                    const ratingStars = [...document.getElementsByClassName("rating__star")];
+                    const ratingResult = document.querySelector(".rating__result");
+                    const ratingView = document.querySelector(".ratingResult");
+                    let starRating = 0;
+
+                    printRatingResult(ratingResult);
+
+                    function executeRating(stars, result) {
+                    const starClassActive = "rating__star fas fa-star";         // 선택된 별
+                    const starClassUnactive = "rating__star far fa-star";       // 선택되지 않은 별
+                    const starsLength = stars.length;                           // 별 요소를 담고 있는 배열의 길이
+                    let i;
+                    stars.map((star) => {
+                        star.onclick = () => {
+                            i = stars.indexOf(star);        // 클릭된 별의 인덱스
+                            if (star.className.indexOf(starClassUnactive) !== -1) {
+                                printRatingResult(result, i + 1);
+                                for (i; i >= 0; --i) stars[i].className = starClassActive;
+                            } else {
+                                printRatingResult(result, i);
+                                for (i; i < starsLength; ++i) stars[i].className = starClassUnactive;
+                            }
+                        };
+                    });
+                    }
+
+                    function printRatingResult(result, num = 0) {
+                        result.textContent = `${num}/5`;
+                        starRating = num;
+                        ratingView.textContent = starRating;
+                    }
+
+                    executeRating(ratingStars, ratingResult);
+
+                    // 전문가 평가 테이블 insert
+                    document.querySelector('.expertStarBtn').addEventListener('click', function () {
+                        return new Promise((resolve, reject) => {
+                            fetch('/ratingInput', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ starRating, requestDate })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.text(); // 응답 텍스트로 받기
+                            })
+                            .then(data => {
+                                resolve(data);
+                                if (data === "duplicate") {
+                                    alert("이미 평가를 진행한 전문가입니다.");
+                                } else {
+                                    alert("평가가 완료되었습니다.");
+                                    // JSON 형식의 응답을 처리할 수 있다면 이곳에서 처리
+                                    console.log(data);
+                                }
+                                document.querySelector('.modal').style.display = 'none';
+                                // 현재 페이지를 검사 결과 페이지 이동
+                                window.location.href = '../InspectResult.html';
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                        });
+                    });
+                });
+    
+                btnDiv.appendChild(newButton);
+            }
+        }
+        else {
+            // 코멘트가 안 달렸을 때 테이블 요소를 가져옴
+            const table = document.getElementById("commentListTable");
+            let tableHTML = "";
+
+            tableHTML += "<tr id='commentListHeader'>";
+            tableHTML += "<th width='10%'>번호</th>";
+            tableHTML += "<th width='30%'>요청 날짜</th>";
+            tableHTML += "<th width='20%'>사진</th>";
+            tableHTML += "<th width='10%'>상태</th>";
+            tableHTML += "<th width='30%'>코멘트</th>";
+            tableHTML += "</tr>";
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                commentImgId[i] = row.img_id;
+                const dateStr = row.upload_date; // 예: '202311051449'
+                const year = dateStr.substring(0, 4);
+                const month = dateStr.substring(4, 6);
+                const day = dateStr.substring(6, 8);
+                const hour = dateStr.substring(8, 10);
+                const minute = dateStr.substring(10, 12);
+                const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+
+                tableHTML += "<tr class='commentRequest'>";
+                tableHTML += `<td>${i + 1}</td>`;
+                tableHTML += `<td>${upload_date}</td>`;
+                tableHTML += `<td><img src="${row.file_route}" style="width: 50px;"></td>`;
+                tableHTML += `<td>${row.result}</td>`;
+                if(row.comment !== null) {
+                    tableHTML += `<td>${row.comment}</td>`;
+                }
+                if(type.userType !== "user"){
+                    tableHTML += "<td><button class='InspectBtn'>수락</button></td>";
+                }
+                tableHTML += "</tr>";
+            }
+
+            table.innerHTML = tableHTML;
+        } 
     });
 
     InitPage();
@@ -857,7 +1003,7 @@ async function getUserSession() {
         fetch('/login-user', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             },
         })
             .then(response => response.json())
@@ -875,8 +1021,9 @@ async function GetBuildingList(){
         fetch('/selectedBuildingSearch', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({ MenuValue })
         })
             .then(response => response.json())
             .then(data => {
@@ -887,9 +1034,21 @@ async function GetBuildingList(){
             });
     });
 }
+
 function OutputBuildingList(){
     GetBuildingList().then(buildings => {
         const buildingSelect = document.getElementById('buildingSelect');
+        // 이전에 생성된 옵션 요소를 모두 제거
+        while (buildingSelect.firstChild) {
+            buildingSelect.removeChild(buildingSelect.firstChild);
+        }
+
+        // "전체 보기" 옵션을 생성 및 추가
+        var optionElement = document.createElement("option");
+        optionElement.value = "";
+        optionElement.text = "전체 보기";
+        buildingSelect.appendChild(optionElement);
+
         for(var i = 0; i < buildings.length; i++){
             var optionElement = document.createElement("option");
             optionElement.value = buildings[i].address;
@@ -918,7 +1077,7 @@ function SelectedBuilding(selectedAddress){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ selectedAddress })
+            body: JSON.stringify({ selectedAddress, MenuValue })
         })
         .then(response => {
             if (!response.ok) {
@@ -972,8 +1131,7 @@ function expertList(data) {
 function selectExpertBtn(button) {
     const tr = button.closest('tr'); // 현재 버튼이 속한 tr 요소를 찾음
     const expertId = tr.querySelector('td:nth-child(1)').textContent; // 첫 번째 td 요소의 텍스트 내용을 가져옴
-    console.log("코멘트 아이디: " + commentImgId);
-    console.log("전문가 아이디: " + expertId);
+    console.log(commentImgId);
     
     return new Promise((resolve, reject) => {
         fetch('/commentRequest', {
@@ -994,6 +1152,7 @@ function selectExpertBtn(button) {
                 if (data === "duplicate") {
                     alert("이미 요청된 이미지들 입니다.");
                 } else {
+                    alert("요청이 완료되었습니다.");
                     // JSON 형식의 응답을 처리할 수 있다면 이곳에서 처리
                     console.log(data);
                 }
@@ -1194,12 +1353,16 @@ function expertListRow(data) {
 // 사용자 코멘트 요청 결과에 따른 게시물 변화
 function Board_Result(selectMenu) {
     console.log(selectMenu.textContent);
+    MenuValue = selectMenu.textContent;
+
     // 해당 사용자 코멘트 결과 확인 요청
     return new  Promise((resolve, reject) => {
         fetch('/commentResult', {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json'
             },
+            body: JSON.stringify({ MenuValue })
         })
         .then(response => {
             if (!response.ok) {
@@ -1210,46 +1373,62 @@ function Board_Result(selectMenu) {
         .then(data => {
             resolve(data);
             console.log(data); // 파싱된 JSON 데이터 출력
-            expertListRow(data)
+            selectMenuTable(data)
+            OutputBuildingList();
         })
         .catch(error => {
             reject(error);
         });
     });
+}
 
-    
-    if(selectMenu.textContent === "코멘트 요청대기") {
+function selectMenuTable(data, state = false) {
+    // 테이블 요소를 가져옴
+    const table = document.getElementById("commentListTable");
+    let tableHTML = "";
 
+    tableHTML += "<tr id='commentListHeader'>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='30%'>요청 날짜</th>";
+    tableHTML += "<th width='15%'>사진</th>";
+    tableHTML += "<th width='15%'>정상</th>";
+    tableHTML += "<th width='15%'>비정상</th>";
+    tableHTML += "<th width='15%'>상세보기</th>";
+    tableHTML += "</tr>";
 
-        // 테이블 요소를 가져옴
-        // const table = document.getElementById("commentListTable");
-        // let tableHTML = "";
+    var preAddress = data[0][0];
+    var sequenceNum = 1;
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        const dateStr = row.upload_date; // 예: '202311051449'
+        const year = dateStr.substring(0, 4);
+        const month = dateStr.substring(4, 6);
+        const day = dateStr.substring(6, 8);
+        const hour = dateStr.substring(8, 10);
+        const minute = dateStr.substring(10, 12);
+        const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
 
-        // tableHTML += "<tr id='commentListHeader'>";
-        // tableHTML += "<th width='10%'>번호</th>";
-        // tableHTML += "<th width='30%'>요청 날짜</th>";
-        // tableHTML += "<th width='15%'>검사 개수</th>";
-        // tableHTML += "<th width='15%'>정상</th>";
-        // tableHTML += "<th width='15%'>비정상</th>";
-        // tableHTML += "<th width='15%'>상세보기</th>";
-        // tableHTML += "</tr>";
-
-        // for (let i = 0; i < data.length; i++) {
-        //     const row = data[i];
-        //     tableHTML += "<tr class='commentRequest'>";
-        //     tableHTML += `<td>${i + 1}</td>`;
-        //     for (const key in row) {
-        //         tableHTML += `<td>${row[key]}</td>`;
-        //     }
-        //     tableHTML += `<td><a href="../viewDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
-        //     tableHTML += "</tr>";
-        // }
-
-        table.innerHTML = tableHTML;
-        InitPage();
-        PageLoad();
+        if(state === true){
+            if(row.address !== preAddress){
+                tableHTML += "<tr class='commentRequest'>";
+                tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
+                tableHTML += "</tr>";
+                sequenceNum = 1;
+            }
+        }
+        tableHTML += "<tr class='commentRequest'>";
+        tableHTML += `<td>${sequenceNum}</td>`;
+        tableHTML += `<td>${upload_date}</td>`;
+        tableHTML += `<td>${row.total}</td>`;
+        tableHTML += `<td>${row.normal_count}</td>`;
+        tableHTML += `<td>${row.abnormality_count}</td>`;
+        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}">상세보기</a></td>`;
+        tableHTML += "</tr>";
+        preAddress = row.address;
+        sequenceNum++;
     }
-    else if(selectMenu.textContent === "코멘트 요청완료") {
-        
-    }
+
+    table.innerHTML = tableHTML;
+    InitPage();
+    PageLoad();
 }
