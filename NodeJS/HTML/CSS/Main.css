@@ -1,4 +1,5 @@
 #userName, #mainLogOut, #mainMyPage, #mainAdmin {
+    width: 20%;
     display: none;
 }
 
