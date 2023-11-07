@@ -593,7 +593,6 @@ app.post('/reqAccept', async (req, res) => {
     const userId = req.session.userId;
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
-    console.log("수락한 이미지 아이디: " + imgId);
     console.log("이미지 수락일자: " + dataTime);
     try {
         await reqComment.updateReqDependingOn(imgUploadDate, dataTime);
