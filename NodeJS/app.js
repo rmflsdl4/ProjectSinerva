@@ -6,7 +6,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const tf = require('./JavaScript/tfjsNode.js');
+// const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
@@ -348,7 +348,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        // await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -376,8 +376,8 @@ app.post("/record", async (req, res) => {
                     INNER JOIN building ON image.building_id = building.id
                     LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
                     WHERE image.user_id = ? AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')
-                    GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC;`;
+                    GROUP BY image.upload_date, building.address
+                    ORDER BY image.upload_date DESC, building.address DESC`;
 
     const values = [req.session.userId];
 
@@ -410,13 +410,14 @@ app.post("/selected-record", async (req, res) => {
                         count(*) as total,
                         SUM(CASE WHEN image.result = '정상' THEN 1 ELSE 0 END) AS normal_count,
                         SUM(CASE WHEN image.result <> '정상' THEN 1 ELSE 0 END) AS abnormality_count,
-                        building.address as address
+                        building.address as address,
+                        commentRequest.reqDependingOn as reqDependingOn
                     FROM image
                     INNER JOIN building ON image.building_id = building.id
                     LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
                     WHERE image.user_id = ? ${sqlStr} 
-                    GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC`;
+                    GROUP BY image.upload_date, building.address
+                    ORDER BY image.upload_date DESC, building.address DESC`;
         const values = [req.session.userId, selectedAddress];
         const result = await database.Query(query, values);
 
@@ -425,16 +426,18 @@ app.post("/selected-record", async (req, res) => {
 
 // 과거 검사한 기록 상세보기
 app.post("/detailsRecord", async (req, res) => {
-    const { date } = req.body;
+    const { date, buildingAddress } = req.body;
 
     console.log(date); // value 변수에 저장된 값 출력
+    console.log(buildingAddress); // value 변수에 저장된 값 출력
 
-    const query = `select i.img_id as img_id, i.upload_date as upload_date, i.file_route as file_route, i.result as result, c.comment as comment
-                    from image as i left outer join commentRequest as c
-                        on i.img_id = c.img_id
-                    where i.upload_date = ? and i.user_id = ?`;
+    const query = `select image.img_id as img_id, image.upload_date as upload_date, image.file_route as file_route, image.result as result, commentRequest.comment as comment
+                    FROM image
+                    INNER JOIN building ON image.building_id = building.id
+                    LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                    where image.upload_date = ? and image.user_id = ? and building.address = ?`;
 
-    const values = [date, req.session.userId];
+    const values = [date, req.session.userId, buildingAddress];
 
     const result = await database.Query(query, values);
     
@@ -657,7 +660,7 @@ app.post('/seeMore', async (req, res) => {
 
 // 전문가 테이블 select
 app.post("/expertSearch", async (req, res) => {
-    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+    const query = `SELECT e.id as expert_id, e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
                     GROUP BY e.id`;
@@ -745,8 +748,8 @@ app.post("/commentResult", async (req, res) => {
                     INNER JOIN building ON image.building_id = building.id
                     LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
                     WHERE image.user_id = ? ${sqlStr}
-                    GROUP BY image.upload_date
-                    ORDER BY image.upload_date, building.address DESC;`;
+                    GROUP BY image.upload_date, building.address
+                    ORDER BY image.upload_date DESC, building.address DESC`;
         const values = [req.session.userId];
         const result = await database.Query(query, values);
 
