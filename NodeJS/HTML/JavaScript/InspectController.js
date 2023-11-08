@@ -712,7 +712,7 @@ function InspectRecordInitPage(){
     });
 }
 // 검사 결과 상세 페이지 select 요청
-function InspectDetailsRecordInitPage(date, requestResult){
+function InspectDetailsRecordInitPage(date, requestResult, buildingAddress){
     console.log(date);
     requestDate = date;
 
@@ -723,7 +723,7 @@ function InspectDetailsRecordInitPage(date, requestResult){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ date })
+            body: JSON.stringify({ date, buildingAddress })
         })
         .then(response => {
             if (!response.ok) {
@@ -786,7 +786,7 @@ function InspectRecordRow(data, state = false) {
         //     tableHTML += `<td>${row[key]}</td>`;
         // }
         console.log(row.upload_date);
-        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}">상세보기</a></td>`;
+        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}&param3=${row.address}">상세보기</a></td>`;
         tableHTML += "</tr>";
         preAddress = row.address;
         sequenceNum++;
@@ -1383,7 +1383,6 @@ function Board_Result(selectMenu) {
 }
 
 function selectMenuTable(data, state = false) {
-    // 테이블 요소를 가져옴
     const table = document.getElementById("commentListTable");
     let tableHTML = "";
 
@@ -1396,39 +1395,46 @@ function selectMenuTable(data, state = false) {
     tableHTML += "<th width='15%'>상세보기</th>";
     tableHTML += "</tr>";
 
-    var preAddress = data[0][0];
-    var sequenceNum = 1;
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        const dateStr = row.upload_date; // 예: '202311051449'
-        const year = dateStr.substring(0, 4);
-        const month = dateStr.substring(4, 6);
-        const day = dateStr.substring(6, 8);
-        const hour = dateStr.substring(8, 10);
-        const minute = dateStr.substring(10, 12);
-        const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+    if (data.length === 0) {
+        // "코멘트 요청완료" 버튼을 누르거나 데이터가 없을 때 빈 테이블을 생성
+        table.innerHTML = tableHTML;
+    } else {
+        var preAddress = data[0][0];
+        var sequenceNum = 1;
 
-        if(state === true){
-            if(row.address !== preAddress){
-                tableHTML += "<tr class='commentRequest'>";
-                tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
-                tableHTML += "</tr>";
-                sequenceNum = 1;
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            const dateStr = row.upload_date;
+            const year = dateStr.substring(0, 4);
+            const month = dateStr.substring(4, 6);
+            const day = dateStr.substring(6, 8);
+            const hour = dateStr.substring(8, 10);
+            const minute = dateStr.substring(10, 12);
+            const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+
+            if (state === true) {
+                if (row.address !== preAddress) {
+                    tableHTML += "<tr class='commentRequest'>";
+                    tableHTML += `<th colspan='6' style='font-size:20px;'>${row.address}</th>`;
+                    tableHTML += "</tr>";
+                    sequenceNum = 1;
+                }
             }
+            tableHTML += "<tr class='commentRequest'>";
+            tableHTML += `<td>${sequenceNum}</td>`;
+            tableHTML += `<td>${upload_date}</td>`;
+            tableHTML += `<td>${row.total}</td>`;
+            tableHTML += `<td>${row.normal_count}</td>`;
+            tableHTML += `<td>${row.abnormality_count}</td>`;
+            tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}&param3=${row.address}">상세보기</a></td>`;
+            tableHTML += "</tr>";
+            preAddress = row.address;
+            sequenceNum++;
         }
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${sequenceNum}</td>`;
-        tableHTML += `<td>${upload_date}</td>`;
-        tableHTML += `<td>${row.total}</td>`;
-        tableHTML += `<td>${row.normal_count}</td>`;
-        tableHTML += `<td>${row.abnormality_count}</td>`;
-        tableHTML += `<td><a href="../InspectResultDetails.html?param1=${row.upload_date}&param2=${row.reqDependingOn}">상세보기</a></td>`;
-        tableHTML += "</tr>";
-        preAddress = row.address;
-        sequenceNum++;
+
+        table.innerHTML = tableHTML;
     }
 
-    table.innerHTML = tableHTML;
     InitPage();
     PageLoad();
 }
