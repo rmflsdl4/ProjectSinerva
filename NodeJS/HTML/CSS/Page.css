@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: right;
     margin-right: 15%;
+    margin-left: 15%;
     height: 30px;
 }
 #profileText{
@@ -47,7 +48,7 @@
     font-size: 25px;
     color: #666;
 }
-#prePage, #nextPage{
+#prePage, #nextPage, .commentButton, .showComment, .commentRequest img {
     cursor: pointer;
 }
 #pageNum{
@@ -85,4 +86,9 @@
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
+}
+
+.more {
+    text-align: center;
+    margin-right: 10px;
 }

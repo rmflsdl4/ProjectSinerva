@@ -3,6 +3,7 @@
         <title>건물 균열 검사 상세보기</title>
         <link rel="stylesheet" href="CSS/All.css">
         <link rel="stylesheet" href="CSS/InspectResultDetails.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
     </head>
     <body>
         <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
@@ -28,9 +29,30 @@
             <div class="modal-content">
                 <span class="close-modal-btn">&times;</span>
                 <center>
-                    <div id="expertList">
+                    <div id="expertList" style="max-height: 500px; overflow-y: auto;">
                         <table id="expertListTable">
                         </table>
+                    </div>
+                </center>
+            </div>
+        </div>
+
+        <!-- 별점 모달 팝업 컨테이너 -->
+        <div class="star-modal">
+            <div class="star-modal-content">
+                <span class="star-close-modal-btn">&times;</span>
+                <center>
+                    <div class="rating">
+                        <span class="rating__result"></span> 
+                        <i class="rating__star far fa-star"></i>
+                        <i class="rating__star far fa-star"></i>
+                        <i class="rating__star far fa-star"></i>
+                        <i class="rating__star far fa-star"></i>
+                        <i class="rating__star far fa-star"></i>
+                        <p class="ratingResult"></p>
+                    </div>
+                    <div class="starBtn">
+                        <button class="expertStarBtn">평가하기</button>
                     </div>
                 </center>
             </div>
@@ -43,9 +65,13 @@
 
             // 매개변수에서 값을 읽기
             const param1 = urlParams.get('param1');
-            InspectDetailsRecordInitPage(param1);
+            const param2 = urlParams.get('param2');
+            const param3 = urlParams.get('param3');
+            InspectDetailsRecordInitPage(param1, param2, param3);
 
             console.log(`param1: ${param1}`);
+            console.log(`param2: ${param2}`);
+            console.log(`param3: ${param3}`);
 
             // 요청 버튼 모달 팝업 열기
             document.querySelector('.expertRequestBtn').addEventListener('click', function () {
@@ -79,6 +105,11 @@
             // 모달 팝업 닫기
             document.querySelector('.close-modal-btn').addEventListener('click', function () {
                 document.querySelector('.modal').style.display = 'none';
+            });
+
+            // star 모달 팝업 닫기
+            document.querySelector('.star-close-modal-btn').addEventListener('click', function () {
+                document.querySelector('.star-modal').style.display = 'none';
             });
         </script>
     </body>

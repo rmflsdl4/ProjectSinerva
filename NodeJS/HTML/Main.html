@@ -12,28 +12,28 @@
             <a href="./Login.html" id="mainLogIn">로그인</a>
             <a href="./SignUp.html" id="mainSignUp">회원가입</a>
             <!-- 로그인 후 -->
+            <span id="userName" style="margin-right: 75%; padding: auto;"></span>
             <a href="./Main.html" id="mainLogOut" onclick="logOut()">로그아웃</a>
             <a href="changeUserInfo.html" id="mainMyPage">마이 페이지</a>
             <!-- 어드민용용 -->
             <a href="Admin.html" id="mainAdmin">유저 관리</a>
         </div>
         <br>
-        <center>
             <div id="menuBar">
-                <span><h3>메뉴바</h3></span>
                 <table id="menuTable">
                     <tr>
                         <!-- 유저용 -->
-                        <th class="userMenu" width="10%"><a href="ImageUpload.html" id="mainMenuBar">검사</a></th>
-                        <th class="userMenu" width="10%"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
-                        <th class="userMenu" width="10%"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
+                        <th class="userMenu"><a href="ImageUpload.html" id="mainMenuBar">검사</a></th>
+                        <th class="userMenu"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="userMenu"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
                         <!-- 전문가용 -->
-                        <th class="expertMenu" width="10%"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
-                        <th class="expertMenu" width="10%"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
+                        <th class="expertMenu"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
                         
                     </tr>
                 </table>
             </div>
+        <center>
             <div id="userImageList">
                 <span><h3>유저 이미지 리스트</h3></span>
                 <a href="#" id="moreViewUserList">더 보기</a>
@@ -54,7 +54,7 @@
             </div>
             <div id="expertInfoList">
                 <span><h3>전문가 정보 리스트</h3></span>
-                <a href="#" id="moreViewExpertList">더 보기</a>
+                <a href="ExpertList.html" id="moreViewExpertList">더 보기</a>
                 <table id="expertTable">
                 </table>
             </div>
