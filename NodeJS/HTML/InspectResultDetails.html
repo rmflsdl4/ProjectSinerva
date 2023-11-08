@@ -29,7 +29,7 @@
             <div class="modal-content">
                 <span class="close-modal-btn">&times;</span>
                 <center>
-                    <div id="expertList">
+                    <div id="expertList" style="max-height: 500px; overflow-y: auto;">
                         <table id="expertListTable">
                         </table>
                     </div>
@@ -66,10 +66,12 @@
             // 매개변수에서 값을 읽기
             const param1 = urlParams.get('param1');
             const param2 = urlParams.get('param2');
-            InspectDetailsRecordInitPage(param1, param2);
+            const param3 = urlParams.get('param3');
+            InspectDetailsRecordInitPage(param1, param2, param3);
 
             console.log(`param1: ${param1}`);
             console.log(`param2: ${param2}`);
+            console.log(`param3: ${param3}`);
 
             // 요청 버튼 모달 팝업 열기
             document.querySelector('.expertRequestBtn').addEventListener('click', function () {
