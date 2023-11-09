@@ -127,6 +127,7 @@ function showExpertList(userType) {
   getExpertInfo()
   .then(expertInfo => {
     const usersMenu = document.getElementById('expertTable');
+    let i = 0;
     console.log(expertInfo);
     
     expertInfo.forEach(item => {
@@ -150,12 +151,54 @@ function showExpertList(userType) {
       introTd.textContent = item.introduction;
       introTd.style.width = '30%';
       row.appendChild(introTd);
-  
-      let likeTd = document.createElement('td');
-      likeTd.className = 'expertTd';
-      likeTd.textContent = 'item.like';
-      likeTd.style.width = '20%';
-      row.appendChild(likeTd);
+
+      // 테이블 셀(td)을 생성합니다.
+      let ratingTd = document.createElement('td');
+      ratingTd.className = 'expertTd'; // 클래스 이름을 'expertTd'로 설정합니다.
+      ratingTd.style.width = '20%'; // 너비를 20%로 설정합니다.
+
+      // 별점을 표시할 별점(div)을 생성합니다.
+      const starRatingsDiv = document.createElement('div');
+      starRatingsDiv.id = `star-ratings-${i}`;; // 고유한 ID를 생성하여 설정합니다.
+      starRatingsDiv.className = 'star-ratings'; // 클래스 이름을 'star-ratings'로 설정합니다.
+
+      // 채워진 별 모양을 표시할 별점 채우기(div)를 생성합니다.
+      const filledStarsDiv = document.createElement('div');
+      filledStarsDiv.className = 'star-ratings-fill space-x-2 text-lg'; // 클래스 이름을 'star-ratings-fill space-x-2 text-lg'로 설정합니다.
+      filledStarsDiv.id = `filled-stars-${i}`; // 고유한 ID를 생성하여 설정합니다.
+
+      // 비어있는 별 모양을 표시할 별점 기본값(div)를 생성합니다.
+      const baseStarsDiv = document.createElement('div');
+      baseStarsDiv.className = 'star-ratings-base space-x-2 text-lg'; // 클래스 이름을 'star-ratings-base space-x-2 text-lg'로 설정합니다.
+      baseStarsDiv.id = `base-stars-${i}`; // 고유한 ID를 생성하여 설정합니다.
+
+      // 별 모양(span)을 별점 채우기(div)와 별점 기본값(div)에 추가합니다.
+      for (let j = 0; j < 5; j++) {
+        const starSpan = document.createElement('span');
+        starSpan.textContent = '★';
+
+        filledStarsDiv.appendChild(starSpan.cloneNode(true));
+        baseStarsDiv.appendChild(starSpan.cloneNode(true));
+      }
+
+      // 별점 채우기(div)와 별점 기본값(div)을 별점(div)에 추가합니다.
+      starRatingsDiv.appendChild(filledStarsDiv);
+      starRatingsDiv.appendChild(baseStarsDiv);
+
+      // 별점(div)을 테이블 셀(td)에 추가합니다.
+      ratingTd.appendChild(starRatingsDiv);
+
+      // 별점 텍스트를 추가합니다.
+      ratingTd.innerHTML += ` / ${item.rating}`;
+
+      // 테이블 행(row)에 테이블 셀(td)을 추가합니다.
+      row.appendChild(ratingTd);
+
+      // 테이블에 행을 추가하기 전에 updateStars 함수를 호출하여 별점을 업데이트합니다.
+      usersMenu.appendChild(row);
+      updateStars(item.rating, i);
+      i++;
+
   
       let buttonTd = document.createElement('td');
       buttonTd.className = 'expertTd';
@@ -173,6 +216,19 @@ function showExpertList(userType) {
       usersMenu.appendChild(row);
     });
   });
+}
+
+// updateStars 함수는 이전 예제와 동일하게 정의되었다고 가정합니다
+function updateStars(score, index) {
+  const STAR_COUNT = 5;
+  const ratingToPercent = (score / STAR_COUNT) * 100;
+  const filledStars = document.getElementById(`filled-stars-${index}`);
+
+  if (filledStars) {
+    filledStars.style.width = ratingToPercent + '%';
+  } else {
+    console.error(`Element with id 'filled-stars-${index}' not found.`);
+  }
 }
 
 async function getExpertInfo() {
@@ -195,4 +251,3 @@ async function getExpertInfo() {
       throw error;
   }
 }
-      

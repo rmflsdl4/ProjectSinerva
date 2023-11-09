@@ -887,28 +887,52 @@ function InspectDetailsRecordRow(data, requestResult) {
                     printRatingResult(ratingResult);
 
                     function executeRating(stars, result) {
-                    const starClassActive = "rating__star fas fa-star";         // 선택된 별
-                    const starClassUnactive = "rating__star far fa-star";       // 선택되지 않은 별
-                    const starsLength = stars.length;                           // 별 요소를 담고 있는 배열의 길이
-                    let i;
-                    stars.map((star) => {
-                        star.onclick = () => {
-                            i = stars.indexOf(star);        // 클릭된 별의 인덱스
-                            if (star.className.indexOf(starClassUnactive) !== -1) {
-                                printRatingResult(result, i + 1);
-                                for (i; i >= 0; --i) stars[i].className = starClassActive;
-                            } else {
-                                printRatingResult(result, i);
-                                for (i; i < starsLength; ++i) stars[i].className = starClassUnactive;
-                            }
-                        };
-                    });
+                        const starClassActive = "rating__star fas fa-star"; // 선택된 별
+                        const starClassHalf = "rating__star fas fa-star-half-alt"; // 반 별
+                        const starClassUnactive = "rating__star far fa-star"; // 선택되지 않은 별
+                        const starsLength = stars.length; // 별 요소를 담고 있는 배열의 길이
+                        let i;
+                        let halfSelected = false; // 반 별이 선택된 상태인지 나타내는 변수
+                    
+                        stars.map((star) => {
+                            star.onclick = () => {
+                                i = stars.indexOf(star); // 클릭된 별의 인덱스
+                                if (star.className.indexOf(starClassUnactive) !== -1) {
+                                    if (halfSelected) {
+                                        halfSelected = false;
+                                        printRatingResult(result, i + 0.5);
+                                        stars[i].className = starClassHalf;
+                                    } else {
+                                        printRatingResult(result, i + 1);
+                                        stars[i].className = starClassActive;
+                                    }
+                                    for (i; i >= 0; --i) {
+                                        if (halfSelected) {
+                                            stars[i].className = starClassHalf;
+                                        } else {
+                                            stars[i].className = starClassActive;
+                                        }
+                                    }
+                                } else {
+                                    halfSelected = !halfSelected;
+                                    if (halfSelected) {
+                                        printRatingResult(result, i + 0.5);
+                                        stars[i].className = starClassHalf;
+                                    } else {
+                                        printRatingResult(result, i);
+                                        for (i; i < starsLength; ++i) {
+                                            stars[i].className = starClassUnactive;
+                                        }
+                                    }
+                                }
+                            };
+                        });
                     }
 
                     function printRatingResult(result, num = 0) {
                         result.textContent = `${num}/5`;
                         starRating = num;
-                        ratingView.textContent = starRating;
+                        ratingView.textContent = ` / ${starRating}`;
                     }
 
                     executeRating(ratingStars, ratingResult);
@@ -1112,19 +1136,19 @@ function expertList(data) {
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        let introduction = truncateText(row.introduction);
+
         tableHTML += "<tr class='expertRequest'>";
         tableHTML += `<td style="display: none;">${row.expert_id}</td>`; // 이 부분을 숨김 처리
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.name}</td>`;
         tableHTML += `<td>${row.rating}</td>`;
-        tableHTML += `<td><textarea readonly rows="7" cols="50">${row.introduction}</textarea></td>`;
+        tableHTML += `<td>${introduction}</td>`;
         tableHTML += `<td><button class="selectExpert" onclick="selectExpertBtn(this)">선택</button></td>`;
         tableHTML += "</tr>";
     }
 
     table.innerHTML = tableHTML;
-
-    // 코멘트 요청 테이블로 값 전달
 }
 
 // 코멘트 요청 테이블 insert
@@ -1171,122 +1195,6 @@ document.querySelector('.close-modal-btn').addEventListener('click', function ()
     document.querySelector('.modal').style.display = 'none';
 });
 
-// ** 불러오기 **
-// 불러오기 페이지 select 요청
-function RecordInitPage(){
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/record', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            recordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 불러오기 상세 페이지 select 요청
-function DetailsRecordInitPage(date){
-    console.log(date);
-
-    // 해당 사용자 과거 기록 select 요청
-    return new  Promise((resolve, reject) => {
-        fetch('/detailsRecord', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ date })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // JSON 데이터로 응답을 파싱
-        })
-        .then(data => {
-            resolve(data);
-            console.log(data); // 파싱된 JSON 데이터 출력
-            DetailsRecordRow(data)
-        })
-        .catch(error => {
-            reject(error);
-        });
-    });
-}
-// 불러오기 페이지 select 결과 출력
-function recordRow(data) {
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='15%'>검사 개수</th>";
-    tableHTML += "<th width='15%'>정상</th>";
-    tableHTML += "<th width='15%'>비정상</th>";
-    tableHTML += "<th width='15%'>상세보기</th>";
-    tableHTML += "</tr>";
-
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${i + 1}</td>`;
-        for (const key in row) {
-            tableHTML += `<td>${row[key]}</td>`;
-        }
-        tableHTML += `<td><a href="../viewDetails.html?param1=${row.upload_date}">상세보기</a></td>`;
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
-    InitPage();
-    PageLoad();
-}
-// 불러오기 상세 페이지 select 결과 출력
-function DetailsRecordRow(data) {
-    // 테이블 요소를 가져옴
-    const table = document.getElementById("commentListTable");
-    let tableHTML = "";
-
-    tableHTML += "<tr id='commentListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='30%'>요청 날짜</th>";
-    tableHTML += "<th width='20%'>사진</th>";
-    tableHTML += "<th width='10%'>상태</th>";
-    tableHTML += "<th width='30%'>코멘트</th>";
-    tableHTML += "</tr>";
-
-    for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        tableHTML += "<tr class='commentRequest'>";
-        tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td>${row.added}</td>`;
-        tableHTML += `<td><img src="./images/${row.added}/${row.file_name}" style="width: 100%;"></td>`;
-        tableHTML += `<td>${row.result}</td>`;
-        tableHTML += "<td>코멘트</td>";
-        tableHTML += "</tr>";
-    }
-
-    table.innerHTML = tableHTML;
-    InitPage();
-    PageLoad();
-}
 // 전문가 리스트 페이지 select 요청
 function ExpertListInitPage(){
     // 해당 사용자 과거 기록 select 요청
@@ -1322,17 +1230,18 @@ function expertListRow(data) {
 
     tableHTML += "<tr id='commentListHeader'>";
     tableHTML += "<th width='5%'>번호</th>";
-    tableHTML += "<th width='15%'>사진</th>";
+    tableHTML += "<th width='10%'>사진</th>";
     tableHTML += "<th width='10%'>이름</th>";
-    tableHTML += "<th width='15%'>전화번호</th>";
-    tableHTML += "<th width='15%'>이메일</th>";
-    tableHTML += "<th width='20%'>주소</th>";
+    tableHTML += "<th width='10%'>전화번호</th>";
+    tableHTML += "<th width='10%'>이메일</th>";
+    tableHTML += "<th width='17%'>주소</th>";
     tableHTML += "<th width='20%'>소개글</th>";
-    tableHTML += "<th width='5%'>평점</th>";
+    tableHTML += "<th width='23%'>평점</th>";
     tableHTML += "</tr>";
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td><img src="${row.expert_route}" style="width: 100%;"></td>`;
@@ -1341,17 +1250,40 @@ function expertListRow(data) {
         tableHTML += `<td>${row.email}</td>`;
         tableHTML += `<td>${row.address}</td>`;
         tableHTML += `<td><textarea readonly rows="7" cols="40">${row.introduction}</textarea></td>`;
-        tableHTML += `<td>${row.rating}</td>`;
+        tableHTML += `<td><div class="star-ratings" id="star-ratings-${i}">
+                        <div class="star-ratings-fill space-x-2 text-lg" id="filled-stars-${i}">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <div class="star-ratings-base space-x-2 text-lg" id="base-stars-${i}">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                    </div> / ${row.rating}</td>`;
         tableHTML += "</tr>";
     }
 
+    // 루프 외부에서 테이블 HTML 업데이트
     table.innerHTML = tableHTML;
+
+    // 루프가 끝난 후에 별 업데이트
+    for (let i = 0; i < data.length; i++) {
+        updateStars(data[i].rating, i);
+    }
+
+    // 추가적인 함수 호출
     InitPage();
     PageLoad();
 }
 
 // 사용자 코멘트 요청 결과에 따른 게시물 변화
 function Board_Result(selectMenu) {
+    const elements = document.getElementsByClassName("Board_Request_Menu");
+
+    for (const element of elements) {
+        element.style.opacity = '0.1'; // 선택되지 않은 요소의 투명도를 낮춥니다.
+    }
+
+    selectMenu.style.opacity = '1'; // 선택된 요소의 투명도를 기본값으로 설정.
+
     console.log(selectMenu.textContent);
     MenuValue = selectMenu.textContent;
 
@@ -1437,4 +1369,21 @@ function selectMenuTable(data, state = false) {
 
     InitPage();
     PageLoad();
+}
+
+// 소개글 제한걸기
+function truncateText(text) {
+    const MAX_INTRODUCTION_LENGTH = 25;
+    if (text.length > MAX_INTRODUCTION_LENGTH) {
+        return text.slice(0, MAX_INTRODUCTION_LENGTH) + '...';
+    }
+    return text;
+}
+
+// updateStars 함수는 이전 예제와 동일하게 정의되었다고 가정합니다
+function updateStars(score, index) {
+    const STAR_COUNT = 5;
+    const ratingToPercent = (score / STAR_COUNT) * 100;
+    const filledStars = document.getElementById(`filled-stars-${index}`);
+    filledStars.style.width = ratingToPercent + '%';
 }
