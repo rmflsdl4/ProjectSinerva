@@ -683,39 +683,29 @@ app.post("/commentRequest", async (req, res) => {
     const minute = date.getMinutes().toString().padStart(2, '0');
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
-    // 비동기 처리를 위한 Promise 배열 생성
-    const promises = commentImgId.map(async (commentImgId) => {
-        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ? AND expert_id = ?';
-        const values = [commentImgId, req.session.userId, expertId];
-        const result = await database.Query(query, values);
-        value += result[0].count;
-    });
+    const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE user_id = ? AND imgUploadDate = ?';
+    const values = [req.session.userId, requestDate];
+    const result = await database.Query(query, values);
+    value += result[0].count;
 
-    try {
-        // 모든 비동기 작업이 완료될 때까지 대기
-        await Promise.all(promises);
-
-        if (value === 0) {
-            commentImgId.forEach(async (commentImgId) => {
-                const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
-                const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
-                await database.Query(query, values);
-            });
-            res.send('success');
-        } else {
-            res.send('duplicate');
-        }
-    } catch (error) {
-        console.error(error);
-        res.send('error');
+    if (value === 0) {
+        commentImgId.forEach(async (commentImgId) => {
+            const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
+            const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
+            await database.Query(query, values);
+        });
+        res.send('success');
+    } else {
+        res.send('duplicate');
     }
 });
 
 // 전문가 리스트 select
 app.post("/expertList", async (req, res) => {
-    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 2), 0) AS rating
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    where e.waitOk = 1
                     GROUP BY e.id`;
 
     const result = await database.Query(query);
