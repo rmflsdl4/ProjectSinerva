@@ -1251,7 +1251,7 @@ function expertListRow(data) {
 
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td><img src="${row.expert_route}" style="width: 100%;"></td>`;
+        tableHTML += `<td><img src="${row.expert_route}"></td>`;
         tableHTML += `<td>${row.name}</td>`;
         tableHTML += `<td>${row.phone_num}</td>`;
         tableHTML += `<td>${row.email}</td>`;
