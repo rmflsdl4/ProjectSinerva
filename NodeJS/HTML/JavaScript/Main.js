@@ -237,36 +237,26 @@ function showExpertList(userType) {
       }
       let row = document.createElement('tr');
       row.className = 'expertTr';
-      row.style.marginTop = "20px";
   
       let nameTd = document.createElement('td');
       nameTd.className = 'expertTd';
       nameTd.textContent = item.name;
-      nameTd.style.width = '10%';
       row.appendChild(nameTd);
   
       let addressTd = document.createElement('td');
       addressTd.className = 'expertTd';
       addressTd.textContent = item.address;
-      addressTd.style.width = '25%';
       row.appendChild(addressTd);
   
       let introTd = document.createElement('td');
       introTd.className = 'expertTd';
       introTd.textContent = item.introduction;
-      if (userType === 'user') {
-        introTd.style.width = '30%';
-      }
-      else{
-        introTd.style.width = '50%';
-      }
       
       row.appendChild(introTd);
 
       // 테이블 셀(td)을 생성합니다.
       let ratingTd = document.createElement('td');
       ratingTd.className = 'expertTd'; // 클래스 이름을 'expertTd'로 설정합니다.
-      ratingTd.style.width = '20%'; // 너비를 20%로 설정합니다.
 
       // 별점을 표시할 별점(div)을 생성합니다.
       const starRatingsDiv = document.createElement('div');
