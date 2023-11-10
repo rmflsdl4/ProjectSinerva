@@ -1128,9 +1128,9 @@ function expertList(data) {
 
     tableHTML += "<tr id='expertListHeader'>";
     tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='10%'>이름</th>";
-    tableHTML += "<th width='10%'>평점</th>";
-    tableHTML += "<th width='60%'>소개</th>";
+    tableHTML += "<th width='10 %'>이름</th>";
+    tableHTML += "<th width='20%'>평점</th>";
+    tableHTML += "<th width='50%'>소개</th>";
     tableHTML += "<th width='10%'>선택</th>";
     tableHTML += "</tr>";
 
@@ -1142,13 +1142,25 @@ function expertList(data) {
         tableHTML += `<td style="display: none;">${row.expert_id}</td>`; // 이 부분을 숨김 처리
         tableHTML += `<td>${i + 1}</td>`;
         tableHTML += `<td>${row.name}</td>`;
-        tableHTML += `<td>${row.rating}</td>`;
+        tableHTML += `<td><div class="star-ratings" id="star-ratings-${i}">
+                        <div class="star-ratings-fill space-x-2 text-lg" id="filled-stars-${i}">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <div class="star-ratings-base space-x-2 text-lg" id="base-stars-${i}">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                    </div> / ${row.rating}</td>`;
         tableHTML += `<td>${introduction}</td>`;
         tableHTML += `<td><button class="selectExpert" onclick="selectExpertBtn(this)">선택</button></td>`;
         tableHTML += "</tr>";
     }
 
     table.innerHTML = tableHTML;
+
+    // 루프가 끝난 후에 별 업데이트
+    for (let i = 0; i < data.length; i++) {
+        updateStars(data[i].rating, i);
+    }
 }
 
 // 코멘트 요청 테이블 insert
@@ -1236,7 +1248,6 @@ function expertListRow(data) {
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
-        //<textarea readonly rows="7" cols="40">${row.introduction}</textarea>
 
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
