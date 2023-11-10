@@ -47,13 +47,23 @@
 
 
 #userImageList {
-    background-color: green;
+    background-color: #F5F5F5;
+    width: 80%;
+    height: auto;
+    box-shadow: inset 0px 0px 10px #666;
+    padding-top: 20px;
+    padding-bottom: 30px;
 }
 #userTable {
-    background-color: lightgreen;
+    width: 80%;
 }
-.userTd {
+.userTr {
     text-align: center;
+}
+.commentTextarea {
+    background-color: #F5F5F5;
+    border: none;
+    font-size: 18px;
 }
 #expertTitle{
     margin-top: 15px;

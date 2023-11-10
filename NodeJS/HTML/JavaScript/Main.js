@@ -12,6 +12,7 @@ function menuBarInit() {
 
   getUserSession()
   .then(loginUser => {
+    showUserList(loginUser.userType);
     showExpertList(loginUser.userType);
     console.log(loginUser);
     if(loginUser.userId !== undefined){
@@ -123,6 +124,106 @@ async function logOut() {
   });
 }
 
+async function showUserList(userType) {
+  getUserInfo()
+  .then(userInfo => {
+    const usersMenu = document.getElementById('userTable');
+    console.log(userInfo);
+    
+    let imageTr = document.createElement('tr');
+    imageTr.className = 'userTrImage';
+    let commentTr = document.createElement('tr');
+    commentTr.className = 'userTrComment';
+    let nameTr = document.createElement('tr');
+    nameTr.className = 'userTrName';
+    let dateTr = document.createElement('tr');
+    dateTr.className = 'userTrDate';
+
+    for (let i = 0; i < 5; i++) {
+      let imageTd = document.createElement('td');
+      imageTd.style.width = '16%';
+      imageTd.className = 'userTd';
+
+      let imageSrc = document.createElement('img');
+      imageSrc.className = 'userImage';
+      imageSrc.style.width = '100px';
+      imageSrc.src = userInfo[i].file_route;
+      imageTd.appendChild(imageSrc);
+
+      imageSrc.addEventListener('click', () => {
+          const modal = document.querySelector('.modal');
+          modal.style.display = 'block';
+
+          imageSrc.style.width = '80%';
+          console.log(userInfo[i].imgUploadDate);
+          seeMore(userInfo[i].imgUploadDate)
+          .then(value => {
+              console.log(value);
+              for (let j = 0; j < value.length; j++) {
+                imageSrc.src = value[j].file_route;
+
+                  // 이미지를 복제하여 모달 팝업에 추가
+                  const imageClone = imageSrc.cloneNode(true);
+                  modal.querySelector('.modal-content').appendChild(imageClone);
+              }
+          });
+      });
+      
+      document.querySelector('.close-modal-btn').addEventListener('click', function () {
+          const modal = document.querySelector('.modal');
+          modal.style.display = 'none';
+          imageSrc.style.width = '100px';
+      
+          // 모달 팝업 내용을 비우지 않고 복제된 이미지만 제거
+          const modalContent = modal.querySelector('.modal-content');
+          const clonedImages = modalContent.querySelectorAll('img');
+          if (clonedImages.length > 0) {
+              clonedImages.forEach((img) => {
+                  modalContent.removeChild(img);
+              });
+          }
+      });
+
+      imageTr.appendChild(imageTd);
+    }
+    usersMenu.appendChild(imageTr);
+    
+    for (let i = 0; i < 5; i++) {
+      let commentTd = document.createElement('td');
+      commentTd.className = 'userTd';
+      commentTd.textContent = '코멘트 내용';
+      commentTd.style.width = '16%';
+
+      let commentTextarea = document.createElement('textarea');
+      commentTextarea.className = 'commentTextarea';
+      commentTextarea.textContent = userInfo[i].comment;
+      commentTextarea.style.width = '100%';
+      commentTextarea.readOnly = true;
+      commentTd.appendChild(commentTextarea);
+      commentTr.appendChild(commentTd);
+    }
+    usersMenu.appendChild(commentTr);
+    
+    for (let i = 0; i < 5; i++) {
+      let nameTd = document.createElement('td');
+      nameTd.className = 'userTd';
+      nameTd.textContent = '유저이름: ' + userInfo[i].nick_name;
+      nameTd.style.width = '16%';
+      nameTr.appendChild(nameTd);
+    }
+    usersMenu.appendChild(nameTr);
+
+    for (let i = 0; i < 5; i++) {
+      let dateTd = document.createElement('td');
+      dateTd.className = 'userTd';
+      dateTd.textContent = '날짜: ' + userInfo[i].requestDate;
+      dateTd.style.width = '16%';
+      dateTr.appendChild(dateTd);
+    }
+    usersMenu.appendChild(dateTr);
+  });
+}
+
 function showExpertList(userType) {
   getExpertInfo()
   .then(expertInfo => {
@@ -231,6 +332,27 @@ function updateStars(score, index) {
   }
 }
 
+async function getUserInfo() {
+  try {
+      const response = await fetch('/getUserInfo', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error('데이터 가져오기 실패');
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
+}
+
 async function getExpertInfo() {
   try {
       const response = await fetch('/getExpertInfo', {
@@ -250,4 +372,23 @@ async function getExpertInfo() {
       console.error(error);
       throw error;
   }
+}
+
+function seeMore(imgUploadDate) {
+	return new Promise((resolve, reject) => {
+        fetch('/seeMore', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ imgUploadDate })
+        })
+			.then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
 }

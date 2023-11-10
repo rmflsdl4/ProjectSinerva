@@ -34,22 +34,11 @@
                 </table>
             </div>
         <center>
+            <!-- 유저 이미지 리스트 -->
+            <span><h3>유저 이미지 리스트</h3></span>
             <div id="userImageList">
-                <span><h3>유저 이미지 리스트</h3></span>
-                <a href="#" id="moreViewUserList"><span>더 보기</span></a>
+                <span id="moreViewUserList" onclick="location.href='#.html'">더 보기</span>
                 <table id="userTable">
-                    <tr class="userTr">
-                        <td class="title" width="50%">이미지</td>
-                    </tr>
-                    <tr class="userTr">
-                        <td class="title" width="40%">코멘트</td>
-                    </tr class="userTr">
-                    <tr>
-                        <td class="title" width="30%">이름</td>
-                    </tr class="userTr">
-                    <tr>
-                        <td class="title" width="30%">날짜</td>
-                    </tr>
                 </table>
             </div>
             <span id="expertTitle"><h3>전문가 정보 리스트</h3></span>
@@ -59,5 +48,15 @@
                 </table>
             </div>
         </center>
+
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="buildingList">
+                    </div>
+                </center>
+            </div>
+        </div>
     </body>
 </html>

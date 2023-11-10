@@ -590,6 +590,13 @@ app.post('/loginUserInfo', async (req, res) => {
     res.send(data);
 })
 
+//유저만 불러옴
+app.post('/getUserInfo', async (req, res) => {
+	const data = await MainSys.userInfo();
+	
+    res.send(data);
+})
+
 //전문가만 불러옴
 app.post('/getExpertInfo', async (req, res) => {
 	const data = await MainSys.expertInfo();
