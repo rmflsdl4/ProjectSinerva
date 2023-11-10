@@ -230,8 +230,11 @@ function showExpertList(userType) {
     const usersMenu = document.getElementById('expertTable');
     let i = 0;
     console.log(expertInfo);
-    
+    let cnt = 0;
     expertInfo.forEach(item => {
+      if(cnt > 4){
+        return;
+      }
       let row = document.createElement('tr');
       row.className = 'expertTr';
   
@@ -315,6 +318,7 @@ function showExpertList(userType) {
       row.appendChild(buttonTd);
   
       usersMenu.appendChild(row);
+      cnt++;
     });
   });
 }
