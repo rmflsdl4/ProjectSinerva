@@ -1190,11 +1190,6 @@ function selectExpertBtn(button) {
     });
 }
 
-// 모달 팝업 닫기
-document.querySelector('.close-modal-btn').addEventListener('click', function () {
-    document.querySelector('.modal').style.display = 'none';
-});
-
 // 전문가 리스트 페이지 select 요청
 function ExpertListInitPage(){
     // 해당 사용자 과거 기록 select 요청
@@ -1233,14 +1228,15 @@ function expertListRow(data) {
     tableHTML += "<th width='10%'>사진</th>";
     tableHTML += "<th width='10%'>이름</th>";
     tableHTML += "<th width='10%'>전화번호</th>";
-    tableHTML += "<th width='10%'>이메일</th>";
-    tableHTML += "<th width='17%'>주소</th>";
-    tableHTML += "<th width='20%'>소개글</th>";
-    tableHTML += "<th width='23%'>평점</th>";
+    tableHTML += "<th width='20%'>이메일</th>";
+    tableHTML += "<th width='20%'>주소</th>";
+    tableHTML += "<th width='10%'>소개글</th>";
+    tableHTML += "<th width='15%'>평점</th>";
     tableHTML += "</tr>";
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        //<textarea readonly rows="7" cols="40">${row.introduction}</textarea>
 
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
@@ -1249,7 +1245,7 @@ function expertListRow(data) {
         tableHTML += `<td>${row.phone_num}</td>`;
         tableHTML += `<td>${row.email}</td>`;
         tableHTML += `<td>${row.address}</td>`;
-        tableHTML += `<td><textarea readonly rows="7" cols="40">${row.introduction}</textarea></td>`;
+        tableHTML += `<td><a href="#" onclick="expertListIntroduction('${row.introduction}')">자세히 보기</a></td>`;
         tableHTML += `<td><div class="star-ratings" id="star-ratings-${i}">
                         <div class="star-ratings-fill space-x-2 text-lg" id="filled-stars-${i}">
                         <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
@@ -1273,6 +1269,16 @@ function expertListRow(data) {
     InitPage();
     PageLoad();
 }
+
+function expertListIntroduction(introduction) {
+    // 모달 팝업 창 열기
+    document.querySelector('.modal').style.display = 'block';
+
+    // introduction 값을 모달에 추가
+    const expertContent = document.getElementById('expertContent');
+    expertContent.textContent = introduction;
+}
+
 
 // 사용자 코멘트 요청 결과에 따른 게시물 변화
 function Board_Result(selectMenu) {
@@ -1386,4 +1392,13 @@ function updateStars(score, index) {
     const ratingToPercent = (score / STAR_COUNT) * 100;
     const filledStars = document.getElementById(`filled-stars-${index}`);
     filledStars.style.width = ratingToPercent + '%';
+}
+
+function closeModal(clickedButton) {
+    // clickedButton에는 클릭된 버튼의 정보가 포함됩니다.
+    // 이를 이용하여 해당 모달을 찾아서 display를 'none'으로 변경합니다.
+    const modal = clickedButton.closest('.modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
