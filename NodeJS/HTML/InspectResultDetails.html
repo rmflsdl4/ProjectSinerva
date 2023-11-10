@@ -110,17 +110,15 @@
 
             // 배경 클릭 시 모달 닫기
             window.onclick = function(event) {
-                var modal = document.getElementById('commentModal');
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
+                var commentModal = document.getElementById('commentModal');
+                var starModal = document.getElementById('star-modal');
 
-            // 평가 팝업창 배경 클릭 시 모달 닫기
-            window.onclick = function(event) {
-                var modal = document.getElementById('star-modal');
-                if (event.target == modal) {
-                    modal.style.display = 'none';
+                if (event.target == commentModal) {
+                    commentModal.style.display = 'none';
+                }
+
+                if (event.target == starModal) {
+                    starModal.style.display = 'none';
                 }
             }
         </script>
