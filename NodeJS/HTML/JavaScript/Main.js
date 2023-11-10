@@ -237,17 +237,18 @@ function showExpertList(userType) {
       }
       let row = document.createElement('tr');
       row.className = 'expertTr';
+      row.style.marginTop = "20px";
   
       let nameTd = document.createElement('td');
       nameTd.className = 'expertTd';
       nameTd.textContent = item.name;
-      nameTd.style.width = '20%';
+      nameTd.style.width = '10%';
       row.appendChild(nameTd);
   
       let addressTd = document.createElement('td');
       addressTd.className = 'expertTd';
       addressTd.textContent = item.address;
-      addressTd.style.width = '10%';
+      addressTd.style.width = '25%';
       row.appendChild(addressTd);
   
       let introTd = document.createElement('td');
