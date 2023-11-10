@@ -23,7 +23,7 @@
         <!-- 모달 팝업 컨테이너 -->
         <div class="modal">
             <div class="modal-content">
-                <span class="close-modal-btn">&times;</span>
+                <span class="close-modal-btn" onclick="closeModal(this)">&times;</span>
                 <center>
                     <div id="expertContent">
                     </div>
@@ -42,6 +42,19 @@
                     document.querySelector('.modal').style.display = 'block';
                 });
             });
+
+            // 배경 클릭 시 모달 닫기
+            window.onclick = function(event) {
+                var modals = document.getElementsByClassName("modal");
+                // HTMLCollection을 배열로 변환
+                var modalsArray = Array.from(modals);
+
+                modalsArray.forEach(function(modal) {
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
         </script>
     </body>
 </html>
