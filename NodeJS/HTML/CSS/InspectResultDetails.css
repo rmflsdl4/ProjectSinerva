@@ -24,6 +24,13 @@
     max-height: 70vh; /* 모달의 최대 높이를 설정, 필요에 따라 조절 가능 */
 }
 
+.star-modal-content {
+    border-radius: 10px; /* 모달 내용의 테두리를 부드럽게 만듭니다. */
+    background-color: #fff; /* 배경 색상을 흰색으로 변경합니다. */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 그림자 효과를 추가합니다. */
+    padding: 20px;
+}
+
 .close-modal-btn, .star-close-modal-btn {
     position: absolute;
     top: 0;
@@ -73,19 +80,31 @@
     border-radius: 5px;
 }
 
+.expertStarBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 18px;
+    margin-top: 20px;
+    padding: 10px 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
 /* 버튼 호버(마우스 오버) 스타일 */
 .expertRequestBtn:hover, .ratingBtn:hover, .expertStarBtn:hover {
     background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
 }
 
-/*별점 평가 스타일*/
 .requestBtn {
+    margin-top: 20px;
     text-align: center;
 }
 textarea {
     resize: none;
 }
 
+/*별점 평가 스타일*/
 .rating {
     position: relative;
     width: 180px;
@@ -120,4 +139,12 @@ textarea {
 
 .rating__star:hover {
     filter: drop-shadow(1px 1px 4px gold);
+}
+
+.ratingTitle {
+    font-family: sans-serif;
+    font-size: 24px; 
+    font-weight: bold; 
+    color: #333; 
+    margin-bottom: 32px;
 }

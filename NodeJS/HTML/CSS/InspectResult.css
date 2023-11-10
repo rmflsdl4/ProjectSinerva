@@ -10,3 +10,14 @@
     outline: none;
     font-size: 15px;
 }
+
+.Request_Menu {
+    margin: 0;
+    padding-top: 15px;
+}
+
+.Board_Request_Menu {
+    display: inline-block;
+    cursor: pointer;
+}
+

@@ -33,17 +33,20 @@
     cursor: pointer;
 }
 
+#commentList {
+    width: 1350px;
+}
+
+.commentRequest > td {
+    font-size: 17px;
+}
+
 .commentRequest > td > img{
     margin-top: 4px;
     margin-bottom: 4px;
 }
-.commentRequest > td > textarea{
-    display: inline;
-    height: 50px;
-    resize: none;
-    vertical-align: middle;
-    border: none;
-    background-color: #F5F5F5;
+.commentRequest > td > a{
+    margin: 0;
 }
 
 .star-ratings {
@@ -55,9 +58,9 @@
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke-width: 1.3px;
     -webkit-text-stroke-color: #2b2a29;
-  }
+}
 
-  .star-ratings-fill {
+.star-ratings-fill {
     color: #fff58c;
     padding: 0;
     position: absolute;
@@ -67,9 +70,15 @@
     left: 0;
     overflow: hidden;
     -webkit-text-fill-color: gold;
-  }
+}
 
-  .star-ratings-base {
+.star-ratings-base {
     z-index: 0;
     padding: 0;
-  }
+}
+
+#expertContent {
+    font-size: 20px; /* 글자 크기 설정 */
+    color: #333; /* 글자 색상 설정 */
+    /* 다른 스타일링 속성들을 추가할 수 있습니다. */
+}
