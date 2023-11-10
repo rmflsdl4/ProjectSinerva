@@ -10,9 +10,10 @@
 }
 #moreViewUserList, #moreViewExpertList {
     display: block;
-    color: red;
+    color: black;
     text-align: right;
     margin-right: 60px;
+    cursor: pointer;
 }
 #menuBar {
     display: flex;
@@ -54,8 +55,13 @@
 .userTd {
     text-align: center;
 }
+#expertTitle{
+    margin-top: 15px;
+}
 #expertInfoList {
-    background-color: orange;
+    background-color: #F5F5F5;
+    width: 80%;
+    box-shadow: inset 0px 0px 10px #666;
 }
 #expertTable {
     background-color: lightcoral;
@@ -92,3 +98,6 @@
     z-index: 0;
     padding: 0;
   }
+
+
+  
