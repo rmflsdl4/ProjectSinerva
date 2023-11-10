@@ -77,6 +77,8 @@
 }
 #expertTable {
     width: 80%;
+    border-collapse: separate;
+    border-spacing: 25px;
 }
 .expertTr{
     font-size: 1.1em;
@@ -86,6 +88,10 @@
     border-radius: 5px;
 }
 .expertTd {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
     text-align: center;
 }
 

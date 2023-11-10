@@ -254,7 +254,13 @@ function showExpertList(userType) {
       let introTd = document.createElement('td');
       introTd.className = 'expertTd';
       introTd.textContent = item.introduction;
-      introTd.style.width = '30%';
+      if (userType === 'user') {
+        introTd.style.width = '30%';
+      }
+      else{
+        introTd.style.width = '50%';
+      }
+      
       row.appendChild(introTd);
 
       // 테이블 셀(td)을 생성합니다.
