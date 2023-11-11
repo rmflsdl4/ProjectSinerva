@@ -2,6 +2,7 @@
     <head>
         <title>건물 균열 검사: 사용자</title>
         <link rel="stylesheet" href="CSS/All.css">
+        <link rel="stylesheet" href="CSS/InspectResult.css">
     </head>
     <body onload="InspectRecordInitPage(); OutputBuildingList();">
         <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
@@ -12,8 +13,11 @@
         <center>
             <div id="commentList">
                 <div id="buildingList">
-                    <div class="requestWait" style="width: 16%;" onclick="Board_Result(this);">전체보기</div>
-                    <div class="requestComplit" style="width: 16%;" onclick="Board_Result(this);">코멘트 요청완료</div>
+                    <div class="Request_Menu">
+                        <div class="Board_Request_Menu" style="width: 16%;" onclick="Board_Result(this);">전체보기</div>
+                        <div class="Board_Request_Menu" style="width: 16%;" onclick="Board_Result(this);">코멘트 요청완료</div>
+                    </div>
+
                     <select id="buildingSelect">
                         <option selected value="">전체 보기</option>
                     </select>
