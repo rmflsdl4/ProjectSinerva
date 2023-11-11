@@ -64,19 +64,13 @@ function SetNextNum(){
     currPageNum += 1;
     PageLoad();
     SetCurrentPageText(currPageNum);
-    if(posts.length < 6){
+    if(pageCount <= currPageNum && posts.length >= 6){
         nextPage.style.visibility = "hidden";
-        prePage.style.visibility = "hidden";
+        prePage.style.visibility = "visible";
     }
-    else{
-        if(pageCount <= currPageNum){
-            nextPage.style.visibility = "hidden";
-            prePage.style.visibility = "visible";
-        }
-        else {
-            prePage.style.visibility = "visible";
-            nextPage.style.visibility = "visible";
-        }
+    else {
+        prePage.style.visibility = "visible";
+        nextPage.style.visibility = "visible";
     }
 }
 function SetCurrentPageText(currentPageNum){
