@@ -68,13 +68,15 @@ function SetNextNum(){
         nextPage.style.visibility = "hidden";
         prePage.style.visibility = "hidden";
     }
-    else if(pageCount <= currPageNum){
-        nextPage.style.visibility = "hidden";
-        prePage.style.visibility = "visible";
-    }
-    else {
-        prePage.style.visibility = "visible";
-        nextPage.style.visibility = "visible";
+    else{
+        if(pageCount <= currPageNum){
+            nextPage.style.visibility = "hidden";
+            prePage.style.visibility = "visible";
+        }
+        else {
+            prePage.style.visibility = "visible";
+            nextPage.style.visibility = "visible";
+        }
     }
 }
 function SetCurrentPageText(currentPageNum){
