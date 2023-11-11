@@ -24,6 +24,12 @@ function userInfoInit(){
                 id.value = data[0].id;
                 pw.value = data[0].password;
                 nick_name.value = data[0].nick_name;
+
+                var expertProfileDiv = document.querySelector('.expertProfile');
+                if (expertProfileDiv) {
+                    expertProfileDiv.style.display = 'none';
+                }
+
                 if (!data[0].phone_num) {
                     phone_num.placeholder = 'xxx-xxxx-xxxx';
                 }
@@ -399,4 +405,16 @@ function All_Values_Check(){
     }
     alert('수정을 완료할려면 비밀번호 확인을 입력해주세요.');
     return false;
+}
+
+function showImageContent(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var imageContainer = document.querySelector('.expertProfileImage');
+            imageContainer.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
