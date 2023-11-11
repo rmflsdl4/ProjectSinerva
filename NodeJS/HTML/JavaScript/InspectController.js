@@ -20,6 +20,11 @@ function InitPage(){
     pageCount = Math.ceil(posts.length / 5);
     PageLoad();
     
+
+    if(posts.length < 6){
+        nextPage.style.visibility = "hidden";
+    }
+
     prePage.style.visibility = "hidden";
 }
 function SetPost(){
@@ -62,9 +67,10 @@ function SetPreNum(){
 }
 function SetNextNum(){
     currPageNum += 1;
+    console.log(currPageNum >= pageCount);
     PageLoad();
     SetCurrentPageText(currPageNum);
-    if(pageCount <= currPageNum && posts.length >= 6){
+    if(pageCount <= currPageNum){
         nextPage.style.visibility = "hidden";
         prePage.style.visibility = "visible";
     }
