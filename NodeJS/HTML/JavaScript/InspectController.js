@@ -62,10 +62,13 @@ function SetPreNum(){
 }
 function SetNextNum(){
     currPageNum += 1;
-    console.log(currPageNum >= pageCount);
     PageLoad();
     SetCurrentPageText(currPageNum);
-    if(pageCount <= currPageNum){
+    if(posts.length < 5){
+        nextPage.style.visibility = "hidden";
+        prePage.style.visibility = "hidden";
+    }
+    else if(pageCount <= currPageNum){
         nextPage.style.visibility = "hidden";
         prePage.style.visibility = "visible";
     }
