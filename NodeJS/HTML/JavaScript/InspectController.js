@@ -20,11 +20,6 @@ function InitPage(){
     pageCount = Math.ceil(posts.length / 5);
     PageLoad();
     
-
-    if(posts.length < 6){
-        nextPage.style.visibility = "hidden";
-    }
-
     prePage.style.visibility = "hidden";
 }
 function SetPost(){
@@ -1020,9 +1015,10 @@ function InspectDetailsRecordRow(data, requestResult) {
 
             table.innerHTML = tableHTML;
         } 
-        InitPage();
-        PageLoad();
     });
+
+    InitPage();
+    PageLoad();
 }
 
 // 건물 가져오기
@@ -1131,10 +1127,10 @@ function expertList(data) {
     let tableHTML = "";
 
     tableHTML += "<tr id='expertListHeader'>";
-    tableHTML += "<th width='8%'>번호</th>";
-    tableHTML += "<th width='20%'>이름</th>";
+    tableHTML += "<th width='10%'>번호</th>";
+    tableHTML += "<th width='10 %'>이름</th>";
     tableHTML += "<th width='20%'>평점</th>";
-    tableHTML += "<th width='42%'>소개</th>";
+    tableHTML += "<th width='50%'>소개</th>";
     tableHTML += "<th width='10%'>선택</th>";
     tableHTML += "</tr>";
 
@@ -1255,7 +1251,7 @@ function expertListRow(data) {
 
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td><img src="${row.expert_route}"></td>`;
+        tableHTML += `<td><img src="${row.expert_route}" style="width: 100%;"></td>`;
         tableHTML += `<td>${row.name}</td>`;
         tableHTML += `<td>${row.phone_num}</td>`;
         tableHTML += `<td>${row.email}</td>`;
