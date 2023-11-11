@@ -64,7 +64,7 @@ function SetNextNum(){
     currPageNum += 1;
     PageLoad();
     SetCurrentPageText(currPageNum);
-    if(posts.length < 5){
+    if(posts.length < 6){
         nextPage.style.visibility = "hidden";
         prePage.style.visibility = "hidden";
     }
