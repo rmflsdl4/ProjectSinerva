@@ -1,11 +1,12 @@
 #profile{
     display: flex;
-    height: 30px;
     align-items: center;
-    justify-content: center;
+    justify-content: right;
+    margin-right: 15%;
+    margin-left: 15%;
+    height: 30px;
 }
 #profileText{
-    font-size: 1.5em;
     color: rgb(121, 121, 121);
     border-bottom: none;
 }

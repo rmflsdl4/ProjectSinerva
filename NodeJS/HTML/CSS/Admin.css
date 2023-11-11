@@ -7,6 +7,15 @@
     cursor: pointer;
 }
 
+#profileText {
+    text-decoration: none;
+    margin-right: 25px;
+    color: #C0C0C0;
+}
+#profileText:hover{
+    border-bottom: 1px solid #C0C0C0;
+}
+
 #usersList{
     width: 70%;
     height: 70%;

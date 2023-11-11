@@ -74,6 +74,7 @@ function menuBarInit() {
       }
     }
     else if (loginUser.userType === 'admin') {
+      menuBar.style.display = 'none';
       logIn.style.display = 'none';
       SignUp.style.display = 'none';
       logOut.style.display = 'block';
@@ -308,6 +309,10 @@ function showExpertList(userType) {
         let requestButton = document.createElement('button');
         requestButton.className = 'requestButton';
         requestButton.textContent = '요청';
+
+        requestButton.addEventListener('click', () => {
+          window.location.href = 'InspectResult.html';
+        });
 
         buttonTd.appendChild(requestButton);
       }

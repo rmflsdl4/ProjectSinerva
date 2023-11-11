@@ -1,5 +1,12 @@
-#userName, #mainLogOut, #mainMyPage, #mainAdmin {
-    width: auto;
+#mainLogOut, #mainMyPage, #mainAdmin {
+    width: 40%;
+    display: none;
+    text-align: center;
+}
+
+#userName {
+    width: 100%;
+    margin-right: 70%;
     display: none;
 }
 
@@ -17,7 +24,6 @@
 }
 #menuBar {
     display: flex;
-    justify-content: center;
     align-items: center;
     width: 72%;
     margin-left: 14%;

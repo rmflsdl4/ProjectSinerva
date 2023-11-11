@@ -1015,10 +1015,9 @@ function InspectDetailsRecordRow(data, requestResult) {
 
             table.innerHTML = tableHTML;
         } 
+        InitPage();
+        PageLoad();
     });
-
-    InitPage();
-    PageLoad();
 }
 
 // 건물 가져오기
