@@ -545,6 +545,7 @@ const exStorage = multer.diskStorage({
     }, 
     filename: (req, file, cb) => {
         // 이미지 번호 증가
+        expertFileName = "";
         ExpertImageNumber++;
         console.log(file);
         expertFileName += "img" + ExpertImageNumber + path.extname(file.originalname);
