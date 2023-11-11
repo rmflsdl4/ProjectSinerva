@@ -1,4 +1,4 @@
-/* 모달 팝업 스타일 */
+    /* 모달 팝업 스타일 */
 .modal, .star-modal {
     display: none;
     position: fixed; /* 화면 상단에 고정 */
@@ -48,7 +48,7 @@
 #expertListTable{
     border-collapse: separate;
     border-spacing: 0 25px;
-    width: 90%;
+    width: 95%;
     text-align: center;
 }
 #expertListHeader{
@@ -67,6 +67,7 @@
     width: 80px;
     font-size: 15px;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 /* 요청 버튼 스타일 */

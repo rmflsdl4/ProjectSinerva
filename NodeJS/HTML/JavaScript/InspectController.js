@@ -1127,10 +1127,10 @@ function expertList(data) {
     let tableHTML = "";
 
     tableHTML += "<tr id='expertListHeader'>";
-    tableHTML += "<th width='10%'>번호</th>";
-    tableHTML += "<th width='10 %'>이름</th>";
+    tableHTML += "<th width='8%'>번호</th>";
+    tableHTML += "<th width='20%'>이름</th>";
     tableHTML += "<th width='20%'>평점</th>";
-    tableHTML += "<th width='50%'>소개</th>";
+    tableHTML += "<th width='42%'>소개</th>";
     tableHTML += "<th width='10%'>선택</th>";
     tableHTML += "</tr>";
 

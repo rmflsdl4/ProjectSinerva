@@ -15,7 +15,7 @@
             <!-- 로그인 후 -->
             <span id="userName" style="margin-right: 75%; padding: auto;"></span>
             <a href="./Main.html" id="mainLogOut" onclick="logOut()">로그아웃</a>
-            <a href="./changeUserInfo.html" id="mainMyPage">마이 페이지</a>
+            <a href="./changeUserInfo.html" id="mainMyPage" style="display: none;">마이 페이지</a>
             <!-- 어드민용용 -->
             <a href="./Admin.html" id="mainAdmin">유저 관리</a>
         </div>
@@ -28,13 +28,12 @@
                         <th class="userMenu"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
                         <th class="userMenu"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
                         <!-- 전문가용 -->
-                        <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
-                        <th class="expertMenu"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar" style="display: none;">검사 요청 코멘트</a></th>
+                        <th class="expertMenu"><a href="#" id="mainMenuBar" style="display: none;">과거 내역 조회</a></th>
                         
                     </tr>
                 </table>
-            </div> 
-            <br>
+            </div>
         <center>
             <div id="commentList">
                 <table id="commentListTable">
