@@ -12,6 +12,10 @@
         </div>
         <br><br>
         <center>
+            <div class="expertNameTitle">
+            </div>
+        </center>
+        <center>
             <div id="commentList">
                 <table id="commentListTable">
                 </table>
@@ -99,6 +103,7 @@
                         })
                         .catch(error => {
                             reject(error);
+                            console.error('Fetch error:', error);
                         });
                 });
             });
