@@ -207,8 +207,15 @@ async function showUserList(userType) {
     
     for (let i = 0; i < 5; i++) {
       let nameTd = document.createElement('td');
-      nameTd.className = 'userTd';
-      nameTd.textContent = '유저이름: ' + userInfo[i].nick_name;
+      let randomNumbers = new Set();
+
+      while(randomNumbers.size < 5){
+        randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+      }
+      let numberArr = Array.from(randomNumbers);
+      nameTd.className = 'userTd'; // 기존 유저 이름에서 검사 결과로 바뀜
+      
+      nameTd.textContent = '검사 결과: ' + userInfo[numberArr[i]].result;
       nameTd.style.width = '16%';
       nameTr.appendChild(nameTd);
     }

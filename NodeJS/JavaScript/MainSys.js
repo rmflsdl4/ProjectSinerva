@@ -1,7 +1,7 @@
 const database = require('../database.js');
 
 async function userInfo() {
-	const query = `SELECT u.id, u.nick_name, c.expert_id, c.imgUploadDate, c.requestDate, c.comment, c.reqDependingOn, i.img_id, i.file_route 
+	const query = `SELECT u.id, i.result, c.expert_id, c.imgUploadDate, c.requestDate, c.comment, c.reqDependingOn, i.img_id, i.file_route 
 					FROM user AS u
 						JOIN commentRequest AS c
 							ON u.id = c.user_id
