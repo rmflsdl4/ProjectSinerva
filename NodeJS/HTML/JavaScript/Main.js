@@ -130,10 +130,11 @@ async function showUserList(userType) {
   .then(userInfo => {
     // 랜덤 이미지
     let randomNumbers = new Set();
-    for(let i = 0; i < 5; i++){
-      if(i < userInfo.length){
-        randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+    while(randomNumbers.size < 5){
+      if(randomNumbers.size === userInfo.length){
+        break;
       }
+      randomNumbers.add(Math.floor(Math.random() * userInfo.length));
     }
     let numberArr = Array.from(randomNumbers);
 
