@@ -128,6 +128,16 @@ async function logOut() {
 async function showUserList(userType) {
   getUserInfo()
   .then(userInfo => {
+    // 랜덤 이미지
+    let randomNumbers = new Set();
+
+    while(randomNumbers.size < 5){
+      randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+    }
+    let numberArr = Array.from(randomNumbers);
+
+
+
     const usersMenu = document.getElementById('userTable');
     console.log(userInfo);
     
@@ -148,7 +158,7 @@ async function showUserList(userType) {
       let imageSrc = document.createElement('img');
       imageSrc.className = 'userImage';
       imageSrc.style.width = '100px';
-      imageSrc.src = userInfo[i].file_route;
+      imageSrc.src = userInfo[numberArr[i]].file_route;
       imageTd.appendChild(imageSrc);
 
       imageSrc.addEventListener('click', () => {
@@ -157,7 +167,7 @@ async function showUserList(userType) {
 
           imageSrc.style.width = '80%';
           console.log(userInfo[i].imgUploadDate);
-          seeMore(userInfo[i].imgUploadDate)
+          seeMore(userInfo[numberArr[i]].imgUploadDate)
           .then(value => {
               console.log(value);
               for (let j = 0; j < value.length; j++) {
@@ -197,7 +207,7 @@ async function showUserList(userType) {
 
       let commentTextarea = document.createElement('textarea');
       commentTextarea.className = 'commentTextarea';
-      commentTextarea.textContent = userInfo[i].comment;
+      commentTextarea.textContent = userInfo[numberArr[i]].comment;
       commentTextarea.style.width = '100%';
       commentTextarea.readOnly = true;
       commentTd.appendChild(commentTextarea);
@@ -205,14 +215,10 @@ async function showUserList(userType) {
     }
     usersMenu.appendChild(commentTr);
     
+    
+
     for (let i = 0; i < 5; i++) {
       let nameTd = document.createElement('td');
-      let randomNumbers = new Set();
-
-      while(randomNumbers.size < 5){
-        randomNumbers.add(Math.floor(Math.random() * userInfo.length));
-      }
-      let numberArr = Array.from(randomNumbers);
       nameTd.className = 'userTd'; // 기존 유저 이름에서 검사 결과로 바뀜
       
       nameTd.textContent = '검사 결과: ' + userInfo[numberArr[i]].result;
@@ -224,7 +230,7 @@ async function showUserList(userType) {
     for (let i = 0; i < 5; i++) {
       let dateTd = document.createElement('td');
       dateTd.className = 'userTd';
-      dateTd.textContent = '날짜: ' + userInfo[i].requestDate;
+      dateTd.textContent = '날짜: ' + userInfo[numberArr[i]].requestDate;
       dateTd.style.width = '16%';
       dateTr.appendChild(dateTd);
     }
