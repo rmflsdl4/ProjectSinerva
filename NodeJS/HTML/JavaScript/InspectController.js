@@ -20,6 +20,11 @@ function InitPage(){
     pageCount = Math.ceil(posts.length / 5);
     PageLoad();
     
+
+    if(posts.length < 6){
+        nextPage.style.visibility = "hidden";
+    }
+
     prePage.style.visibility = "hidden";
 }
 function SetPost(){
@@ -1015,10 +1020,9 @@ function InspectDetailsRecordRow(data, requestResult) {
 
             table.innerHTML = tableHTML;
         } 
+        InitPage();
+        PageLoad();
     });
-
-    InitPage();
-    PageLoad();
 }
 
 // 건물 가져오기
@@ -1251,7 +1255,7 @@ function expertListRow(data) {
 
         tableHTML += "<tr class='commentRequest'>";
         tableHTML += `<td>${i + 1}</td>`;
-        tableHTML += `<td><img src="${row.expert_route}" style="width: 100%;"></td>`;
+        tableHTML += `<td><img src="${row.expert_route}"></td>`;
         tableHTML += `<td>${row.name}</td>`;
         tableHTML += `<td>${row.phone_num}</td>`;
         tableHTML += `<td>${row.email}</td>`;
@@ -1390,11 +1394,11 @@ function selectMenuTable(data, state = false) {
 
 // 소개글 제한걸기
 function truncateText(text) {
-    const MAX_INTRODUCTION_LENGTH = 25;
-    if (text.length > MAX_INTRODUCTION_LENGTH) {
-        return text.slice(0, MAX_INTRODUCTION_LENGTH) + '...';
+    if (text) {
+        const maxLength = 70; // 원하는 최대 길이로 수정
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
-    return text;
+    return '';
 }
 
 // updateStars 함수는 이전 예제와 동일하게 정의되었다고 가정합니다
