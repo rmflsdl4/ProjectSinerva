@@ -130,11 +130,9 @@ async function showUserList(userType) {
   .then(userInfo => {
     // 랜덤 이미지
     let randomNumbers = new Set();
-    if(userInfo.length > 0){
-      for(let i = 0; i < 5; i++){
-        if(i < randomNumbers.size){
-          randomNumbers.add(Math.floor(Math.random() * userInfo.length));
-        }
+    for(let i = 0; i < 5; i++){
+      if(i < userInfo.length){
+        randomNumbers.add(Math.floor(Math.random() * userInfo.length));
       }
     }
     let numberArr = Array.from(randomNumbers);
@@ -153,7 +151,7 @@ async function showUserList(userType) {
     let dateTr = document.createElement('tr');
     dateTr.className = 'userTrDate';
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberArr.length; i++) {
       let imageTd = document.createElement('td');
       imageTd.style.width = '16%';
       imageTd.className = 'userTd';
@@ -202,7 +200,7 @@ async function showUserList(userType) {
     }
     usersMenu.appendChild(imageTr);
     
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberArr.length; i++) {
       let commentTd = document.createElement('td');
       commentTd.className = 'userTd';
       commentTd.textContent = '코멘트 내용';
@@ -220,7 +218,7 @@ async function showUserList(userType) {
     
     
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberArr.length; i++) {
       let nameTd = document.createElement('td');
       nameTd.className = 'userTd'; // 기존 유저 이름에서 검사 결과로 바뀜
       
@@ -230,7 +228,7 @@ async function showUserList(userType) {
     }
     usersMenu.appendChild(nameTr);
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberArr.length; i++) {
       const dateStr = userInfo[numberArr[i]].requestDate; // 예: '202311051449'
       const year = dateStr.substring(0, 4);
       const month = dateStr.substring(4, 6);
