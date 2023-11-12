@@ -67,7 +67,7 @@ function SetPreNum(){
 }
 function SetNextNum(){
     currPageNum += 1;
-    console.log(currPageNum >= pageCount);
+
     PageLoad();
     SetCurrentPageText(currPageNum);
     if(pageCount <= currPageNum){
@@ -82,7 +82,16 @@ function SetNextNum(){
 function SetCurrentPageText(currentPageNum){
     pageNum.textContent = currentPageNum;
 }
-
+// 날짜 포맷
+function DateFormat(dateStr){
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    const hour = dateStr.substring(8, 10);
+    const minute = dateStr.substring(10, 12);
+    const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+    return upload_date;
+}
 //관리자 코멘트 기능 ExpertRequestComment.html
 const menu = document.getElementsByClassName('Board_Menu');
 
@@ -179,11 +188,11 @@ async function Posts_Output(board_type){
 
                 const reqDate = document.createElement('td');
                 reqDate.className = 'add_td_Tag';
-                reqDate.textContent = row['requestDate'];
+                reqDate.textContent = DateFormat(row['requestDate']);
 
                 const uploadDate = document.createElement('td');
                 uploadDate.className = 'add_td_Tag';
-                uploadDate.textContent = row['imgUploadDate'];
+                uploadDate.textContent = DateFormat(row['imgUploadDate']);
 
                 const imageCell = document.createElement('td');
                 imageCell.className = 'add_td_Tag';
@@ -269,12 +278,12 @@ async function Posts_Output(board_type){
 
                             const reqDate = document.createElement('td');
                             reqDate.className = 'more';
-                            reqDate.textContent = value[i].requestDate;
+                            reqDate.textContent = DateFormat(value[i].requestDate);
                             reqDate.style.width = '20%';
 
                             const uploadDate = document.createElement('td');
                             uploadDate.className = 'more';
-                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.textContent = DateFormat(value[i].imgUploadDate);
                             uploadDate.style.width = '30%';
 
                             const imageCell = document.createElement('td');
@@ -336,11 +345,11 @@ async function Posts_Output(board_type){
 
             const reqDate = document.createElement('td');
             reqDate.className = 'add_td_Tag';
-            reqDate.textContent = row['requestDate'];
+            reqDate.textContent = DateFormat(row['requestDate']);
 
             const uploadDate = document.createElement('td');
             uploadDate.className = 'add_td_Tag';
-            uploadDate.textContent = row['imgUploadDate'];
+            uploadDate.textContent = DateFormat(row['imgUploadDate']);
 
             const imageCell = document.createElement('td');
             imageCell.className = 'add_td_Tag';
@@ -423,7 +432,7 @@ async function Posts_Output(board_type){
 
                             const uploadDate = document.createElement('td');
                             uploadDate.className = 'more';
-                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.textContent = DateFormat(value[i].imgUploadDate);
                             uploadDate.style.width = '30%';
 
                             const imageCell = document.createElement('td');
@@ -513,12 +522,12 @@ async function Posts_Output(board_type){
 
                             const reqDate = document.createElement('td');
                             reqDate.className = 'more';
-                            reqDate.textContent = value[i].requestDate;
+                            reqDate.textContent = DateFormat(value[i].requestDate);
                             reqDate.style.width = '20%';
 
                             const uploadDate = document.createElement('td');
                             uploadDate.className = 'more';
-                            uploadDate.textContent = value[i].imgUploadDate;
+                            uploadDate.textContent = DateFormat(value[i].imgUploadDate);
                             uploadDate.style.width = '30%';
 
                             const imageCell = document.createElement('td');
@@ -765,13 +774,7 @@ function InspectRecordRow(data, state = false) {
     var sequenceNum = 1;
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
-        const dateStr = row.upload_date; // 예: '202311051449'
-        const year = dateStr.substring(0, 4);
-        const month = dateStr.substring(4, 6);
-        const day = dateStr.substring(6, 8);
-        const hour = dateStr.substring(8, 10);
-        const minute = dateStr.substring(10, 12);
-        const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+        const upload_date = DateFormat(row.upload_date);
 
         if(state === true){
             if(row.address !== preAddress){
@@ -856,13 +859,7 @@ function InspectDetailsRecordRow(data, requestResult) {
             tableHTML += "</tr>";
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
-                const dateStr = row.upload_date; // 예: '202311051449'
-                const year = dateStr.substring(0, 4);
-                const month = dateStr.substring(4, 6);
-                const day = dateStr.substring(6, 8);
-                const hour = dateStr.substring(8, 10);
-                const minute = dateStr.substring(10, 12);
-                const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+                const upload_date = DateFormat(row.upload_date);
 
                 commentImgId[i] = row.img_id;
                 tableHTML += "<tr class='commentRequest'>";
@@ -1012,13 +1009,7 @@ function InspectDetailsRecordRow(data, requestResult) {
             for (let i = 0; i < data.length; i++) {
                 const row = data[i];
                 commentImgId[i] = row.img_id;
-                const dateStr = row.upload_date; // 예: '202311051449'
-                const year = dateStr.substring(0, 4);
-                const month = dateStr.substring(4, 6);
-                const day = dateStr.substring(6, 8);
-                const hour = dateStr.substring(8, 10);
-                const minute = dateStr.substring(10, 12);
-                const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+                const upload_date = DateFormat(row.upload_date);
 
                 tableHTML += "<tr class='commentRequest'>";
                 tableHTML += `<td>${i + 1}</td>`;
@@ -1373,13 +1364,7 @@ function selectMenuTable(data, state = false) {
 
         for (let i = 0; i < data.length; i++) {
             const row = data[i];
-            const dateStr = row.upload_date;
-            const year = dateStr.substring(0, 4);
-            const month = dateStr.substring(4, 6);
-            const day = dateStr.substring(6, 8);
-            const hour = dateStr.substring(8, 10);
-            const minute = dateStr.substring(10, 12);
-            const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
+            const upload_date = DateFormat(row.upload_date);
 
             if (state === true) {
                 if (row.address !== preAddress) {
