@@ -165,3 +165,9 @@ textarea {
 .selectExpert:hover {
     background: linear-gradient(180deg, #1E90FF, #87CEEB);
 }
+
+.expertProfileRoute, .expertNameTitle {
+    display: none;
+    font-size: 28px;
+    padding-bottom: 20px;
+}
