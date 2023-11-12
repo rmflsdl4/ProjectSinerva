@@ -293,7 +293,6 @@ const storage = multer.diskStorage({
         const minute = date.getMinutes().toString().padStart(2, '0');
         const userId = req.session.userId;
         
-
         console.log("고유 넘버: " + randomNumber);
         dataTime = `${year}${month}${day}${hour}${minute}${randomNumber}`;
         console.log("전체 경로: " + dataTime + randomNumber);
@@ -351,7 +350,6 @@ app.post("/buildingNameInput", async (req, res) => {
 
 // 검사 페이지 이미지 업로드
 app.post('/image-discrimination', upload.array('images'), async (req, res) => {
-    
     do {
         randomNumber = Math.floor(Math.random() * 10000) + 1;
     } while (randomNumbers.has(randomNumber));
@@ -715,6 +713,7 @@ app.post("/commentRequest", async (req, res) => {
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
     const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE user_id = ? AND imgUploadDate = ?';
+
     const values = [req.session.userId, requestDate];
     const result = await database.Query(query, values);
     value += result[0].count;
@@ -791,15 +790,15 @@ app.post("/ratingInput", async (req, res) => {
     let expertId = result[0].expert_id;
 
     // 이미 평가한 전문가인지 확인
-    const duplQuery = 'SELECT COUNT(*) as count FROM user_has_expert WHERE user_id = ? AND expert_id = ?';
-    const duplValues = [req.session.userId, expertId];
+    const duplQuery = 'SELECT COUNT(*) as count FROM user_has_expert WHERE user_id = ? AND imgUploadDate = ?';
+    const duplValues = [req.session.userId, requestDate];
     const duplResult = await database.Query(duplQuery, duplValues);
     value += duplResult[0].count;
     console.log(value);
 
     if (value === 0) {
-        const inQuery = `insert into user_has_expert(user_id, expert_id, rating) values(?, ?, ?)`;
-        const inValues = [req.session.userId, expertId, starRating];
+        const inQuery = `insert into user_has_expert(user_id, expert_id, imgUploadDate, rating) values(?, ?, ?, ?)`;
+        const inValues = [req.session.userId, expertId, requestDate, starRating];
         await database.Query(inQuery, inValues);
         res.send('success');
     } else {
