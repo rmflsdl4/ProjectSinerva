@@ -132,7 +132,10 @@ async function showUserList(userType) {
     let randomNumbers = new Set();
 
     while(randomNumbers.size < 5){
-      randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+      let randomNumber = Math.floor(Math.random() * userInfo.length);
+      if(userInfo[randomNumber.result] !== "null"){
+        randomNumbers.add(randomNumber);
+      }
     }
     let numberArr = Array.from(randomNumbers);
 
@@ -228,9 +231,16 @@ async function showUserList(userType) {
     usersMenu.appendChild(nameTr);
 
     for (let i = 0; i < 5; i++) {
+      const dateStr = userInfo[numberArr[i]].requestDate; // 예: '202311051449'
+      const year = dateStr.substring(0, 4);
+      const month = dateStr.substring(4, 6);
+      const day = dateStr.substring(6, 8);
+      const hour = dateStr.substring(8, 10);
+      const minute = dateStr.substring(10, 12);
+      const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
       let dateTd = document.createElement('td');
       dateTd.className = 'userTd';
-      dateTd.textContent = '날짜: ' + userInfo[numberArr[i]].requestDate;
+      dateTd.textContent = '날짜: ' + upload_date;
       dateTd.style.width = '16%';
       dateTr.appendChild(dateTd);
     }
