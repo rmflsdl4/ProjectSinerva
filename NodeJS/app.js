@@ -6,7 +6,8 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const tf = require('./JavaScript/tfjsNode.js');
+const setInterval = require('timers').setInterval;
+//const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
@@ -271,7 +272,15 @@ try {
 } catch (err) {
     console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
 }
+  
+// 1분마다 measureTime 함수를 호출합니다.
 
+let randomNumbers = new Set();
+function InitSet() {
+    randomNumbers = new Set();
+    console.log(`세트 초기화! 현재 세트 길이: ${randomNumbers.size}`);
+}
+setInterval(InitSet, 60000);
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const date = new Date();
@@ -281,8 +290,17 @@ const storage = multer.diskStorage({
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
         const userId = req.session.userId;
+        let randomNumber = 0; // 랜덤 값 변수 초기화
+        do {
+            randomNumber = Math.floor(Math.random() * 10000) + 1;
+        } while (randomNumbers.has(randomNumber));
+        randomNumbers.add(randomNumber);
+        console.log(`현재 세트에 추가된 값: ${randomNumber}`);
+        console.log(`현재 세트의 크기: ${randomNumbers.size}`);
 
+        console.log("고유 넘버: " + randomNumber);
         dataTime = `${year}${month}${day}${hour}${minute}`;
+        console.log("전체 경로: " + dataTime + randomNumber);
         folder = `images/${userId}/${buildingName}/${dataTime}/`;
 
         // 해당 유저 아이디 폴더가 없으면 생성
@@ -348,7 +366,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        //await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
