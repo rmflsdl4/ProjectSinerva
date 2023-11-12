@@ -6,7 +6,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-const tf = require('./JavaScript/tfjsNode.js');
+// const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
@@ -348,7 +348,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        // await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -431,10 +431,11 @@ app.post("/detailsRecord", async (req, res) => {
     console.log(date); // value 변수에 저장된 값 출력
     console.log(buildingAddress); // value 변수에 저장된 값 출력
 
-    const query = `select image.img_id as img_id, image.upload_date as upload_date, image.file_route as file_route, image.result as result, commentRequest.comment as comment
+    const query = `select image.img_id as img_id, image.upload_date as upload_date, image.file_route as file_route, image.result as result, commentRequest.comment as comment, expert.id as expert_id, expert.name as expert_name, expert.expert_route as expert_route
                     FROM image
                     INNER JOIN building ON image.building_id = building.id
                     LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
+                    LEFT OUTER JOIN expert ON commentRequest.expert_id = expert.id
                     where image.upload_date = ? and image.user_id = ? and building.address = ?`;
 
     const values = [date, req.session.userId, buildingAddress];
