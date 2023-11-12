@@ -481,13 +481,16 @@ app.post("/selectedBuildingSearch", async (req, res) => {
     const { MenuValue } = req.body;
 
     if(MenuValue === "전체보기") {
-        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+        var sqlStr = "";
     }
     else if(MenuValue === "코멘트 요청완료") {
         var sqlStr = "AND commentRequest.reqDependingOn = 'Y'";
     }
-    else {
+    else if(MenuValue === "코멘트 요청미완료") {
         var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+    }
+    else {
+        var sqlStr = "";
     }
 
     const query = `SELECT DISTINCT building.address as address
@@ -754,7 +757,7 @@ app.post("/commentResult", async (req, res) => {
         var sqlStr = "AND commentRequest.reqDependingOn = 'Y'";
     }
     else {
-        var sqlStr = "";
+        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
     }
 
     const query = `SELECT 
@@ -772,7 +775,6 @@ app.post("/commentResult", async (req, res) => {
                     ORDER BY image.upload_date DESC, building.address DESC`;
         const values = [req.session.userId];
         const result = await database.Query(query, values);
-
 
         res.send(result);
 });
