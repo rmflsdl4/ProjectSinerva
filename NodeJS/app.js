@@ -7,7 +7,7 @@ const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
 const setInterval = require('timers').setInterval;
-const tf = require('./JavaScript/tfjsNode.js');
+//const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
@@ -368,7 +368,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        await tf.Predict(image_route, file.filename);
+        //await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
@@ -395,7 +395,7 @@ app.post("/record", async (req, res) => {
                     FROM image
                     INNER JOIN building ON image.building_id = building.id
                     LEFT OUTER JOIN commentRequest ON image.img_id = commentRequest.img_id
-                    WHERE image.user_id = ? AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')
+                    WHERE image.user_id = ?
                     GROUP BY image.upload_date, building.address
                     ORDER BY image.upload_date DESC, building.address DESC`;
 
@@ -748,13 +748,13 @@ app.post("/commentResult", async (req, res) => {
     const { MenuValue } = req.body;
     
     if(MenuValue === "전체보기") {
-        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+        var sqlStr = "";
     }
     else if(MenuValue === "코멘트 요청완료") {
         var sqlStr = "AND commentRequest.reqDependingOn = 'Y'";
     }
     else {
-        var sqlStr = "AND (commentRequest.reqDependingOn IS NULL OR commentRequest.reqDependingOn = 'N')";
+        var sqlStr = "";
     }
 
     const query = `SELECT 
@@ -772,6 +772,7 @@ app.post("/commentResult", async (req, res) => {
                     ORDER BY image.upload_date DESC, building.address DESC`;
         const values = [req.session.userId];
         const result = await database.Query(query, values);
+
 
         res.send(result);
 });
