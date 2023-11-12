@@ -2,7 +2,8 @@
     <head>
         <title>회원정보 수정</title>
         <link rel="stylesheet" href="CSS/All.css">
-                <script src="JavaScript/userInfo.js"></script>
+        <link rel="stylesheet" href="CSS/changeUserInfo.css">
+        <script src="JavaScript/userInfo.js"></script>
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body id="Main_BackGround" onload="userInfoInit();">
@@ -36,12 +37,19 @@
                 <div>
                     <textarea id="introduction" type="text" name="introduction" placeholder="소개글" onkeyup="Input_Check(this);"></textarea>
                 </div>
-                <div>
-                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
-                </div> 
+                <div class="expertProfile">
+                    <label for="profile_picture" id="profile_picture_label">
+                        <img class="expertProfileImage" src="./Image/icons8.png" alt="프로필 이미지"/>
+                        <span>프로필 사진 선택</span>
+                    </label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;" onchange="showImageContent(this);">
+                    <div class="profile-content hidden">
+                    </div>
+                </div>   
+
                 <div id="MainMenuBox">
                     <button id="changeCommitButton" type="submit" onclick="window.onbeforeunload = null;">정보수정</button>
-                </div>
+                </div> 
             </form>
         </div>
     </body>

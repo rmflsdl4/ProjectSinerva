@@ -12,7 +12,7 @@
             <a href="./Login.html" id="mainLogIn">로그인</a>
             <a href="./SignUp.html" id="mainSignUp">회원가입</a>
             <!-- 로그인 후 -->
-            <span id="userName" style="margin-right: 75%; padding: auto;"></span>
+            <span id="userName"></span>
             <a href="./Main.html" id="mainLogOut" onclick="logOut()">로그아웃</a>
             <a href="changeUserInfo.html" id="mainMyPage">마이 페이지</a>
             <!-- 어드민용용 -->
@@ -34,30 +34,37 @@
                 </table>
             </div>
         <center>
+            <!-- 유저 이미지 리스트 -->
+            <span><h2>유저 이미지 리스트</h2></span>
             <div id="userImageList">
-                <span><h3>유저 이미지 리스트</h3></span>
-                <a href="#" id="moreViewUserList">더 보기</a>
+                <!-- <span id="moreViewUserList" onclick="location.href='UserList.html'">더 보기</span> -->
                 <table id="userTable">
-                    <tr class="userTr">
-                        <td class="title" width="50%">이미지</td>
-                    </tr>
-                    <tr class="userTr">
-                        <td class="title" width="40%">코멘트</td>
-                    </tr class="userTr">
-                    <tr>
-                        <td class="title" width="30%">이름</td>
-                    </tr class="userTr">
-                    <tr>
-                        <td class="title" width="30%">날짜</td>
-                    </tr>
                 </table>
             </div>
+            <span id="expertTitle"><h2>전문가 정보 리스트</h2></span>
             <div id="expertInfoList">
-                <span><h3>전문가 정보 리스트</h3></span>
-                <a href="ExpertList.html" id="moreViewExpertList">더 보기</a>
+                <span id="moreViewExpertList" onclick="location.href='ExpertList.html'">더 보기</span>
                 <table id="expertTable">
+                    <tr style="font-weight: bold; font-size: 1.2em;">
+                        <th style="width: 15%;">이름</th>
+                        <th style="width: 25%;">주소</th>
+                        <th style="width: 30%;">소개</th>
+                        <th style="width: 20%;">별점</th>
+                        <th style="width: 10%;"></th>
+                    </tr>
                 </table>
             </div>
         </center>
+        <br>
+        <br>
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="buildingList">
+                    </div>
+                </center>
+            </div>
+        </div>
     </body>
 </html>

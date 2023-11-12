@@ -263,6 +263,15 @@ const IMAGE_NUMBER_FILE = './image_number.txt';
 let dataTime;
 let folder;
 let buildingName;
+const usedRandomNumbers = new Set(); // 이미 사용된 난수를 저장하는 Set
+
+// 주기적으로 Set을 초기화하는 함수
+function resetUsedRandomNumbers() {
+    usedRandomNumbers.clear();
+}
+
+// 1분(60초)마다 Set을 초기화
+setInterval(resetUsedRandomNumbers, 60 * 1000);
 
 // 이미지 번호 파일에서 읽어오기
 try {
@@ -281,8 +290,18 @@ const storage = multer.diskStorage({
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
         const userId = req.session.userId;
+        let randomNumber;
 
-        dataTime = `${year}${month}${day}${hour}${minute}`;
+        // 이미지 업로드 요청이 들어올 때만 1번만 발생
+        if (!usedRandomNumbers.has(userId)) {
+            do {
+                randomNumber = Math.floor(Math.random() * 9999) + 1;
+            } while (usedRandomNumbers.has(randomNumber));
+
+            usedRandomNumbers.add(randomNumber);
+        }
+
+        dataTime = `${year}${month}${day}${hour}${minute}${randomNumber}`;
         folder = `images/${userId}/${buildingName}/${dataTime}/`;
 
         // 해당 유저 아이디 폴더가 없으면 생성
@@ -545,6 +564,7 @@ const exStorage = multer.diskStorage({
     }, 
     filename: (req, file, cb) => {
         // 이미지 번호 증가
+        expertFileName = "";
         ExpertImageNumber++;
         console.log(file);
         expertFileName += "img" + ExpertImageNumber + path.extname(file.originalname);
@@ -586,6 +606,13 @@ app.post('/changeCommit', exUpload.single('profile_picture'), async (req, res) =
 app.post('/loginUserInfo', async (req, res) => {
     const { id, userType } = req.body;
 	const data = await changeUserInfo.getUserInfo(id, userType);
+	
+    res.send(data);
+})
+
+//유저만 불러옴
+app.post('/getUserInfo', async (req, res) => {
+	const data = await MainSys.userInfo();
 	
     res.send(data);
 })
@@ -683,39 +710,29 @@ app.post("/commentRequest", async (req, res) => {
     const minute = date.getMinutes().toString().padStart(2, '0');
     dataTime = `${year}${month}${day}${hour}${minute}`;
 
-    // 비동기 처리를 위한 Promise 배열 생성
-    const promises = commentImgId.map(async (commentImgId) => {
-        const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE img_id = ? AND user_id = ? AND expert_id = ?';
-        const values = [commentImgId, req.session.userId, expertId];
-        const result = await database.Query(query, values);
-        value += result[0].count;
-    });
+    const query = 'SELECT COUNT(*) as count FROM commentRequest WHERE user_id = ? AND imgUploadDate = ?';
+    const values = [req.session.userId, requestDate];
+    const result = await database.Query(query, values);
+    value += result[0].count;
 
-    try {
-        // 모든 비동기 작업이 완료될 때까지 대기
-        await Promise.all(promises);
-
-        if (value === 0) {
-            commentImgId.forEach(async (commentImgId) => {
-                const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
-                const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
-                await database.Query(query, values);
-            });
-            res.send('success');
-        } else {
-            res.send('duplicate');
-        }
-    } catch (error) {
-        console.error(error);
-        res.send('error');
+    if (value === 0) {
+        commentImgId.forEach(async (commentImgId) => {
+            const query = `INSERT INTO commentRequest(img_id, user_id, expert_id, requestDate, imgUploadDate) VALUES (?, ?, ?, ?, ?)`;
+            const values = [commentImgId, req.session.userId, expertId, dataTime, requestDate];
+            await database.Query(query, values);
+        });
+        res.send('success');
+    } else {
+        res.send('duplicate');
     }
 });
 
 // 전문가 리스트 select
 app.post("/expertList", async (req, res) => {
-    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 1), 0) AS rating
+    const query = `SELECT e.name AS name, e.phone_num AS phone_num, e.email AS email, e.address AS address, e.introduction, e.expert_route AS expert_route, COALESCE(ROUND(AVG(ue.rating), 2), 0) AS rating
                     FROM expert AS e
                     LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
+                    where e.waitOk = 1
                     GROUP BY e.id`;
 
     const result = await database.Query(query);

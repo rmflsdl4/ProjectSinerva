@@ -8,9 +8,13 @@
     <body>
         <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
         <div id="profile">
-            <a href="#" id="profileText">마이 페이지</a>
+            <a href="changeUserInfo.html" id="profileText">마이 페이지</a>
         </div>
         <br><br>
+        <center>
+            <div class="expertNameTitle">
+            </div>
+        </center>
         <center>
             <div id="commentList">
                 <table id="commentListTable">
@@ -24,10 +28,10 @@
             <button class="expertRequestBtn">코멘트 요청</button>
         </div>
 
-        <!-- 모달 팝업 컨테이너 -->
-        <div class="modal">
+        <!-- 요청 모달 팝업 컨테이너 -->
+        <div class="modal" id="commentModal">
             <div class="modal-content">
-                <span class="close-modal-btn">&times;</span>
+                <span class="close-modal-btn" onclick="closeModal(this)">&times;</span>
                 <center>
                     <div id="expertList" style="max-height: 500px; overflow-y: auto;">
                         <table id="expertListTable">
@@ -38,10 +42,11 @@
         </div>
 
         <!-- 별점 모달 팝업 컨테이너 -->
-        <div class="star-modal">
+        <div class="star-modal" id="star-modal">
             <div class="star-modal-content">
                 <span class="star-close-modal-btn">&times;</span>
                 <center>
+                    <div class="ratingTitle">전문가 서비스 평가</div>
                     <div class="rating">
                         <span class="rating__result"></span> 
                         <i class="rating__star far fa-star"></i>
@@ -98,19 +103,29 @@
                         })
                         .catch(error => {
                             reject(error);
+                            console.error('Fetch error:', error);
                         });
                 });
-            });
-
-            // 모달 팝업 닫기
-            document.querySelector('.close-modal-btn').addEventListener('click', function () {
-                document.querySelector('.modal').style.display = 'none';
             });
 
             // star 모달 팝업 닫기
             document.querySelector('.star-close-modal-btn').addEventListener('click', function () {
                 document.querySelector('.star-modal').style.display = 'none';
             });
+
+            // 배경 클릭 시 모달 닫기
+            window.onclick = function(event) {
+                var commentModal = document.getElementById('commentModal');
+                var starModal = document.getElementById('star-modal');
+
+                if (event.target == commentModal) {
+                    commentModal.style.display = 'none';
+                }
+
+                if (event.target == starModal) {
+                    starModal.style.display = 'none';
+                }
+            }
         </script>
     </body>
 </html>
