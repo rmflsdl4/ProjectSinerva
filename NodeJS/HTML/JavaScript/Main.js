@@ -131,8 +131,10 @@ async function showUserList(userType) {
     // 랜덤 이미지
     let randomNumbers = new Set();
     if(userInfo.length > 0){
-      while(randomNumbers.size < 5){
-        randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+      for(let i = 0; i < 5; i++){
+        if(i < randomNumbers.size){
+          randomNumbers.add(Math.floor(Math.random() * userInfo.length));
+        }
       }
     }
     let numberArr = Array.from(randomNumbers);
