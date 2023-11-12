@@ -831,6 +831,22 @@ function InspectDetailsRecordRow(data, requestResult) {
             const table = document.getElementById("commentListTable");
             let tableHTML = "";
 
+            // div 요소 가져오기
+            const expertNameDiv = document.querySelector('.expertNameTitle');
+            // 전문가 이름 배열 가져오기
+            const expertNames = data.map(row => row.expert_name); // data는 여러 행을 포함하는 배열
+            // 중복된 이름 제거
+            const uniqueExpertNames = [...new Set(expertNames)];
+
+            // 가져온 div 요소가 존재하고 전문가 이름이 존재한다면 처리
+            if (expertNameDiv && uniqueExpertNames.length > 0) {
+                // div 요소를 보이게 설정
+                expertNameDiv.style.display = 'block';
+                // div 요소에 전문가 이름 설정
+                expertNameDiv.textContent = `전문가 : ${uniqueExpertNames.join(', ')}`;
+            }
+
+
             tableHTML += "<tr id='commentListHeader'>";
             tableHTML += "<th width='10%'>번호</th>";
             tableHTML += "<th width='30%'>요청 날짜</th>";
