@@ -132,10 +132,7 @@ async function showUserList(userType) {
     let randomNumbers = new Set();
 
     while(randomNumbers.size < 5){
-      let randomNumber = Math.floor(Math.random() * userInfo.length);
-      if(userInfo[randomNumber.result] !== "null"){
-        randomNumbers.add(randomNumber);
-      }
+      randomNumbers.add(Math.floor(Math.random() * userInfo.length));
     }
     let numberArr = Array.from(randomNumbers);
 
@@ -240,7 +237,7 @@ async function showUserList(userType) {
       const upload_date = `${year}-${month}-${day} ${hour}:${minute}`;
       let dateTd = document.createElement('td');
       dateTd.className = 'userTd';
-      dateTd.textContent = '날짜: ' + upload_date;
+      dateTd.textContent = upload_date;
       dateTd.style.width = '16%';
       dateTr.appendChild(dateTd);
     }

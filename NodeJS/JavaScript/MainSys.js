@@ -8,7 +8,7 @@ async function userInfo() {
 						JOIN image AS i
 							ON c.imgUploadDate = i.upload_date
 						GROUP BY c.requestDate
-						HAVING comment IS NOT NULL`;
+						HAVING comment IS NOT NULL AND i.result IS NOT NULL`;
 	
 	const result = await database.Query(query, null);
 	
