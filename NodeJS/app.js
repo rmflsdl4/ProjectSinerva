@@ -273,14 +273,16 @@ try {
     console.error('이미지 번호 파일을 읽어올 수 없습니다. 이미지 번호는 0으로 초기화됩니다.');
 }
   
-// 1분마다 measureTime 함수를 호출합니다.
-
 let randomNumbers = new Set();
+
 function InitSet() {
     randomNumbers = new Set();
     console.log(`세트 초기화! 현재 세트 길이: ${randomNumbers.size}`);
 }
 setInterval(InitSet, 60000);
+
+let randomNumber = 0; // 랜덤 값 변수 초기화
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const date = new Date();
@@ -290,16 +292,10 @@ const storage = multer.diskStorage({
         const hour = date.getHours().toString().padStart(2, '0');
         const minute = date.getMinutes().toString().padStart(2, '0');
         const userId = req.session.userId;
-        let randomNumber = 0; // 랜덤 값 변수 초기화
-        do {
-            randomNumber = Math.floor(Math.random() * 10000) + 1;
-        } while (randomNumbers.has(randomNumber));
-        randomNumbers.add(randomNumber);
-        console.log(`현재 세트에 추가된 값: ${randomNumber}`);
-        console.log(`현재 세트의 크기: ${randomNumbers.size}`);
+        
 
         console.log("고유 넘버: " + randomNumber);
-        dataTime = `${year}${month}${day}${hour}${minute}`;
+        dataTime = `${year}${month}${day}${hour}${minute}${randomNumber}`;
         console.log("전체 경로: " + dataTime + randomNumber);
         folder = `images/${userId}/${buildingName}/${dataTime}/`;
 
@@ -352,8 +348,16 @@ app.post("/buildingNameInput", async (req, res) => {
     res.send();
 })
 
+
 // 검사 페이지 이미지 업로드
 app.post('/image-discrimination', upload.array('images'), async (req, res) => {
+    
+    do {
+        randomNumber = Math.floor(Math.random() * 10000) + 1;
+    } while (randomNumbers.has(randomNumber));
+    randomNumbers.add(randomNumber);
+    console.log(`현재 세트에 추가된 값: ${randomNumber}`);
+    console.log(`현재 세트의 크기: ${randomNumbers.size}`);
     // req.files는 업로드한 파일에 대한 정보를 가지고 있는 배열
     const uploadTasks = req.files.map(async (file) => {
         // console.log('업로드한 파일 이름:', file.originalname);
