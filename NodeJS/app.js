@@ -6,7 +6,7 @@ const signup = require('./JavaScript/SignUp.js');
 const login = require('./JavaScript/Login.js');
 const findAccount = require('./JavaScript/Find.js');
 const database = require('./database.js');
-// const tf = require('./JavaScript/tfjsNode.js');
+const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
@@ -348,7 +348,7 @@ app.post('/image-discrimination', upload.array('images'), async (req, res) => {
         let image_route = folder + file.filename;
         const img_values = [image_route, dataTime, building_num[0].id, req.session.userId];
         await database.Query(img_query, img_values);
-        // await tf.Predict(image_route, file.filename);
+        await tf.Predict(image_route, file.filename);
 
         return Promise.resolve(); 
     });
