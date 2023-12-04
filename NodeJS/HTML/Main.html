@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>메인페이지</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <script src="JavaScript/Main.js"></script>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body onload="menuBarInit();">
+        <div id="Logo" onclick="window.location.href = 'Main.html'">건물 균열 검사</div>
+        <div id="profile">
+            <!-- 로그인 전 -->
+            <a href="./Login.html" id="mainLogIn">로그인</a>
+            <a href="./SignUp.html" id="mainSignUp">회원가입</a>
+            <!-- 로그인 후 -->
+            <span id="userName"></span>
+            <a href="./Main.html" id="mainLogOut" onclick="logOut()">로그아웃</a>
+            <a href="changeUserInfo.html" id="mainMyPage">마이 페이지</a>
+            <!-- 어드민용용 -->
+            <a href="Admin.html" id="mainAdmin">유저 관리</a>
+        </div>
+        <br>
+            <div id="menuBar">
+                <table id="menuTable">
+                    <tr>
+                        <!-- 유저용 -->
+                        <th class="userMenu"><a href="ImageUpload.html" id="mainMenuBar">검사</a></th>
+                        <th class="userMenu"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="userMenu"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
+                        <!-- 전문가용 -->
+                        <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
+                        <th class="expertMenu"><a href="#" id="mainMenuBar">과거 내역 조회</a></th>
+                        
+                    </tr>
+                </table>
+            </div>
+        <center>
+            <!-- 유저 이미지 리스트 -->
+            <span><h2>유저 이미지 리스트</h2></span>
+            <div id="userImageList">
+                <!-- <span id="moreViewUserList" onclick="location.href='UserList.html'">더 보기</span> -->
+                <table id="userTable">
+                </table>
+            </div>
+            <span id="expertTitle"><h2>전문가 정보 리스트</h2></span>
+            <div id="expertInfoList">
+                <span id="moreViewExpertList" onclick="location.href='ExpertList.html'">더 보기</span>
+                <table id="expertTable">
+                    <tr style="font-weight: bold; font-size: 1.2em;">
+                        <th style="width: 15%;">이름</th>
+                        <th style="width: 25%;">주소</th>
+                        <th style="width: 30%;">소개</th>
+                        <th style="width: 20%;">별점</th>
+                        <th style="width: 10%;"></th>
+                    </tr>
+                </table>
+            </div>
+        </center>
+        <br>
+        <br>
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="buildingList">
+                    </div>
+                </center>
+            </div>
+        </div>
+    </body>
+</html>

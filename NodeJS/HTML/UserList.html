@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>사용자 리스트</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <link rel="stylesheet" href="CSS/UserList.css">
+    </head>
+    <body onload="UserListInitPage();">
+        <div id="Logo" onclick="window.location.href = './Main.html'">사용자 리스트</div>
+        <div id="profile">
+            <a href="changeUserInfo.html" id="profileText">마이 페이지</a>
+        </div>
+        <br><br>
+        <center>
+            <div id="commentList">
+                <table id="commentListTable">
+                </table>
+                <div id="pageContainer">
+                    <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
+                </div>
+            </div>
+        </center>
+
+        <!-- 모달 팝업 컨테이너 -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn" onclick="closeModal(this)">&times;</span>
+                <center>
+                    <div id="expertContent" style="max-height: 500px; overflow-y: auto;">
+                    </div>
+                </center>
+            </div>
+        </div>
+
+        <script src="JavaScript/InspectController.js"></script>
+        <script>
+            // expertIntroductionBtn 버튼에 대한 클릭 이벤트를 설정합니다.
+            document.querySelectorAll('.expertIntroductionBtn').forEach(button => {
+                button.addEventListener('click', function () {
+                    console.log("버튼이 클릭되었습니다.");
+
+                    // 모달 팝업 열기 및 내용 설정
+                    document.querySelector('.modal').style.display = 'block';
+                });
+            });
+
+            // 배경 클릭 시 모달 닫기
+            window.onclick = function(event) {
+                var modals = document.getElementsByClassName("modal");
+                // HTMLCollection을 배열로 변환
+                var modalsArray = Array.from(modals);
+
+                modalsArray.forEach(function(modal) {
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

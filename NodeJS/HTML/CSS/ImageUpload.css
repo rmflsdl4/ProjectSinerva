@@ -1,0 +1,237 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Popins", sans-serif;
+}
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+#Logo {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 20px;
+}
+#Logo:hover::before {
+    width: 100%;
+}
+#Logo::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: #333;
+    transition: width 0.3s ease;
+}
+.wrapper {
+    width: 550px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 5px;
+}
+.wrapper header {
+    color: #6990f2;
+    font-size: 27px;
+    font-weight: 600;
+    text-align: center;
+}
+.wrapper form {
+    height: 167px;
+    display: flex;
+    margin: 30px 0;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 5px;
+    border: 2px dashed #6990f2;
+}
+.wrapper form:hover {
+    background: linear-gradient(to bottom, #87CEEB, #B0E0E6);
+}
+form i {
+    font-size: 50px;
+}
+form p {
+    font-size: 16px;
+    margin-top: 15px;
+}
+section .row {
+    background: #e9f0ff;
+    margin-bottom: 10px;
+    list-style: none;
+    padding: 15px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+section .row i{
+    font-size: 30px;
+    color: #6990f2;
+}
+section .details span {
+    font-size: 14px;
+}
+.selectArea {
+    max-height: 350px;
+    overflow-y: scroll;
+}
+.selectArea::-webkit-scrollbar {
+    width: 0px;
+}
+.selectArea .row .content .imgContent {
+    width: 100%;
+    margin-left: 15px;
+}
+.selectArea .details {
+    display: flex;
+    align-items: center;
+    margin-bottom: 7px;
+}
+.imgContent {
+    display: inline-block;
+}
+.imgContent img {
+    width: 50px; 
+    height: 50px;
+}
+
+/* 검사 버튼 스타일 */
+.checkBtn, .resetBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 26px;
+    padding: 20px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* 버튼 호버(마우스 오버) 스타일 */
+.checkBtn:hover, .resetBtn:hover {
+    background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
+}
+
+.testBtnArea {
+    margin-top: 30px;
+}
+
+.testBtnBox {
+    text-align: center;
+}
+
+/* 모달 팝업 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 8% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+    position: relative;
+    text-align: center;
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    max-height: 70vh; /* 모달의 최대 높이를 설정, 필요에 따라 조절 가능 */
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#buildingList{
+    width: 70%;
+    height: 70%;
+    box-shadow: inset 0px 0px 10px #666;
+}
+#buildingListTable{
+    border-collapse: separate;
+    border-spacing: 0 25px;
+    width: 90%;
+    text-align: center;
+}
+#buildingListHeader{
+    height: 60px;
+    width: 90%;
+    font-size: 1.2em;
+}
+.buildingRequest{
+    font-size: 1.1em;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0px 0px 5px #444;
+    border-radius: 5px;
+}
+#buildingListTable button{
+    width: 80px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.radio-wrapper {
+    display: inline-block;
+}
+
+.radio-wrapper div {
+    display: inline-block;
+    margin-right: 10px; /* 각 라디오 버튼 사이의 간격 조절 */
+}
+
+/* 선택된 라디오 버튼의 레이블 스타일링 */
+.radio-wrapper input[type="radio"]:checked + label {
+    font-weight: bold;
+}
+
+.buildingWrite, .buildingSearch {
+    display: none;
+}
+
+fieldset.buildingInput {
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    padding: 20px;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+legend {
+    font-weight: bold;
+}
+
+.buildingWrite {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}

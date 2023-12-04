@@ -1,0 +1,173 @@
+    /* 모달 팝업 스타일 */
+.modal, .star-modal {
+    display: none;
+    position: fixed; /* 화면 상단에 고정 */
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content, .star-modal-content {
+    background-color: #fefefe;
+    margin: 9% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 85%;
+    max-width: 850px;
+    position: relative;
+    text-align: center;
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    max-height: 70vh; /* 모달의 최대 높이를 설정, 필요에 따라 조절 가능 */
+}
+
+.star-modal-content {
+    border-radius: 10px; /* 모달 내용의 테두리를 부드럽게 만듭니다. */
+    background-color: #fff; /* 배경 색상을 흰색으로 변경합니다. */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 그림자 효과를 추가합니다. */
+    padding: 20px;
+}
+
+.close-modal-btn, .star-close-modal-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#expertList{
+    width: 100%;
+    height: 70%;
+    box-shadow: inset 0px 0px 10px #666;
+}
+#expertListTable{
+    border-collapse: separate;
+    border-spacing: 0 25px;
+    width: 95%;
+    text-align: center;
+}
+#expertListHeader{
+    height: 60px;
+    width: 90%;
+    font-size: 1.2em;
+}
+.expertRequest{
+    font-size: 1.1em;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0px 0px 5px #444;
+    border-radius: 5px;
+}
+#expertListTable button, .expertStarBtn{
+    width: 80px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* 요청 버튼 스타일 */
+.expertRequestBtn, .ratingBtn, .expertStarBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 26px;
+    padding: 20px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.expertStarBtn {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
+    color: white;
+    font-size: 18px;
+    margin-top: 20px;
+    padding: 10px 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* 버튼 호버(마우스 오버) 스타일 */
+.expertRequestBtn:hover, .ratingBtn:hover, .expertStarBtn:hover {
+    background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
+}
+
+.requestBtn {
+    margin-top: 20px;
+    text-align: center;
+}
+textarea {
+    resize: none;
+}
+
+/*별점 평가 스타일*/
+.rating {
+    position: relative;
+    width: 180px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .3em;
+    padding: 5px;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 0 2px #b3acac;
+}
+
+.rating__result {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-10px) translateX(-5px);
+    z-index: -9;
+    font: 3em Arial, Helvetica, sans-serif;
+    color: #ebebeb8e;
+    pointer-events: none;
+}
+
+.rating__star {
+    font-size: 1.3em;
+    cursor: pointer;
+    color: #dabd18b2;
+    transition: filter linear .3s;
+}
+
+.rating__star:hover {
+    filter: drop-shadow(1px 1px 4px gold);
+}
+
+.ratingTitle {
+    font-family: sans-serif;
+    font-size: 24px; 
+    font-weight: bold; 
+    color: #333; 
+    margin-bottom: 32px;
+}
+
+/* 선택 버튼 스타일 */
+.selectExpert {
+    background: linear-gradient(180deg, #87CEEB, #1E90FF);
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.selectExpert:hover {
+    background: linear-gradient(180deg, #1E90FF, #87CEEB);
+}
+
+.expertProfileRoute, .expertNameTitle {
+    display: none;
+    font-size: 28px;
+    padding-bottom: 20px;
+}

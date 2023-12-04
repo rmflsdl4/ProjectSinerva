@@ -1,0 +1,22 @@
+#buildingSelect{
+    width: auto;
+    height: 35px;
+    margin-top: 17px;
+    border: none;
+    border-bottom: 1px solid black;
+    background-color: #F5F5F5;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    font-size: 15px;
+}
+
+.Request_Menu {
+    margin: 0;
+    padding-top: 15px;
+}
+
+.Board_Request_Menu {
+    display: inline-block;
+    cursor: pointer;
+}

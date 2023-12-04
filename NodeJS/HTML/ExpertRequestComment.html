@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <title>건물 균열 검사: 전문가</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <script src="JavaScript/InspectController.js"></script>
+        <script src="JavaScript/Main.js"></script>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body onload="InitPage(); menuBarInit(); Board_State_Init();">
+        <div id="Logo" onclick="window.location.href = 'Main.html'">건물 균열 검사 AI</div>
+        <div id="profile">
+            <!-- 로그인 전 -->
+            <a href="./Login.html" id="mainLogIn">로그인</a>
+            <a href="./SignUp.html" id="mainSignUp">회원가입</a>
+            <!-- 로그인 후 -->
+            <span id="userName" style="margin-right: 75%; padding: auto;"></span>
+            <a href="./Main.html" id="mainLogOut" onclick="logOut()">로그아웃</a>
+            <a href="./changeUserInfo.html" id="mainMyPage" style="display: none;">마이 페이지</a>
+            <!-- 어드민용용 -->
+            <a href="./Admin.html" id="mainAdmin">유저 관리</a>
+        </div>
+        <br>
+            <div id="menuBar">
+                <table id="menuTable">
+                    <tr>
+                        <!-- 유저용 -->
+                        <th class="userMenu"><a href="ImageUpload.html" id="mainMenuBar">검사</a></th>
+                        <th class="userMenu"><a href="InspectResult.html" id="mainMenuBar">과거 내역 조회</a></th>
+                        <th class="userMenu"><a href="ExpertList.html" id="mainMenuBar">전문가 리스트</a></th>
+                        <!-- 전문가용 -->
+                        <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar" style="display: none;">검사 요청 코멘트</a></th>
+                        <th class="expertMenu"><a href="#" id="mainMenuBar" style="display: none;">과거 내역 조회</a></th>
+                        
+                    </tr>
+                </table>
+            </div>
+        <center>
+            <div id="commentList">
+                <table id="commentListTable">
+                    <tr>
+                        <th class="Board_Menu" style="width: 13%;" onclick="Board_Select();">코멘트 요청</th>
+                        <th class="Board_Menu" style="width: 16%;" onclick="Board_Select();">코멘트 관리</th>
+                    </tr>
+                    <tr id="commentListHeader">
+                        <th width="5%">번호</th>
+                        <th width="5%">유저 아이디</th>
+                        <th width="16%">요청 날짜</th>
+                        <th width="16%">검사 날짜</th>
+                        <th width="15%">사진</th>
+                        <th width="13%"></th>
+                        <th width="10%"></th>
+                    </tr>
+                </table>
+                <div id="noRequestsMessage">
+                    요청이 없습니다.
+                </div>
+                <div id="pageContainer">
+                    <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
+                </div>
+                <table id="expertTable" style="display: none;"> <!-- 오류보기싫어서 만들었음 -->
+                </table>
+            </div>
+        </center>
+
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-modal-btn">&times;</span>
+                <center>
+                    <div id="buildingList">
+                    </div>
+                </center>
+            </div>
+        </div>
+    </body>
+</html>

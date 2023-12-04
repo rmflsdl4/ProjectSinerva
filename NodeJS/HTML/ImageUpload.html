@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RecordList</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="CSS/ImageUpload.css"/>
+    <link rel="stylesheet" href="CSS/Loading.css"/>
+</head>
+<body>
+    <div>
+        <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사</div>
+        <center>
+            <div class="wrapper">
+                <header>파일 업로드</header>
+                <form action="#">
+                    <input type="file" class="fileInput" accept="image/jpeg" hidden multiple/>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>브라우저 파일 업로드</p>
+                </form>
+                <section class="selectArea">
+                    <li class="row" style="display: none;"></li>
+                </section>
+                <section class="buildingInputArea">
+                    <fieldset class="buildingInput">
+                        <legend>건물명 입력</legend>
+
+                        <div class="radio-wrapper">
+                            <div>
+                                <input type="radio" id="new-registration" name="registration" value="신규등록" />
+                                <label for="huey">신규등록</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="re-registration" name="registration" value="재등록"/>
+                                <label for="huey">재등록</label>
+                            </div>
+                        </div>
+                        <input class="buildingWrite" type="text">
+                        <div class="error-message"></div> <!-- 에러 메시지를 보여줄 공간 -->
+                    </fieldset>     
+                </section>
+                <section class="testBtnArea">
+                    <div class="testBtnBox">
+                        <button class="checkBtn">검사</button>
+                        <button class="resetBtn">파일 리셋</button>
+                    </div>     
+                </section>
+            </div>
+        </center>
+    </div>
+
+    <!-- 모달 팝업 컨테이너 -->
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <center>
+                <div id="buildingList" style="max-height: 550px; overflow-y: auto;">
+                    <table id="buildingListTable">
+                    </table>
+                </div>
+            </center>
+        </div>
+    </div>
+    <!-- 로딩바 -->
+    <div id="loadingBox">
+        <div id="loading"></div>
+    </div>
+    <script src="JavaScript/ImageUpload.js"></script>
+</body>
+</html>

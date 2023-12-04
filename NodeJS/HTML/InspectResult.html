@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>건물 균열 검사: 사용자</title>
+        <link rel="stylesheet" href="CSS/All.css">
+        <link rel="stylesheet" href="CSS/InspectResult.css">
+    </head>
+    <body onload="InspectRecordInitPage(); OutputBuildingList();">
+        <div id="Logo" onclick="window.location.href = './Main.html'">건물 균열 검사 기록</div>
+        <div id="profile">
+            <a href="changeUserInfo.html" id="profileText">마이 페이지</a>
+        </div>
+        <br><br>
+        <center>
+            <div id="commentList">
+                <div id="buildingList">
+                    <div class="Request_Menu">
+                        <div class="Board_Request_Menu" style="width: 16%;" onclick="Board_Result(this);">전체보기</div>
+                        <div class="Board_Request_Menu" style="width: 16%; opacity: 0.1;" onclick="Board_Result(this);">코멘트 요청미완료</div>
+                        <div class="Board_Request_Menu" style="width: 16%; opacity: 0.1;" onclick="Board_Result(this);">코멘트 요청완료</div>
+                    </div>
+
+                    <select id="buildingSelect">
+                        <option selected value="">전체 보기</option>
+                    </select>
+                </div>
+                <table id="commentListTable">
+                </table>
+                <div id="pageContainer">
+                    <span id="prePage" onclick="SetPreNum();">❮</span><span id="pageNum">1</span><span id="nextPage" onclick="SetNextNum();">❯</span>
+                </div>
+            </div>
+        </center>
+
+        <script src="JavaScript/InspectController.js"></script>
+        <script src="JavaScript/Main.js"></script>
+    </body>
+</html>

@@ -1,4 +1,5 @@
 const tf = require('@tensorflow/tfjs-node');
+const database = require('../database.js');
 const { createCanvas, loadImage } = require('canvas');
 const modelPath = 'tfjs_model(final)/model.json';
 
@@ -33,7 +34,7 @@ async function LoadImageToTensor(imagePath) {
     // 이미지 데이터를 3차원 배열에 채우기
     for (let y = 0; y < 256; y++) {
         for (let x = 0; x < 256; x++) {
-            const offset = (y * canvas.width + x) * 4;
+            const offset = (y * resizedCanvas.width + x) * 4;
             data[0][y][x] = [imageData[offset] / 255, imageData[offset + 1] / 255, imageData[offset + 2] / 255];
         }
     }
@@ -54,21 +55,31 @@ async function PredictWithImage(imagePath) {
 }
 
 // 이미지 파일 경로
-const imagePath = 'Images/';
 const resultArr = ['정상', '균열', '철근노출', '백태누수'];
-async function ProcessImageAndPredict(fileName) {
+async function ProcessImageAndPredict(filePath) {
     try {
-        const predictions = await PredictWithImage(imagePath + fileName);
+        const predictions = await PredictWithImage(filePath);
         const MaxValue = Math.max(...predictions);
         const index = predictions.indexOf(MaxValue);
-        console.log('모델 예측 결과 상세: ', predictions);
         console.log('모델 예측 결과:', resultArr[index]);
-        // 여기서 예측값을 사용할 작업을 수행할 수 있습니다.
+        await ResultUpdate(filePath, resultArr[index]);
+
+        
     } catch (error) {
         console.error('예측 중 오류 발생:', error);
     }
 }
-
+async function ResultUpdate(filePath, state){
+    try{
+        query = 'UPDATE image SET result = ? WHERE file_route = ?';
+        values = [state, filePath];
+        
+        await database.Query(query, values);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
 module.exports = {
     Predict: ProcessImageAndPredict
 };

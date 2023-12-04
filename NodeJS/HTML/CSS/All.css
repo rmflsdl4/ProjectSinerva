@@ -1,6 +1,9 @@
 @import url("./font.css"); /* 글꼴 */
-@import url("./Expert.css"); /* 안전 전문가 */
+@import url("./InspectResult.css"); /* 안전 전문가 */
 @import url("./Admin.css"); /* 관리자 */
+@import url("./Main.css"); /* 메인 */
+@import url("./Page.css");
+@import url("./InspectResult.css");
 
 /* Main */
 html, body{
@@ -8,7 +11,7 @@ html, body{
     padding: 0;
     width: 100%;
     height: 100%;
-    background-color: #F5F5F5;;
+    background-color: #F5F5F5;
 }
 a{
     text-decoration: none;
@@ -20,7 +23,7 @@ a:hover{
 }
 #Logo {
     font-family: Arial, sans-serif;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     padding: 10px 20px;
@@ -58,7 +61,7 @@ a:hover{
 }
 
 /* Login */
-#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address{
+#id, #pw,#confirm_pw, #nick_name, #phone_num, #phone_num, #email, #address, #introduction {
     width: 500px;
     height: 70px;
     border: 2px solid gray;
@@ -66,6 +69,11 @@ a:hover{
     font-size: 20px;
     padding: 30px;
     outline: none;
+}
+#introduction {
+    height: 90px;
+    resize: none;
+    overflow: auto;
 }
 #login{
     font-size: 17px;
@@ -100,4 +108,12 @@ a:hover{
     width: 20px;
     height: 20px;
     margin-right: 8px;
+}
+textarea {
+    resize: none;
+}
+
+.requestWait, .requestComplit {
+    display: inline-block;
+    cursor: pointer;
 }

@@ -189,15 +189,7 @@ function Input_Check(element){
         }
     }
     else if (element.name === "address") {
-        const spaceBar = / /;
-        if(spaceBar.test(element.value)){
-            img.src = "Image/dcheck.png";
-            textNode.nodeValue = "공백은 주소에 사용할 수 없습니다.";
-            MessageBox_Check();
-            return;
-        }
-        else {
-            Value_Check(element.name, element.value, null)
+        Value_Check(element.name, element.value, null)
             .then(result => {
                 adc = result;
                 if(result){
@@ -210,7 +202,6 @@ function Input_Check(element){
                 }
                 MessageBox_Check();
             });
-        }
     }
     else if (element.value === "expert") {
         alert("안전 전문가는 승인을 받아야 로그인할 수 있습니다.");
