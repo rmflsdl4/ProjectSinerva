@@ -19,7 +19,7 @@ async function userInfo() {
 }
 
 async function expertInfo() {
-	const query = `SELECT e.name as name, e.address as address, e.introduction as introduction, COALESCE(ROUND(AVG(ue.rating), 2), 0) AS rating
+	const query = `SELECT e.id, e.name as name, e.address as address, e.introduction as introduction, COALESCE(ROUND(AVG(ue.rating), 2), 0) AS rating
 					FROM expert AS e
 					LEFT JOIN user_has_expert AS ue ON e.id = ue.expert_id
 					WHERE e.waitOk = 1

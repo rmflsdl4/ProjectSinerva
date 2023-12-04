@@ -1,3 +1,5 @@
+document.write('<script src="JavaScript/ChatSocket.js"></script>');
+
 var currPageNum;
 var posts; 
 var prePage;
@@ -823,6 +825,27 @@ async function getUserSession() {
     });
 }
 
+async function chatMessage(id) {
+    console.log(id);
+
+    let response = await fetch('/chatMessage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    let data = await response.json(); // 응답에서 JSON 추출
+
+     console.log("전문가: ", id[0] , "유저: " , data.userId);
+
+    socketChat(id[0], data.userId);
+}
+
 // 검사 결과 상세 페이지 select 결과 출력
 function InspectDetailsRecordRow(data, requestResult) {
     getUserSession().then(type => {
@@ -838,8 +861,10 @@ function InspectDetailsRecordRow(data, requestResult) {
             const expertNameDiv = document.querySelector('.expertNameTitle');
             // 전문가 이름 배열 가져오기
             const expertNames = data.map(row => row.expert_name); // data는 여러 행을 포함하는 배열
+            const expertId = data.map(row => row.expert_id);
             // 중복된 이름 제거
             const uniqueExpertNames = [...new Set(expertNames)];
+            const uniqueExpertId = [...new Set(expertId)];
 
             // 가져온 div 요소가 존재하고 전문가 이름이 존재한다면 처리
             if (expertNameDiv && uniqueExpertNames.length > 0) {
@@ -847,6 +872,16 @@ function InspectDetailsRecordRow(data, requestResult) {
                 expertNameDiv.style.display = 'block';
                 // div 요소에 전문가 이름 설정
                 expertNameDiv.textContent = `전문가 : ${uniqueExpertNames.join(', ')}`;
+
+                let requestButton = document.createElement('button');
+                requestButton.className = 'requestButton';
+                requestButton.textContent = '채팅';
+
+                requestButton.addEventListener('click', async () => {
+                    chatMessage(uniqueExpertId);
+                });
+
+                expertNameDiv.appendChild(requestButton);
             }
 
 

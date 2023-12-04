@@ -11,6 +11,12 @@ const tf = require('./JavaScript/tfjsNode.js');
 const MemoryStore = require('memorystore')(session);
 const MainSys = require('./JavaScript/MainSys.js');
 const reqComment = require('./JavaScript/reqComment.js');
+const ChatSocket = require('./HTML/JavaScript/ChatSocket.js');
+
+//소캣 통신 //채팅
+const http = require('http');
+const socketIO = require('socket.io');
+
 //유저 기능
 var bodyParser = require('body-parser');
 const multer = require('multer');
@@ -25,6 +31,11 @@ database.Connect();
 // 모듈에서 사용할 로직들
 const app = express();
 var fs = require('fs');
+
+//소캣 통신 //채팅
+const server = http.createServer(app);
+const io = socketIO(server, { path: "/socket.io" });
+app.use(express.static(__dirname + '/public'));
 
 app.use(express.static('HTML'))
 app.use(express.json());
@@ -41,10 +52,39 @@ app.use(session({
     }),
 }));
 
-// 서버 구동
-app.listen(3000, function(){
-    console.log('서버 구동');
+//소캣 통신 //채팅
+app.post('/chatMessage', (req, res) => {
+    res.send({userId: req.session.userId});
 });
+
+io.on('connection', (socket) => {
+    console.log('새로운 사용자가 연결되었습니다.');
+
+    socket.on('join', (room) => {
+        socket.join(room); // 방에 참가
+        console.log(`사용자가 방 ${room}에 참가했습니다.`);
+    });
+
+    socket.on('chat message', (messageObject, room) => {
+        console.log(`방 ${room}에서 메시지 수신: ${messageObject.message}`);
+        // io.to(room).emit('chat message', msg); // 해당 방에만 메시지 전송
+        io.to(room).emit('chat message2', messageObject); // 해당 방에만 메시지 전송
+    });
+
+    socket.on('disconnect', () => {
+        console.log('사용자가 연결을 해제했습니다.');
+    });
+});
+
+const port = 3000;
+server.listen(port, () => {
+    console.log(`서버가 http://localhost:${port} 에서 실행 중입니다.`);
+});
+
+// //서버 구동
+// app.listen(3000, function(){
+//     console.log('서버 구동');
+// });
 
 // 서버 오류 처리
 process.on('uncaughtException', (err) => {
@@ -69,6 +109,7 @@ app.get('/', function(req, res){
         }
     });
 });
+
 // 회원가입 입력값 검사 및 계정 찾기 입력값 검사
 app.post('/check-input', (req, res) => {
     const { name, value1, value2 } = req.body;
