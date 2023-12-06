@@ -19,7 +19,8 @@ function createChatRoom(){
     // 방에 참가
     const room = expertId + userId;
     if(socket !== null){
-        socket.emit('join', room);
+        let info = [userId, expertId, room];
+        socket.emit('join', info);
         setChating(expertId, room);
     }
     else{

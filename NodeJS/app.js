@@ -60,9 +60,20 @@ app.post('/chatMessage', (req, res) => {
 io.on('connection', (socket) => {
     console.log('새로운 사용자가 연결되었습니다.');
 
-    socket.on('join', (room) => {
-        socket.join(room); // 방에 참가
-        console.log(`사용자가 방 ${room}에 참가했습니다.`);
+    socket.on('join', async (info) => {
+        socket.join(info[2]); // 방에 참가
+
+        console.log(`사용자가 방 ${info[2]}에 참가했습니다.`);
+        console.log(`참여자 - ${info[0]}, ${info[1]}`);
+        try{
+            const query = `INSERT INTO chat(user_id, expert_id, room) VALUES(?, ?, ?)`;
+            const values = [info[0], info[1], info[2]];
+            await database.Query(query, values);
+        }
+        catch(err){
+            // 방 있으니까 인서트 무시하고 들어가게 할 것
+        }
+        
     });
 
     socket.on('chat message', (messageObject, room) => {

@@ -9,6 +9,18 @@ function menuBarInit() {
   const expertMenu = document.getElementsByClassName('expertMenu');
   const requestButton = document.getElementsByClassName('requestButton');
   const userName = document.getElementById('userName');
+  // const expertChatButton = document.getElementById('expertChatButton');
+
+  // let chatButton = document.createElement('button');
+  // chatButton.className = 'expertMenu';
+  // chatButton.id = 'mainMenuBar';
+  // chatButton.textContent = '채팅';
+
+  // chatButton.addEventListener('click', async () => {
+  //     chatMessage(uniqueExpertId);
+  // });
+
+  // expertChatButton.appendChild(chatButton);
 
   getUserSession()
   .then(loginUser => {
@@ -420,3 +432,54 @@ function seeMore(imgUploadDate) {
             });
     });
 }
+
+//전문가 채팅 목옥
+function expertChatList(data) {
+  // 테이블 요소를 가져옴
+  const table = document.getElementById("expertChatTable");
+  let tableHTML = "";
+
+  tableHTML += "<tr id='expertListHeader'>";
+  tableHTML += "<th width='10%'>유저이름</th>";
+  tableHTML += "<th width='10%'>채팅</th>";
+  tableHTML += "</tr>";
+
+  for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+
+      tableHTML += "<tr class='expertRequest'>";
+      tableHTML += `<td>${row.user_id}</td>`;
+      tableHTML += `<td><button class="selectExpert" onclick="selectExpertBtn(this)">채팅</button></td>`;
+      tableHTML += "</tr>";
+  }
+
+  table.innerHTML = tableHTML;
+}
+
+//채팅 아이디 가져오는거임
+async function chatMessage(id) {
+  console.log(id);
+
+  let response = await fetch('/chatMessage', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  });
+
+  if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+
+  let data = await response.json(); // 응답에서 JSON 추출
+
+   console.log("전문가: ", id[0] , "유저: " , data.userId);
+
+  socketChat(id[0], data.userId);
+}
+
+
+
+document.querySelector('.expertChatButton').addEventListener('click', function () {
+  document.querySelector('.modal').style.display = 'block';
+})
