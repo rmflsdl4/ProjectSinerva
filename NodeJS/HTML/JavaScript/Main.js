@@ -439,7 +439,7 @@ function expertChatList(data) {
   const table = document.getElementById("expertChatTable");
   let tableHTML = "";
 
-  tableHTML += "<tr id='expertListHeader'>";
+  tableHTML += "<tr id='expertChatHeader'>";
   tableHTML += "<th width='10%'>유저이름</th>";
   tableHTML += "<th width='10%'>채팅</th>";
   tableHTML += "</tr>";
@@ -447,9 +447,9 @@ function expertChatList(data) {
   for (let i = 0; i < data.length; i++) {
       const row = data[i];
 
-      tableHTML += "<tr class='expertRequest'>";
+      tableHTML += "<tr class='expertChatRow'>";
       tableHTML += `<td>${row.user_id}</td>`;
-      tableHTML += `<td><button class="selectExpert" onclick="selectExpertBtn(this)">채팅</button></td>`;
+      tableHTML += `<td><button class="selectChat" onclick="selectExpertBtn(this)">채팅</button></td>`;
       tableHTML += "</tr>";
   }
 
@@ -479,7 +479,15 @@ async function chatMessage(id) {
 }
 
 
-
 document.querySelector('.expertChatButton').addEventListener('click', function () {
   document.querySelector('.modal').style.display = 'block';
 })
+
+// 배경 클릭 시 모달 닫기
+window.onclick = function(event) {
+  var commentModal = document.getElementById('commentModal');
+
+  if (event.target == commentModal) {
+      commentModal.style.display = 'none';
+  }
+}
