@@ -2,7 +2,7 @@
     <head>
         <title>메인페이지</title>
         <link rel="stylesheet" href="CSS/All.css">
-        <script src="JavaScript/Main.js"></script>
+        <link rel="stylesheet" href="CSS/Main.css">
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body onload="menuBarInit();">
@@ -29,7 +29,6 @@
                         <!-- 전문가용 -->
                         <th class="expertMenu"><a href="ExpertRequestComment.html" id="mainMenuBar">검사 요청 코멘트</a></th>
                         <th class="expertMenu"><button class="expertChatButton">채팅</button></th>
-                        
                     </tr>
                 </table>
             </div>
@@ -58,7 +57,7 @@
         </center>
         <br>
         <br>
-        <div class="modal">
+        <!-- <div class="modal">
             <div class="modal-content">
                 <span class="close-modal-btn">&times;</span>
                 <center>
@@ -66,18 +65,21 @@
                     </div>
                 </center>
             </div>
-        </div>
+        </div> -->
 
         <!-- 요청 모달 팝업 컨테이너 -->
-        <div class="modal">
+        <div class="modal" id="commentModal">
             <div class="modal-content">
                 <span class="close-modal-btn">&times;</span>
                 <center>
-                    <div id="expertChatTable">
+                    <div id="expertChatList">
+                        <table id="expertChatTable">
+                        </table>
                     </div>
                 </center>
             </div>
         </div>
 
+        <script src="JavaScript/Main.js"></script>
     </body>
 </html>
