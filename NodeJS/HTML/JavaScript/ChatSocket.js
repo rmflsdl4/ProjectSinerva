@@ -49,25 +49,36 @@ async function getUserSession() {
     });
 }
 
+let isChatMessageListenerRegistered = false;
+
 function setChating(room){
     const input = document.getElementById('message-input');
     console.log("방 정보", room);
     getUserSession().then(type => {
         const msg = input.value;
         if (msg.trim() !== '') {
-        const messageObject = {
-            fromUser: type.userId,
-            message: msg,
-        };
-        socket.emit('chat message', messageObject, room);
-        input.value = '';
+            const messageObject = {
+                fromUser: type.userId,
+                message: msg,
+            };
+            socket.emit('chat message', messageObject, room);
+            input.value = '';
         }
     });
-    socket.on('chat message2', (messageObject) => {
-        const { fromUser, message } = messageObject;
-        appendMessage(`(${fromUser}): ${message}`);
-    });
+
+    registerChatMessageListener(); // 리스너 등록 함수 호출
 }
+
+function registerChatMessageListener() {
+    if (!isChatMessageListenerRegistered) {
+        socket.on('chat message', (messageObject) => {
+            const { fromUser, message } = messageObject;
+            appendMessage(`(${fromUser}): ${message}`);
+        });
+        isChatMessageListenerRegistered = true;
+    }
+}
+
 function socketChat(expertId, userId) {
     console.log("소켓챗 함수 호출");
 
@@ -78,6 +89,7 @@ function socketChat(expertId, userId) {
 }
 
 function appendMessage(message) {
+    console.log(message);
     const messages = document.getElementById('messages');
     const li = document.createElement('li');
     li.textContent = message;

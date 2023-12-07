@@ -91,12 +91,22 @@ io.on('connection', (socket) => {
             console.log(`채팅 로그를 데이터베이스에 남기는 도중 오류 발생 ! ERROR: ${err}`);
         }
         // io.to(room).emit('chat message', msg); // 해당 방에만 메시지 전송
-        io.to(room).emit('chat message2', messageObject); // 해당 방에만 메시지 전송
+        io.to(room).emit('chat message', messageObject); // 해당 방에만 메시지 전송
     });
 
     socket.on('disconnect', () => {
         console.log('사용자가 연결을 해제했습니다.');
     });
+});
+
+//전문가 채팅
+app.post("/expertChating", async (req, res) => {
+    const query = `SELECT user_id FROM chat WHERE expert_id = ?`;
+    
+    const values = [ req.session.userId ];
+    const result = await database.Query(query, values);
+
+    res.send(result);
 });
 
 const port = 3000;
