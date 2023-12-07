@@ -5,7 +5,7 @@ let pool = null;
 function DB_Connect(){
     pool = mysql.createPool({
         connectionLimit: 200,
-        host: 'sinervadb.caujbsdernjk.ap-northeast-2.rds.amazonaws.com',
+        host: 'sinervadb.cmf8kaym3rs4.ap-northeast-2.rds.amazonaws.com',
         user: 'sinerva',
         password: 'sinerva1234',
         database: 'sinervaDB',

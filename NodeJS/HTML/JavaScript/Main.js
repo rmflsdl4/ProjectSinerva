@@ -1,3 +1,5 @@
+document.write('<script src="JavaScript/ChatSocket.js"></script>');
+
 function menuBarInit() {
   const menuBar = document.getElementById('menuBar');
   const logIn = document.getElementById('mainLogIn');
@@ -416,44 +418,21 @@ async function getExpertInfo() {
 
 function seeMore(imgUploadDate) {
 	return new Promise((resolve, reject) => {
-        fetch('/seeMore', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ imgUploadDate })
-        })
-			.then(response => response.json())
-            .then(data => {
-                resolve(data);
-            })
-            .catch(error => {
-                reject(error);
-            });
+      fetch('/seeMore', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ imgUploadDate })
+      })
+      .then(response => response.json())
+      .then(data => {
+          resolve(data);
+      })
+      .catch(error => {
+          reject(error);
+      });
     });
-}
-
-//전문가 채팅 목옥
-function expertChatList(data) {
-  // 테이블 요소를 가져옴
-  const table = document.getElementById("expertChatTable");
-  let tableHTML = "";
-
-  tableHTML += "<tr id='expertChatHeader'>";
-  tableHTML += "<th width='10%'>유저이름</th>";
-  tableHTML += "<th width='10%'>채팅</th>";
-  tableHTML += "</tr>";
-
-  for (let i = 0; i < data.length; i++) {
-      const row = data[i];
-
-      tableHTML += "<tr class='expertChatRow'>";
-      tableHTML += `<td>${row.user_id}</td>`;
-      tableHTML += `<td><button class="selectChat" onclick="selectExpertBtn(this)">채팅</button></td>`;
-      tableHTML += "</tr>";
-  }
-
-  table.innerHTML = tableHTML;
 }
 
 //채팅 아이디 가져오는거임
@@ -481,6 +460,21 @@ async function chatMessage(id) {
 
 document.querySelector('.expertChatButton').addEventListener('click', function () {
   document.querySelector('.modal').style.display = 'block';
+  fetch('/expertChating', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  .then(response => response.json())
+  .then(res => {
+      console.log(res);
+      expertChatList(res);
+  })
+  .catch(error => {
+      alert('오류');
+      console.log(error);
+  });
 })
 
 // 배경 클릭 시 모달 닫기
@@ -490,4 +484,48 @@ window.onclick = function(event) {
   if (event.target == commentModal) {
       commentModal.style.display = 'none';
   }
+}
+
+//전문가 채팅 목옥
+function expertChatList(data) {
+  // 테이블 요소를 가져옴
+  const table = document.getElementById("expertChatTable");
+  let tableHTML = "";
+
+  tableHTML += "<tr id='expertChatHeader'>";
+  tableHTML += "<th width='10%'>유저아이디</th>";
+  tableHTML += "<th width='10%'>채팅</th>";
+  tableHTML += "</tr>";
+
+  for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+
+      tableHTML += "<tr class='expertChatRow'>";
+      tableHTML += `<td>${row.user_id}</td>`;
+      tableHTML += `<td><button class="selectChat" onclick="chatMessage('${row.user_id}')">채팅</button></td>`;
+      tableHTML += "</tr>";
+  }
+
+  table.innerHTML = tableHTML;
+}
+
+async function chatMessage(id) {
+  console.log(id);
+
+  let response = await fetch('/chatMessage', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  });
+
+  if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+
+  let data = await response.json(); // 응답에서 JSON 추출
+
+   console.log("전문가: ", data.userId , "유저: " , id[0]);
+
+  socketChat(id[0], data.userId);
 }

@@ -99,6 +99,16 @@ io.on('connection', (socket) => {
     });
 });
 
+//전문가 채팅
+app.post("/expertChating", async (req, res) => {
+    const query = `SELECT user_id FROM chat WHERE expert_id = ?`;
+    
+    const values = [ req.session.userId ];
+    const result = await database.Query(query, values);
+
+    res.send(result);
+});
+
 const port = 3000;
 server.listen(port, () => {
     console.log(`서버가 http://localhost:${port} 에서 실행 중입니다.`);
