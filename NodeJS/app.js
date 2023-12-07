@@ -72,12 +72,24 @@ io.on('connection', (socket) => {
         }
         catch(err){
             // 방 있으니까 인서트 무시하고 들어가게 할 것
+            console.log(`방: ${info[2]}이 이미 존재합니다 !`);
         }
         
     });
 
-    socket.on('chat message', (messageObject, room) => {
+    socket.on('chat message', async (messageObject, room) => {
         console.log(`방 ${room}에서 메시지 수신: ${messageObject.message}`);
+        try{
+            const selectQuery = `SELECT id FROM chat where room = ?`;
+            const value = room;
+            let result = await database.Query(selectQuery, value);
+            const query = `INSERT INTO message(fromUser, content, chat_id) VALUES(?, ?, ?)`;
+            const values = [messageObject.fromUser, messageObject.message, result[0].id];
+            await database.Query(query, values);
+        }
+        catch(err){
+            console.log(`채팅 로그를 데이터베이스에 남기는 도중 오류 발생 ! ERROR: ${err}`);
+        }
         // io.to(room).emit('chat message', msg); // 해당 방에만 메시지 전송
         io.to(room).emit('chat message2', messageObject); // 해당 방에만 메시지 전송
     });
@@ -307,7 +319,7 @@ app.post('/users-import', async (req, res) => {
 app.post('/login-user', async (req, res) => {
     const userId = req.session.userId;
     const userType = req.session.userType;
-	
+	console.log(userId);
     res.send({ userId, userType });
 })
 

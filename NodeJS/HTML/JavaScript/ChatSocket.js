@@ -16,28 +16,47 @@ function createChatRoom(){
     console.log('expertId:', expertId);
     console.log('userId:', userId);
 
+    const sendBtn = document.getElementById('sendBtn');
     // 방에 참가
     const room = expertId + userId;
+    sendBtn.addEventListener('click', ()=>{
+        setChating(room);
+    });
     if(socket !== null){
         let info = [userId, expertId, room];
         socket.emit('join', info);
-        setChating(expertId, room);
     }
     else{
         serverConnect();
         console.log("소켓이 없음!");
     }
 }
-function setChating(expertId, room){
-    const form = document.getElementById('chat-form');
+async function getUserSession() {
+    return await new Promise((resolve, reject) => {
+        fetch('/login-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+function setChating(room){
     const input = document.getElementById('message-input');
-    console.log("방 정보",expertId, room);
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    console.log("방 정보", room);
+    getUserSession().then(type => {
         const msg = input.value;
         if (msg.trim() !== '') {
         const messageObject = {
-            userId: expertId,  // 실제로 사용자 아이디를 어떻게 처리할지 정의해야 합니다.
+            fromUser: type.userId,
             message: msg,
         };
         socket.emit('chat message', messageObject, room);
@@ -45,8 +64,8 @@ function setChating(expertId, room){
         }
     });
     socket.on('chat message2', (messageObject) => {
-        const { userId, message } = messageObject;
-        appendMessage(`(${userId}): ${message}`);
+        const { fromUser, message } = messageObject;
+        appendMessage(`(${fromUser}): ${message}`);
     });
 }
 function socketChat(expertId, userId) {
