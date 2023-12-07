@@ -68,7 +68,6 @@ function setChating(room){
         appendMessage(`(${fromUser}): ${message}`);
     });
 }
-
 function socketChat(expertId, userId) {
     console.log("소켓챗 함수 호출");
 
