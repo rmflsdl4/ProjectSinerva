@@ -71,8 +71,20 @@ io.on('connection', (socket) => {
             await database.Query(query, values);
         }
         catch(err){
-            // 방 있으니까 인서트 무시하고 들어가게 할 것
+            // 방 있으니까 인서트 무시하고 들어가게 할 것 ( 메세지 로그 여기서 가져올 것 )
             console.log(`방: ${info[2]}이 이미 존재합니다 !`);
+
+            const query = `SELECT fromUser, date, content
+                            FROM chat
+                            INNER JOIN message
+                            ON chat.id = message.chat_id
+                            WHERE chat.room = ?
+                            ORDER BY date ASC`;
+            const value = info[2];
+            const chatData = await database.Query(query, value);
+
+            // 클라이언트에게 채팅 데이터를 전송
+            io.to(socket.id).emit('chatData', chatData);
         }
         
     });

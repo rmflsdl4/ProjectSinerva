@@ -1,0 +1,35 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+#chatLogContainer{
+    height: 80%;
+    overflow-y: auto; /* 세로 스크롤을 적용할 때 스크롤이 필요한 경우에만 보이도록 설정 */
+    padding-right: 17px; /* 스크롤이 항상 보이도록 padding을 추가 */
+    width: 90%;
+    border: 5px solid gray;
+}
+.rightMsg, .leftMsg{
+    font-size: 1.3em;
+    margin: 10px;
+}
+.rightMsg{
+    text-align: right;
+}
+.leftMsg{
+    text-align: left;
+}
+.chatStyle{
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 5px;
+}
+#message-input{
+    width: 25%;
+    height: 35px;
+}
+#sendBtn{
+    width: 5%;
+    height: 35px;
+}

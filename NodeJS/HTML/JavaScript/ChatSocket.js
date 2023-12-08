@@ -4,6 +4,35 @@ let socket = null;
 function serverConnect(){
     socket = io();
     createChatRoom();
+    scrollToBottom();
+    // 채팅방이 존재하면 채팅 로그 가져옴
+    socket.on('chatData', (chatData) => {
+        console.log('받은 채팅 데이터:', chatData);
+        createChatLog(chatData);
+    });
+}
+function createChatLog(chatData){
+    const chatLogContainer = document.getElementById('chatLogContainer');
+    let messageElement = "";
+
+    getUserSession().then(type => {
+        for(let i = 0; i < chatData.length; i++){
+            console.log(type.userId == chatData[i].fromUser);
+            if(type.userId == chatData[i].fromUser){
+                messageElement += `<div class='rightMsg'>
+                                        <p style='margin:0; margin-bottom: 10px;'>${chatData[i].fromUser}</p>
+                                        <span class='chatStyle'>${chatData[i].content}</span>
+                                    </div>`;
+            }
+            else{
+                messageElement += `<div class='leftMsg'>
+                                        <p style='margin:0; margin-bottom: 10px;'>${chatData[i].fromUser}</p>
+                                        <span class='chatStyle'>${chatData[i].content}</span>
+                                    </div>`;
+            }
+        }
+        chatLogContainer.innerHTML = messageElement;
+    });
 }
 function createChatRoom(){
     const urlParams = new URLSearchParams(window.location.search);
@@ -73,7 +102,10 @@ function registerChatMessageListener() {
     if (!isChatMessageListenerRegistered) {
         socket.on('chat message', (messageObject) => {
             const { fromUser, message } = messageObject;
-            appendMessage(`(${fromUser}): ${message}`);
+            appendMessage(`<div class='rightMsg'>
+                                <p style='margin:0; margin-bottom: 10px;'>${fromUser}</p>
+                                <span class='chatStyle'>${message}</span>
+                            </div>`);
         });
         isChatMessageListenerRegistered = true;
     }
@@ -84,14 +116,28 @@ function socketChat(expertId, userId) {
 
     console.log(expertId, userId);
 
-    
-    location.href = `Chating.html?expertId=${expertId}&userId=${userId}`;
+    window.open(`Chating.html?expertId=${expertId}&userId=${userId}`, 'ChatPopup', 'width=800, height=900');
+    //location.href = `Chating.html?expertId=${expertId}&userId=${userId}`;
 }
 
 function appendMessage(message) {
-    console.log(message);
-    const messages = document.getElementById('messages');
-    const li = document.createElement('li');
-    li.textContent = message;
-    messages.appendChild(li);
+    const chatLogContainer = document.getElementById('chatLogContainer');
+    chatLogContainer.innerHTML += `${message}`;
+    // console.log(message);
+    // const messages = document.getElementById('messages');
+    // const li = document.createElement('li');
+    // li.textContent = message;
+    // messages.appendChild(li);
+    scrollToBottom();
 }
+
+
+function scrollToBottom() {
+    const scrollableContent = document.getElementById('chatLogContainer');
+    
+    scrollableContent.scrollTop = scrollableContent.scrollHeight;
+    scrollableContent.addEventListener('scroll', (event) => {
+        console.log(`scrollTop: ${scrollableContent.scrollTop}`);
+    });
+}
+

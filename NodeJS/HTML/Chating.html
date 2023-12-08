@@ -2,14 +2,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/All.css">
+    <link rel="stylesheet" href="CSS/Chating.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script src="JavaScript/ChatSocket.js"></script>
     <title>1:1 채팅</title>
 </head>
 <body onload="serverConnect()">
-    <h1>1:1 채팅</h1>
-    <ul id="messages"></ul>
-    <input type="text" id="message-input" autocomplete="off" />
-    <button id="sendBtn">Send</button>
+    <center>
+        <h1>1:1 채팅</h1>
+        <ul id="messages"></ul>
+        <div id="chatLogContainer"></div>
+        <br>
+        <input type="text" id="message-input" autocomplete="off" autofocus/>
+        <button id="sendBtn">Send</button>
+    </center>
 </body>
 </html>
