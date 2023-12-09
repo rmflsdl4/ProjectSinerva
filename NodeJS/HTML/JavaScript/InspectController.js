@@ -873,17 +873,24 @@ function InspectDetailsRecordRow(data, requestResult) {
                 // div 요소에 전문가 이름 설정
                 expertNameDiv.textContent = `전문가 : ${uniqueExpertNames.join(', ')}`;
 
-                let requestButton = document.createElement('button');
-                requestButton.className = 'requestButton';
-                requestButton.textContent = '채팅';
+                // let requestButton = document.createElement('button');
+                // requestButton.className = 'requestButton';
+                // requestButton.textContent = '채팅';
 
-                requestButton.addEventListener('click', async () => {
-                    chatMessage(uniqueExpertId);
-                });
+                // requestButton.addEventListener('click', async () => {
+                //     chatMessage(uniqueExpertId);
+                // });
 
-                expertNameDiv.appendChild(requestButton);
+                // expertNameDiv.appendChild(requestButton);
             }
 
+            let requestButton = document.createElement('button');
+            requestButton.className = 'requestButton';
+            requestButton.textContent = '채팅';
+
+            requestButton.addEventListener('click', async () => {
+                chatMessage(uniqueExpertId);
+            });
 
             tableHTML += "<tr id='commentListHeader'>";
             tableHTML += "<th width='10%'>번호</th>";
@@ -1027,6 +1034,7 @@ function InspectDetailsRecordRow(data, requestResult) {
                 });
     
                 btnDiv.appendChild(newButton);
+                btnDiv.appendChild(requestButton);
             }
         }
         else {

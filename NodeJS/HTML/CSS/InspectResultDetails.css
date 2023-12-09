@@ -71,7 +71,7 @@
 }
 
 /* 요청 버튼 스타일 */
-.expertRequestBtn, .ratingBtn, .expertStarBtn {
+.expertRequestBtn, .ratingBtn, .expertStarBtn, .requestButton {
     background: linear-gradient(180deg, #87CEEB, #1E90FF); /* 그라데이션 배경 */
     color: white;
     font-size: 26px;
@@ -92,8 +92,12 @@
     border-radius: 5px;
 }
 
+.requestButton {
+    margin-left: 10px;
+}
+
 /* 버튼 호버(마우스 오버) 스타일 */
-.expertRequestBtn:hover, .ratingBtn:hover, .expertStarBtn:hover {
+.expertRequestBtn:hover, .ratingBtn:hover, .expertStarBtn:hover, .requestButton:hover {
     background: linear-gradient(180deg, #1E90FF, #87CEEB); /* 호버 상태 그라데이션 배경 */
 }
 
