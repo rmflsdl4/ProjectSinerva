@@ -25,11 +25,16 @@ function createChatLog(chatData){
             else{
                 messageElement += `<div class='leftMsg'>
                                         <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${chatData[i].fromUser}</p>
-                                        <div id='leftMsgDiv'>
-                                            <img src='${chatData[i].expert_route}' id='chatProfile' />
-                                            <span class='chatStyle'>${chatData[i].content}</span>
-                                        </div>
-                                    </div>`;
+                                        <div id='leftMsgDiv'>`;
+                if(type.userType == "expert"){
+                    messageElement += `<img src='${chatData[i].expert_route}' id='chatProfile' />`;
+                }
+                else{
+                    messageElement += `<img src='https://t1.daumcdn.net/cfile/tistory/2513B53E55DB206927' id='chatProfile' />`;
+                }
+                messageElement += `<span class='chatStyle'>${chatData[i].content}</span>
+                                    </div>
+                                </div>`;           
             }
         }
         chatLogContainer.innerHTML = messageElement;
