@@ -26,7 +26,7 @@ function createChatLog(chatData){
                 messageElement += `<div class='leftMsg'>
                                         <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${chatData[i].fromUser}</p>
                                         <div id='leftMsgDiv'>`;
-                if(type.userType == "expert"){
+                if(type.userType == "user"){
                     messageElement += `<img src='${chatData[i].expert_route}' id='chatProfile' />`;
                 }
                 else{
