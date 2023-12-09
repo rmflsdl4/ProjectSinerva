@@ -116,7 +116,7 @@ function registerChatMessageListener() {
     if (!isChatMessageListenerRegistered) {
         socket.on('chat message', (messageObject) => {
             const { fromUser, message } = messageObject;
-
+            let messageElement = "";
             getUserSession().then(type => {
                 if(type.userId == fromUser){
                     messageElement += `<div class='rightMsg'>
