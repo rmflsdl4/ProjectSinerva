@@ -93,10 +93,15 @@ io.on('connection', (socket) => {
 
     socket.on('chat message', async (messageObject, room) => {
         console.log(`방 ${room}에서 메시지 수신: ${messageObject.message}`);
+        let result = null;
         try{
-            const selectQuery = `SELECT id FROM chat where room = ?`;
+            const selectQuery = `SELECT chat.id as id, expert_route
+                                    FROM chat
+                                    INNER JOIN expert
+                                    ON chat.expert_id = expert.id
+                                    WHERE room = ?`;
             const value = room;
-            let result = await database.Query(selectQuery, value);
+            result = await database.Query(selectQuery, value);
             const query = `INSERT INTO message(fromUser, content, chat_id) VALUES(?, ?, ?)`;
             const values = [messageObject.fromUser, messageObject.message, result[0].id];
             await database.Query(query, values);
@@ -105,7 +110,7 @@ io.on('connection', (socket) => {
             console.log(`채팅 로그를 데이터베이스에 남기는 도중 오류 발생 ! ERROR: ${err}`);
         }
         // io.to(room).emit('chat message', msg); // 해당 방에만 메시지 전송
-        io.to(room).emit('chat message', messageObject); // 해당 방에만 메시지 전송
+        io.to(room).emit('chat message', messageObject, result[0].expert_route); // 해당 방에만 메시지 전송
     });
 
     socket.on('disconnect', () => {
