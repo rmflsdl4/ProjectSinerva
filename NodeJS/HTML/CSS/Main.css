@@ -49,7 +49,7 @@
     font-size: 22px;
     text-decoration: none;
 }
-.expertChatButton {
+.expertChatButton, .uesrChatButton {
     display: block;
     width: 100%;
     height: 30px;
@@ -63,7 +63,7 @@
     color: #C0C0C0;
     cursor: pointer;
 }
-.expertChatButton:hover {
+.expertChatButton:hover, .uesrChatButton:hover {
     border-bottom: 1px solid #C0C0C0;
 }
 

@@ -145,6 +145,19 @@ io.on('connection', (socket) => {
     });
 });
 
+//유저 채팅
+app.post("/userChating", async (req, res) => {
+    const query = `SELECT distinct expert_id, name
+                    FROM commentRequest as c
+                    INNER JOIN expert as e
+                    ON c.expert_id = e.id
+                    WHERE reqDependingOn = 'Y' && user_id = ?`;
+    
+    const values = [ req.session.userId ];
+    const result = await database.Query(query, values);
+    res.send(result);
+});
+
 //전문가 채팅
 app.post("/expertChating", async (req, res) => {
     const query = `SELECT user_id FROM chat WHERE expert_id = ?`;
