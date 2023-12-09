@@ -116,9 +116,29 @@ function registerChatMessageListener() {
     if (!isChatMessageListenerRegistered) {
         socket.on('chat message', (messageObject) => {
             const { fromUser, message } = messageObject;
-            appendMessage(`<div class='rightMsg'>
-                                <span class='chatStyle'>${message}</span>
-                            </div>`);
+
+            getUserSession().then(type => {
+                if(type.userId == fromUser){
+                    messageElement += `<div class='rightMsg'>
+                                            <span class='chatStyle'>${message}</span>
+                                        </div>`;
+                }
+                else{
+                    messageElement += `<div class='leftMsg'>
+                                            <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${fromUser}</p>
+                                            <div id='leftMsgDiv'>`;
+                    if(type.userType == "user"){
+                        messageElement += `<img src='#' id='chatProfile' />`;
+                    }
+                    else{
+                        messageElement += `<img src='https://t1.daumcdn.net/cfile/tistory/2513B53E55DB206927' id='chatProfile' />`;
+                    }
+                    messageElement += `<span class='chatStyle'>${message}</span>
+                                        </div>
+                                    </div>`;           
+                }
+                appendMessage(messageElement);
+            });
         });
         isChatMessageListenerRegistered = true;
     }
