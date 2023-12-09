@@ -98,7 +98,9 @@
 }
 #expertInfoList {
     background-color: #F5F5F5;
-    width: 80%;
+    width: auto;
+    margin-left: 10%;
+    margin-right: 10%;
     box-shadow: inset 0px 0px 10px #666;
     padding-top: 20px;
     padding-bottom: 30px;
