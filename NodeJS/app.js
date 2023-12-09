@@ -74,12 +74,19 @@ io.on('connection', (socket) => {
             // 방 있으니까 인서트 무시하고 들어가게 할 것 ( 메세지 로그 여기서 가져올 것 )
             console.log(`방: ${info[2]}이 이미 존재합니다 !`);
 
-            const query = `SELECT fromUser, date, content, expert_route
+            const query = `SELECT fromUser, date, content, expert_route,
+                            CASE
+                                WHEN fromUser = expert.id
+                                THEN expert.name
+                                ELSE user.nick_name
+                            END as name
                             FROM chat
                             INNER JOIN message
                             ON chat.id = message.chat_id
                             INNER JOIN expert
                             ON chat.expert_id = expert.id
+                            INNER JOIN user
+                            ON chat.user_id = user.id
                             WHERE chat.room = ?
                             ORDER BY date ASC`;
             const value = info[2];
@@ -94,6 +101,7 @@ io.on('connection', (socket) => {
     socket.on('chat message', async (messageObject, room) => {
         console.log(`방 ${room}에서 메시지 수신: ${messageObject.message}`);
         let result = null;
+        let result2 = null;
         try{
             const selectQuery = `SELECT chat.id as id, expert_route
                                     FROM chat
@@ -105,12 +113,31 @@ io.on('connection', (socket) => {
             const query = `INSERT INTO message(fromUser, content, chat_id) VALUES(?, ?, ?)`;
             const values = [messageObject.fromUser, messageObject.message, result[0].id];
             await database.Query(query, values);
-        }
+
+            const selectQuery2 = `SELECT nick_name as name
+                                    FROM user
+                                    WHERE id IN(SELECT distinct fromUser
+                                            FROM chat
+                                            INNER JOIN message
+                                            ON chat.id = message.chat_id
+                                            WHERE room = ? AND message.fromUser = ?)
+                                    UNION
+                                    SELECt name
+                                    FROM expert
+                                    WHERE id IN(SELECT distinct fromUser
+                                            FROM chat
+                                            INNER JOIN message
+                                            ON chat.id = message.chat_id
+                                            WHERE room = ? AND message.fromUser = ?)`;
+            const values2 = [room, messageObject.fromUser, room, messageObject.fromUser];
+            result2 = await database.Query(selectQuery2, values2);
+        }   
+
         catch(err){
             console.log(`채팅 로그를 데이터베이스에 남기는 도중 오류 발생 ! ERROR: ${err}`);
         }
         // io.to(room).emit('chat message', msg); // 해당 방에만 메시지 전송
-        io.to(room).emit('chat message', messageObject, result[0].expert_route); // 해당 방에만 메시지 전송
+        io.to(room).emit('chat message', messageObject, result[0].expert_route, result2[0].name); // 해당 방에만 메시지 전송
     });
 
     socket.on('disconnect', () => {
