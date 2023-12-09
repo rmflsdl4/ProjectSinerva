@@ -4,7 +4,6 @@ let socket = null;
 function serverConnect(){
     socket = io();
     createChatRoom();
-    scrollToBottom();
     // 채팅방이 존재하면 채팅 로그 가져옴
     socket.on('chatData', (chatData) => {
         console.log('받은 채팅 데이터:', chatData);
@@ -20,19 +19,29 @@ function createChatLog(chatData){
             console.log(type.userId == chatData[i].fromUser);
             if(type.userId == chatData[i].fromUser){
                 messageElement += `<div class='rightMsg'>
-                                        <p style='margin:0; margin-bottom: 10px;'>${chatData[i].fromUser}</p>
                                         <span class='chatStyle'>${chatData[i].content}</span>
                                     </div>`;
             }
             else{
                 messageElement += `<div class='leftMsg'>
-                                        <p style='margin:0; margin-bottom: 10px;'>${chatData[i].fromUser}</p>
-                                        <span class='chatStyle'>${chatData[i].content}</span>
+                                        <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${chatData[i].fromUser}</p>
+                                        <div id='leftMsgDiv'>
+                                            <img src='${chatData[i].expert_route}' id='chatProfile' />
+                                            <span class='chatStyle'>${chatData[i].content}</span>
+                                        </div>
                                     </div>`;
             }
         }
         chatLogContainer.innerHTML = messageElement;
+        scrollToBottom();
     });
+}
+//엔터를 누르면 버튼 작동
+function handleKeyPress(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("sendBtn").click();
+    }
 }
 function createChatRoom(){
     const urlParams = new URLSearchParams(window.location.search);
@@ -103,7 +112,6 @@ function registerChatMessageListener() {
         socket.on('chat message', (messageObject) => {
             const { fromUser, message } = messageObject;
             appendMessage(`<div class='rightMsg'>
-                                <p style='margin:0; margin-bottom: 10px;'>${fromUser}</p>
                                 <span class='chatStyle'>${message}</span>
                             </div>`);
         });
@@ -116,7 +124,7 @@ function socketChat(expertId, userId) {
 
     console.log(expertId, userId);
 
-    window.open(`Chating.html?expertId=${expertId}&userId=${userId}`, 'ChatPopup', 'width=800, height=900');
+    window.open(`Chating.html?expertId=${expertId}&userId=${userId}`, 'ChatPopup', 'width=585, height=900');
     //location.href = `Chating.html?expertId=${expertId}&userId=${userId}`;
 }
 

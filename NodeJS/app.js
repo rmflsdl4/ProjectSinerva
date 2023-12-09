@@ -74,10 +74,12 @@ io.on('connection', (socket) => {
             // 방 있으니까 인서트 무시하고 들어가게 할 것 ( 메세지 로그 여기서 가져올 것 )
             console.log(`방: ${info[2]}이 이미 존재합니다 !`);
 
-            const query = `SELECT fromUser, date, content
+            const query = `SELECT fromUser, date, content, expert_route
                             FROM chat
                             INNER JOIN message
                             ON chat.id = message.chat_id
+                            INNER JOIN expert
+                            ON chat.expert_id = expert.id
                             WHERE chat.room = ?
                             ORDER BY date ASC`;
             const value = info[2];

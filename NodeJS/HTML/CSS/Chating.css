@@ -4,14 +4,14 @@ body {
 }
 
 #chatLogContainer{
+    scrollbar-arrow-color: transparent;
     height: 80%;
     overflow-y: auto; /* 세로 스크롤을 적용할 때 스크롤이 필요한 경우에만 보이도록 설정 */
-    padding-right: 17px; /* 스크롤이 항상 보이도록 padding을 추가 */
     width: 90%;
     border: 5px solid gray;
 }
 .rightMsg, .leftMsg{
-    font-size: 1.3em;
+    font-size: 17px;
     margin: 10px;
 }
 .rightMsg{
@@ -21,15 +21,90 @@ body {
     text-align: left;
 }
 .chatStyle{
-    border: 1px solid gray;
+    display: inline-block;
+    flex-direction: column-reverse;
+    position: relative;
+    max-width: calc(100% - 150px);
+    padding: 7.5px 15px 7.5px 15px;
+    font-size: 16px;
     border-radius: 10px;
-    padding: 5px;
 }
-#message-input{
-    width: 25%;
-    height: 35px;
+.chatStyle::before {
+    position: absolute;
+    display: block;
+    top: 0;
+    font-size: 2rem;
 }
-#sendBtn{
-    width: 5%;
-    height: 35px;
+#message-input {
+    padding: 10px;
+    font-size: 20px;
+    width: 350px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+#sendBtn {
+    padding: 15px 20px;
+    font-size: 14px;
+    background-color: #3498db; /* 진한 푸른색으로 변경 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+#sendBtn:hover {
+    background-color: #2980b9; /* 버튼에 호버 효과를 주기 위한 다른 색상 */
+}
+
+#chatLogContainer p {
+    margin:0; 
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
+
+.rightMsg .chatStyle {
+    margin-right: 10px;
+    background-color: skyblue;
+}
+.rightMsg .chatStyle::before {
+    right: -13px;
+    content: "▶";
+    color: skyblue;
+}
+.leftMsg .chatStyle {
+    margin-left: 10px;
+    background-color: #cecdcd;
+}
+.leftMsg .chatStyle::before {
+    left: -13px;
+    content: "◀";
+    color: #cecdcd;
+}
+#leftMsgDiv{
+    display: flex;
+    align-items: center;
+}
+#chatProfile{
+    border: 1px solid black;
+    border-radius: 50%;
+    width: 40px;
+    margin-right: 6px;
+}
+
+
+/* 스크롤바 전체 기본 꾸미기 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* 스크롤바 막대 꾸미기 */
+::-webkit-scrollbar-thumb {
+    background-color: rgb(128, 128, 128);
+    border: 2px solid #F5F5F5;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
 }
