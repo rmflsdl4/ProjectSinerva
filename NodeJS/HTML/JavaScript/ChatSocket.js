@@ -24,7 +24,7 @@ function createChatLog(chatData){
             }
             else{
                 messageElement += `<div class='leftMsg'>
-                                        <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${chatData[i].name}</p>
+                                        <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${chatData[i].fromUser}</p>
                                         <div id='leftMsgDiv'>`;
                 if(type.userType == "user"){
                     messageElement += `<img src='${chatData[i].expert_route}' id='chatProfile' />`;
@@ -114,7 +114,7 @@ function setChating(room){
 
 function registerChatMessageListener() {
     if (!isChatMessageListenerRegistered) {
-        socket.on('chat message', (messageObject, expert_route, name) => {
+        socket.on('chat message', (messageObject, expert_route) => {
             const { fromUser, message } = messageObject;
             let messageElement = "";
             getUserSession().then(type => {
@@ -125,7 +125,7 @@ function registerChatMessageListener() {
                 }
                 else{
                     messageElement += `<div class='leftMsg'>
-                                            <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${name}</p>
+                                            <p style='margin:0; margin-left: 50px; margin-bottom: -5px;'>${fromUser}</p>
                                             <div id='leftMsgDiv'>`;
                     if(type.userType == "user"){
                         messageElement += `<img src='${expert_route}' id='chatProfile' />`;

@@ -574,3 +574,8 @@ async function expertChatMessage(id) {
 
   socketChat(data.userId, id);
 }
+
+//모달 팝업 닫기
+document.querySelector('.close-modal-btn').addEventListener('click', function () {
+  document.querySelector('.modal').style.display = 'none';
+});

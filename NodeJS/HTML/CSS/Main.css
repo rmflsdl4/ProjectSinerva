@@ -49,7 +49,7 @@
     font-size: 22px;
     text-decoration: none;
 }
-.expertChatButton, .uesrChatButton {
+.expertChatButton, .userChatButton {
     display: block;
     width: 100%;
     height: 30px;
@@ -63,7 +63,7 @@
     color: #C0C0C0;
     cursor: pointer;
 }
-.expertChatButton:hover, .uesrChatButton:hover {
+.expertChatButton:hover, .userChatButton:hover {
     border-bottom: 1px solid #C0C0C0;
 }
 
@@ -98,9 +98,7 @@
 }
 #expertInfoList {
     background-color: #F5F5F5;
-    width: auto;
-    margin-left: 10%;
-    margin-right: 10%;
+    width: 80%;
     box-shadow: inset 0px 0px 10px #666;
     padding-top: 20px;
     padding-bottom: 30px;
